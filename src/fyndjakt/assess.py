@@ -262,7 +262,7 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
                 val, m25, m75 = priced(strong.condition_guess)  # the decision uses the strong model's condition
 
     replica = pf.replica_flag or bool(final_ver.replica_signals)
-    confidence = dec.combine_confidence(final_ver.confidence, final_ver.match, val.level, replica, disagree)
+    confidence = dec.combine_confidence(final_ver.confidence, final_ver.match, val.level, replica, disagree, val.n)
 
     # 9. Decision
     decision = dec.decide(

@@ -10,8 +10,16 @@ def should_escalate(match: str | None, net_sek: int | None, min_net_margin_sek: 
     return match in ("yes", "uncertain") and net_sek is not None and net_sek >= 2 * min_net_margin_sek
 
 
+THIN_COMPS = 5
+
+
 def combine_confidence(
-    model_confidence: str, match: str | None, value_level: str, replica_flag: bool, strong_disagrees: bool = False
+    model_confidence: str,
+    match: str | None,
+    value_level: str,
+    replica_flag: bool,
+    strong_disagrees: bool = False,
+    n_comps: int | None = None,
 ) -> str:
     """Cap the model's own confidence with what the code knows."""
     level = CONFIDENCE_ORDER.get(model_confidence, 0)
@@ -19,6 +27,8 @@ def combine_confidence(
         level = min(level, 1)
     if value_level == "designer_category":
         level = min(level, 1)
+    if value_level == "model" and n_comps is not None and n_comps < THIN_COMPS:
+        level = min(level, 1)  # a price from 1-4 sales without a prior to lean on is thin evidence
     if match not in ("yes", "uncertain") or value_level == "none" or replica_flag or strong_disagrees:
         level = 0
     return next(k for k, v in CONFIDENCE_ORDER.items() if v == level)

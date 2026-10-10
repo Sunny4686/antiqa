@@ -365,3 +365,28 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 2026-10-10 17:59:35,329 INFO fyndjakt.jobs: auctionet backfill {'category_id': 280}: 4506 new comps, 7 steps left
 2026-10-10 18:08:34,633 INFO fyndjakt.jobs: auctionet backfill {'category_id': 23}: 9995 new comps, 6 steps left
 2026-10-10 18:11:00,110 INFO fyndjakt.jobs: auctionet backfill {'category_id': 279}: 2636 new comps, 5 steps left
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [77822]
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 18:19:49,757 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [79277]
+INFO:     Waiting for application startup.
+2026-10-10 18:19:49,833 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 18:19:49,834 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-10-10 18:20:38,891 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 10, 0 new comps
+INFO:     127.0.0.1:61385 - "GET /health HTTP/1.1" 200 OK
+2026-10-10 18:21:32,330 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 20, 0 new comps
+2026-10-10 18:22:25,876 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 30, 0 new comps
+2026-10-10 18:23:19,720 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 40, 0 new comps
+2026-10-10 18:24:13,199 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 50, 0 new comps
+2026-10-10 18:25:06,950 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 60, 0 new comps
+2026-10-10 18:26:00,534 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 70, 0 new comps

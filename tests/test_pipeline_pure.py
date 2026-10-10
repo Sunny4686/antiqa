@@ -174,6 +174,8 @@ def test_combine_confidence_caps():
     assert dec.combine_confidence("hög", "yes", "none", False) == "låg"
     assert dec.combine_confidence("hög", "yes", "model", False, strong_disagrees=True) == "låg"
     assert dec.combine_confidence("hög", "no", "model", False) == "låg"
+    assert dec.combine_confidence("hög", "yes", "model", False, n_comps=4) == "medel"  # thin, no prior
+    assert dec.combine_confidence("hög", "yes", "model", False, n_comps=5) == "hög"
 
 
 def test_decide_fynd_and_its_gates():
