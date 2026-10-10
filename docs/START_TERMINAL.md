@@ -1,0 +1,39 @@
+# Startprompt för Claude Code i terminalen
+
+## Förberedelser (en gång)
+
+```bash
+git clone https://github.com/sunny4686/antiqa.git ~/antiqa
+cd ~/antiqa
+git checkout claude/undervalued-furniture-llm-service-iq43fh
+claude
+```
+
+Kräver git, Python 3.12+ och uv (`curl -LsSf https://astral.sh/uv/install.sh | sh`).
+Ha en Anthropic API-nyckel redo (`ANTHROPIC_API_KEY`) och skapa en Telegram-bot via @BotFather
+när Claude ber om det.
+
+## Prompt att klistra in
+
+```text
+Vi bygger Fyndjakt. Läs CLAUDE.md och docs/PRD.md noga, och skumma
+reports/Fyndjakt svenska designmöbler.md för bakgrund. PRD.md gäller: helautomatisk skrapning av
+Blocket och Auctionet, med skyddsräckena i CLAUDE.md som hårda krav.
+
+Jobba på branchen claude/undervalued-furniture-llm-service-iq43fh, små commits, pusha efter
+varje avslutad milstolpe.
+
+Börja med M0 (fas 0-rekognosering) här på min dator:
+1. Hämta och spara robots.txt och användarvillkor för blocket.se och auctionet.com i docs/recon/
+   och sammanfatta vad de säger om automatiserad åtkomst.
+2. Ta reda på hur Blockets nya plattform (sedan nov 2025) listar möbelkategorin sorterad på nyast:
+   JSON-endpoint, inbäddad JSON eller HTML. Dokumentera URL, parametrar, fält och hur en enskild
+   annons hämtas. Spara 3–5 fixtures utan säljaruppgifter i tests/fixtures/.
+3. Uppskatta antal nya möbelannonser per timme och dygn.
+4. Gör samma kartläggning för Auctionets avslutade möbelobjekt (titel, formgivare, klubbslag,
+   datum, skick, bild-URL:er) och spara fixtures.
+5. Skriv docs/recon/RESULTAT.md med fynd, föreslagen mappstruktur och databasschema, och en
+   kostnadsuppskattning för AI-steget utifrån uppmätt volym.
+
+Stanna där och visa mig resultatet innan du bygger M1. Fråga mig innan nya beroenden eller tjänster.
+```
