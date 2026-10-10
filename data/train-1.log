@@ -1,0 +1,37 @@
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 20:27:30,688 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+2026-10-10 20:27:30,712 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 20:27:30,712 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+2026-10-10 20:27:33,302 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:35,278 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:36,253 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:39,146 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:40,748 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:42,371 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:44,139 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:46,017 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:47,596 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:49,153 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:52,974 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:54,576 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:56,091 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:57,618 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:27:59,279 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:00,986 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:02,648 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:04,175 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:05,769 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:08,274 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:10,127 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:11,779 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:14,973 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:16,579 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:18,015 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:19,548 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:21,208 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:22,822 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"

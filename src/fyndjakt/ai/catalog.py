@@ -61,22 +61,17 @@ def reference_blocks(
     model_ids: list[int],
     exclude_comp_ids: set[int] | None = None,
     max_px: int = 512,
-) -> dict[int, dict]:
-    """model id -> image block of a sold comp of that model (the most expensive one with photos: usually the
-    clearest, most typical example). Models without a usable photo are left out."""
-    out: dict[int, dict] = {}
-    for mid in model_ids:
-        comps = session.scalars(
-            select(Comp)
-            .where(Comp.model_id == mid, Comp.state == "sold", Comp.hammer_sek.is_not(None))
-            .order_by(desc(Comp.hammer_sek))
-            .limit(5)
+    per_top: int = 2,
+    top: int = 2,
+) -> dict[int, list[dict]]:
+    """model id -> photos of sold comps of that model (most expensive first: usually the clearest, most typical
+    examples). The first `top` candidates get `per_top` photos each, the rest one. Models without photos are
+    left out."""
+    out: dict[int, list[dict]] = {}
+    for rank, mid in enumerate(model_ids):
+        photos = model_photos(
+            session, loader, mid, n=per_top if rank < top else 1, max_px=max_px, exclude_comp_ids=exclude_comp_ids
         )
-        for c in comps:
-            if exclude_comp_ids and c.id in exclude_comp_ids or not c.image_urls:
-                continue
-            blocks = loader.blocks(c.image_urls[:1], max_px, 1)
-            if blocks:
-                out[mid] = blocks[0]
-                break
+        if photos:
+            out[mid] = photos
     return out

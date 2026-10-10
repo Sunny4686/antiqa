@@ -160,7 +160,7 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
             )
         return out
 
-    def references(model_ids: list[int]) -> dict[int, dict]:
+    def references(model_ids: list[int]) -> dict[int, list[dict]]:
         """A sold example's photo per candidate (Auctionet), for picture-against-picture comparison."""
         if deps.images is None:
             return {}

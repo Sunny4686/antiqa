@@ -230,6 +230,6 @@ def test_reference_photos_are_labelled_per_candidate():
         CandidateSpec(2, "Ekström – Lamino", None, None, None),
     ]
     img = {"type": "image", "source": {}}
-    out = _reference_content(specs, {2: img})
-    assert out[1]["text"].startswith("Referensbild") and "id=2" in out[1]["text"] and out[2] is img and len(out) == 3
+    out = _reference_content(specs, {2: [img, img]})
+    assert out[1]["text"].startswith("Referensbilder") and "id=2" in out[1]["text"] and out[2] is img and len(out) == 4
     assert _reference_content(specs, None) == []

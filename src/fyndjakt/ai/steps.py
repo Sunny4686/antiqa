@@ -108,16 +108,18 @@ def screen(
     return resp.parsed_output, _usage(model, resp)
 
 
-def _reference_content(candidates: list[CandidateSpec], references: dict[int, dict] | None) -> list[dict]:
-    """After the listing's own photos: one labelled reference photo per candidate, to compare form directly."""
+def _reference_content(candidates: list[CandidateSpec], references: dict[int, list[dict]] | None) -> list[dict]:
+    """After the listing's own photos: labelled reference photos per candidate, to compare form directly."""
     out: list[dict] = []
     for c in candidates:
-        block = (references or {}).get(c.id)
-        if block:
-            out += [
-                {"type": "text", "text": f"Referensbild (såld, bekräftad) för kandidat id={c.id}: {c.label}"},
-                block,
-            ]
+        blocks = (references or {}).get(c.id) or []
+        if isinstance(blocks, dict):
+            blocks = [blocks]
+        if blocks:
+            out.append(
+                {"type": "text", "text": f"Referensbilder (sålda, bekräftade) för kandidat id={c.id}: {c.label}"}
+            )
+            out += blocks
     if out:
         out.insert(0, {"type": "text", "text": "Ovan: annonsens bilder. Nedan: referensbilder att jämföra formen med."})
     return out
@@ -131,7 +133,7 @@ def verify(
     price_sek: int | None,
     image_blocks: list[dict],
     candidates: list[CandidateSpec],
-    references: dict[int, dict] | None = None,
+    references: dict[int, list[dict]] | None = None,
 ) -> tuple[Verification, Usage]:
     cand_text = "\n\n".join(
         f"id={c.id}: {c.label}\nKännetecken: {c.identifying_features or '-'}\n"

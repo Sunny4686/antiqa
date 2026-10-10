@@ -776,3 +776,7 @@ INFO:     Waiting for application startup.
 2026-10-10 20:20:46,223 INFO alembic.runtime.migration: Will assume non-transactional DDL.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-10-10 20:27:42,116 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01LRi3QwcUY1FNYdtevwxuKE "HTTP/1.1 200 OK"
+2026-10-10 20:27:42,459 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01LRi3QwcUY1FNYdtevwxuKE "HTTP/1.1 200 OK"
+2026-10-10 20:27:42,854 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01LRi3QwcUY1FNYdtevwxuKE/results "HTTP/1.1 200 OK"
+2026-10-10 20:27:44,320 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages/batches "HTTP/1.1 200 OK"
