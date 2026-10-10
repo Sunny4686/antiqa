@@ -35,4 +35,15 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
 
 ## Kommandon
 
-Fylls i när stommen finns (installera, testa, köra lokalt, eval, driftsätta).
+- Installera: `uv sync` (kopiera `.env.example` till `.env`)
+- Testa: `uv run pytest` · Lint: `uv run ruff check src tests && uv run ruff format --check src tests`
+- Köra lokalt (webb + jobb): `uv run fyndjakt serve` → http://127.0.0.1:8000/inkorg
+- Migrera: `uv run fyndjakt migrate` (körs även vid start). Ny migration: ändra `models.py`, autogenerera via
+  `alembic.command.revision(fyndjakt.migrate.alembic_config(), autogenerate=True, ...)`.
+- Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
+
+## Struktur
+
+`src/fyndjakt/`: `pipeline/` (rena funktioner, steg 1, 3, 5–9), `ai/` (steg 2, 4, budget), `sources/auctionet.py`,
+`notify/telegram.py`, `assess.py` (kör stegen för en annons), `jobs.py` (SQLite-jobbkö + worker),
+`web/` (FastAPI + Jinja2/HTMX), `migrations/` (Alembic).

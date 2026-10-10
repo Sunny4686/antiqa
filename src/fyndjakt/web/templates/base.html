@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Fyndjakt{% endblock %}</title>
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <style>
+    :root { --fg:#1d1d1b; --muted:#6b6b66; --line:#e4e2dc; --bg:#faf9f6; --fynd:#b8460b; --kolla:#2f5f8a; }
+    body { font: 15px/1.45 system-ui, sans-serif; color: var(--fg); background: var(--bg); margin: 0; }
+    header { display:flex; gap:1.2rem; align-items:baseline; padding: .8rem 1.2rem; border-bottom:1px solid var(--line); }
+    header b { font-size: 1.1rem; } header a { color: var(--fg); text-decoration: none; }
+    main { max-width: 980px; margin: 0 auto; padding: 1rem 1.2rem 3rem; }
+    table { width:100%; border-collapse: collapse; } td, th { text-align:left; padding:.45rem .4rem; border-bottom:1px solid var(--line); vertical-align: top; }
+    th { font-weight:600; color: var(--muted); font-size: .85rem; }
+    .tag { font-size:.75rem; font-weight:700; padding:.1rem .4rem; border-radius:4px; color:#fff; }
+    .FYND { background: var(--fynd); } .KOLLA_SJALV { background: var(--kolla); } .INGET { background: #999; }
+    .muted { color: var(--muted); } .num { text-align:right; white-space:nowrap; }
+    button { font: inherit; padding:.3rem .6rem; border:1px solid var(--line); background:#fff; border-radius:5px; cursor:pointer; }
+    form.grid { display:grid; grid-template-columns: max-content 12rem; gap:.5rem 1rem; align-items:center; }
+    input { font: inherit; padding:.3rem .4rem; }
+    .done { color: green; font-weight: 600; }
+    pre { background:#fff; border:1px solid var(--line); padding:.6rem; overflow-x:auto; font-size:.8rem; }
+  </style>
+</head>
+<body>
+<header>
+  <b>Fyndjakt</b>
+  <a href="/inkorg">Inkorg</a>
+  <a href="/installningar">Inställningar</a>
+</header>
+<main>{% block content %}{% endblock %}</main>
+</body>
+</html>

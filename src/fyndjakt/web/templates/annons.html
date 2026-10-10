@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ listing.title }} · Fyndjakt{% endblock %}
+{% block content %}
+<h1>{{ listing.title }}</h1>
+<p>
+  {{ listing.price_sek if listing.price_sek is not none else "?" }} kr · {{ listing.municipality or "okänd ort" }}
+  · källa {{ listing.source }}
+  {% if listing.url %}· <a href="{{ listing.url }}" target="_blank" rel="noopener">Öppna annons</a>{% endif %}
+</p>
+{% if show_images %}{% for u in listing.image_urls[:4] %}<img src="{{ u }}" alt="" style="max-height:180px;margin-right:.4rem">{% endfor %}{% endif %}
+{% if listing.description %}<p style="white-space:pre-line">{{ listing.description }}</p>{% endif %}
+
+{% if final %}
+<h2><span class="tag {{ final.decision }}">{{ final.decision }}</span> Bedömning</h2>
+<table>
+  <tr><th>Kandidat</th><td>{% if model %}{{ model.designer }} – {{ model.model_name or "" }} ({{ model.manufacturer or "?" }}){% else %}–{% endif %} · match: {{ final.match or "–" }}</td></tr>
+  <tr><th>Värde</th><td>{% if final.value_p25 %}{{ final.value_p25 }}–{{ final.value_p75 }} kr (median {{ final.value_median }}), n={{ final.n_comps }}, nivå {{ final.value_level }}{% else %}inget värde ({{ final.value_level or "–" }}){% endif %}</td></tr>
+  <tr><th>Netto / ROI</th><td>{% if final.net_margin_sek is not none %}{{ final.net_margin_sek }} kr{% if final.roi is not none %} / {{ (final.roi * 100)|round|int }} %{% endif %}{% else %}–{% endif %}</td></tr>
+  <tr><th>Avstånd / transport</th><td>{{ final.distance_km if final.distance_km is not none else "?" }} km / {{ final.transport_sek if final.transport_sek is not none else "?" }} kr</td></tr>
+  <tr><th>Säkerhet</th><td>{{ final.confidence or "–" }}{% if final.needs_underside_photo %} · be om foto av undersidan{% endif %}</td></tr>
+  <tr><th>Bevis</th><td>{% for e in final.evidence %}✓ {{ e }}<br>{% else %}–{% endfor %}</td></tr>
+  <tr><th>Motbevis</th><td>{% for e in final.contradictions %}✗ {{ e }}<br>{% else %}–{% endfor %}</td></tr>
+  <tr><th>Replikasignaler</th><td>{{ final.replica_signals|join(", ") or "–" }}</td></tr>
+  <tr><th>Märkning (OCR)</th><td>{{ final.label_ocr or "–" }}</td></tr>
+  <tr><th>Notering</th><td>{{ final.note or "–" }}</td></tr>
+  <tr><th>AI</th><td class="muted">{{ final.llm_model or "–" }} · {{ final.tokens_in }} in / {{ final.tokens_out }} ut · {{ "%.4f"|format(final.cost_usd) }} USD</td></tr>
+</table>
+{% endif %}
+
+<h2>Återkoppling</h2>
+<div id="fb">
+  {% for key, label in buttons %}
+  <button hx-post="/annons/{{ listing.id }}/feedback" hx-vals='{"label": "{{ key }}"}' hx-target="#fb-result">{{ label }}</button>
+  {% endfor %}
+  <span id="fb-result">{% for f in feedback %}<span class="done">✓ {{ f.label }}</span> {% endfor %}</span>
+</div>
+
+<h2>Alla steg</h2>
+{% for a in assessments %}
+<details><summary>{{ a.stage }} · {{ a.created_at.strftime("%H:%M:%S") }}{% if a.decision %} · {{ a.decision }}{% endif %}</summary>
+<pre>{{ a.raw | tojson(indent=2) if a.raw else (a.note or "") }}</pre></details>
+{% endfor %}
+{% endblock %}
