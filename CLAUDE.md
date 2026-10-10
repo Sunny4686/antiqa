@@ -27,7 +27,6 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
   bara via push, delning eller passivt tillägg till `/ingest/*`. Att byta adress (VPS/Pi/proxy) ändrar
   inget och räknas som kringgående.
 - Följ varje källas robots.txt och villkor. Läs dem på nytt innan en ny källa eller sökväg används.
-
 - Ingen inloggning. Inget kringgående av CAPTCHA/blockering, ingen proxy- eller IP-rotation.
 - Vid 403/429/CAPTCHA: backoff, stoppa källan och larma ägaren.
 - Auctionet (öppet JSON-API) högst 1 förfrågan per 5 s. Blocket-takten (1 sökanrop per 2–5 min) gäller
