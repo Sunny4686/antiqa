@@ -74,6 +74,13 @@ class IngestListing(BaseModel):
         return scrub_contacts(v)
 
 
+def _enqueue_assess(session: Session, listing_id: int) -> None:
+    """One pending assessment per listing is enough: it reads the latest price when it runs."""
+    pending = session.scalars(select(Job).where(Job.kind == "assess", Job.status == "pending"))
+    if not any(j.payload.get("listing_id") == listing_id for j in pending):
+        enqueue(session, "assess", {"listing_id": listing_id})
+
+
 def upsert_listing(session: Session, data: IngestListing) -> tuple[Listing, bool, bool]:
     """Returns (listing, is_new, price_changed). New listings and price changes get (re)assessed."""
     listing = session.scalar(
@@ -88,7 +95,7 @@ def upsert_listing(session: Session, data: IngestListing) -> tuple[Listing, bool
         listing = Listing(source=data.source, external_id=data.external_id, **fields)
         session.add(listing)
         session.flush()
-        enqueue(session, "assess", {"listing_id": listing.id})
+        _enqueue_assess(session, listing.id)
         return listing, True, False
     price_changed = data.price_sek is not None and data.price_sek != listing.price_sek
     for k, v in fields.items():
@@ -96,7 +103,7 @@ def upsert_listing(session: Session, data: IngestListing) -> tuple[Listing, bool
             setattr(listing, k, v)
     if price_changed:
         listing.status = "new"
-        enqueue(session, "assess", {"listing_id": listing.id})
+        _enqueue_assess(session, listing.id)
     return listing, False, price_changed
 
 

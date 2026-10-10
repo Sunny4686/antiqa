@@ -3,7 +3,7 @@
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import anthropic
@@ -22,7 +22,7 @@ from fyndjakt.pipeline import geo
 from fyndjakt.pipeline.margin import margin
 from fyndjakt.pipeline.prefilter import prefilter, watch_terms
 from fyndjakt.pipeline.valuation import value
-from fyndjakt.services import comps_for_model, get_settings, health_row, prior_comps
+from fyndjakt.services import comps_for_model, enqueue, get_settings, health_row, prior_comps
 
 log = logging.getLogger(__name__)
 
@@ -362,9 +362,30 @@ def _maybe_notify(
     if a.decision == dec.INGET or not (deps.telegram and deps.config.telegram_chat_id):
         return
     hour = deps.now().astimezone(ZoneInfo(deps.config.timezone)).hour
-    silent = a.decision == dec.KOLLA_SJALV
-    if silent and dec.in_quiet_hours(hour, s.quiet_hours_start, s.quiet_hours_end):
+    if a.decision == dec.KOLLA_SJALV and dec.in_quiet_hours(hour, s.quiet_hours_start, s.quiet_hours_end):
         return  # stays in the inbox; quiet hours never hold back a FYND
+    try:
+        send_alert_for(session, deps, a.id)
+    except Exception as e:
+        # A lost FYND is the worst failure: retry delivery as its own job, without re-running the AI steps.
+        log.warning("telegram alert failed for listing %s, retrying as a job: %s", listing.id, e)
+        enqueue(session, "send_alert", {"assessment_id": a.id}, run_at=deps.now() + timedelta(minutes=1))
+
+
+def send_alert_for(session: Session, deps: Deps, assessment_id: int) -> None:
+    """Send the Telegram alert for a final assessment (once). Raises when Telegram fails."""
+    a = session.get(Assessment, assessment_id)
+    listing = session.get(Listing, a.listing_id)
+    if not (deps.telegram and deps.config.telegram_chat_id):
+        return
+    sent = session.scalar(
+        select(TelegramMessage.id).where(
+            TelegramMessage.listing_id == listing.id, TelegramMessage.created_at >= a.created_at
+        )
+    )
+    if sent:
+        return
+    model = session.get(WatchModel, a.model_candidate_id) if a.model_candidate_id else None
     data = AlertData(
         listing_id=listing.id,
         kind=a.decision,
@@ -386,14 +407,13 @@ def _maybe_notify(
         needs_underside_photo=a.needs_underside_photo,
     )
     photo = listing.image_urls[0] if deps.config.ai_send_listing_images and listing.image_urls else None
-    try:
-        msg_id = deps.telegram.send_alert(
-            deps.config.telegram_chat_id, format_alert(data), keyboard(listing.id, listing.url), photo, silent
-        )
-        session.add(
-            TelegramMessage(
-                listing_id=listing.id, chat_id=deps.config.telegram_chat_id, message_id=msg_id, kind=a.decision
-            )
-        )
-    except Exception:
-        log.exception("telegram alert failed for listing %s", listing.id)
+    msg_id = deps.telegram.send_alert(
+        deps.config.telegram_chat_id,
+        format_alert(data),
+        keyboard(listing.id, listing.url),
+        photo,
+        a.decision == dec.KOLLA_SJALV,
+    )
+    session.add(
+        TelegramMessage(listing_id=listing.id, chat_id=deps.config.telegram_chat_id, message_id=msg_id, kind=a.decision)
+    )

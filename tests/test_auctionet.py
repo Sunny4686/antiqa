@@ -158,3 +158,44 @@ def test_non_json_page_counts_as_block(clock):
 def test_page_cap_redirect_ends_iteration(clock):
     client = _client(lambda req: httpx.Response(302, headers={"location": "/"}))
     assert list(client.iter_new(set())) == []
+
+
+def _timed_page(items, total_pages=3):
+    return {
+        "items": [{"id": i, "title": f"t{i}", "state": "sold", "bids": [], "ends_at": ts} for i, ts in items],
+        "pagination": {"total_pages": total_pages},
+    }
+
+
+def test_iter_new_with_mark_continues_past_known_ids_until_older_items(clock):
+    from datetime import UTC, datetime
+
+    mark = datetime.fromtimestamp(500, UTC)
+    # A crawl died after saving page 1 (ids 10-8); ids 7-5 were never saved; 4-3 are older than the mark.
+    pages = {1: _timed_page([(10, 900), (9, 880), (8, 860)]), 2: _timed_page([(7, 800), (6, 700), (5, 600)])}
+    pages[3] = _timed_page([(4, 450), (3, 400)])
+    seen = []
+
+    def handler(req):
+        seen.append(req.url.params["page"])
+        return httpx.Response(200, json=pages[int(req.url.params["page"])])
+
+    known = {"10", "9", "8", "4", "3"}
+    assert [i["id"] for i in _client(handler).iter_new(known, stop_before=mark)] == [7, 6, 5]
+    assert seen == ["1", "2", "3"]
+    seen.clear()
+    assert [i["id"] for i in _client(handler).iter_new(known)] == []  # old rule would stop at page 1
+    assert seen == ["1"]
+
+
+def test_pages_reports_last_page(clock):
+    pages = {1: _page([3, 2], total_pages=2), 2: _page([1], total_pages=2)}
+    client = _client(lambda req: httpx.Response(200, json=pages[int(req.url.params["page"])]))
+    assert [(p, last) for p, _items, last in client.pages(1, 1)] == [(1, False)]
+    assert [(p, last) for p, _items, last in client.pages(2, 10)] == [(2, True)]
+
+
+def test_partly_parsed_title_goes_to_llm():
+    item = {"id": 1, "title": "YNGVE EKSTRÖM. Fåtölj Lamino, Swedese.", "state": "sold", "bids": []}
+    c = auctionet.parse_item(item)
+    assert c.designer and not c.model_name and c.parse_status is None

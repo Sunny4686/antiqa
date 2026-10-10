@@ -2,7 +2,7 @@
 
 import io
 import os
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import httpx
 import pytest
@@ -244,3 +244,35 @@ def test_ai_cost_survives_a_failing_later_step(session, config, world):  # noqa:
         assess_listing(session, listing.id, _deps(config, verify_fn=broken_verify))
     session.rollback()  # what session_scope does when the job fails
     assert session.scalar(select(func.count(AICall.id)).where(AICall.purpose == "screen")) == 1
+
+
+def test_failed_alert_is_retried_as_job_without_new_ai_calls(session, config, world):  # noqa: F811
+    from fyndjakt import jobs
+    from fyndjakt.models import Job, TelegramMessage
+    from tests.test_assess_jobs_web import _verify
+
+    m, listing = world
+
+    class FlakyTelegram(FakeTelegram):
+        fail = True
+
+        def send_alert(self, *a):
+            if self.fail:
+                raise TelegramError("sendMessage: HTTP 502")
+            return super().send_alert(*a)
+
+    tg = FlakyTelegram()
+    verify = _verify(m.id)
+    a = assess_listing(session, listing.id, _deps(config, tg, verify_fn=verify))
+    assert a.decision == "FYND" and not tg.alerts
+    session.commit()
+    job = session.scalar(select(Job).where(Job.kind == "send_alert"))
+    assert job.payload == {"assessment_id": a.id}
+    tg.fail = False
+    n_calls = len(verify.calls)
+    later = NOW + timedelta(minutes=5)
+    assert jobs.run_one(_deps(config, tg, verify_fn=verify, now=later), {})
+    assert len(tg.alerts) == 1 and len(verify.calls) == n_calls
+    session.expire_all()
+    assert session.scalar(select(func.count(TelegramMessage.id))) == 1
+    assert jobs.run_one(_deps(config, tg, verify_fn=verify, now=later), {}) is False  # nothing left to send

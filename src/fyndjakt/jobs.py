@@ -10,7 +10,7 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from fyndjakt.ai import budget, enrich
-from fyndjakt.assess import Deps, assess_listing, notify_owner
+from fyndjakt.assess import Deps, assess_listing, notify_owner, send_alert_for
 from fyndjakt.backup import backup_sqlite
 from fyndjakt.db import session_scope
 from fyndjakt.images import purge_old
@@ -19,6 +19,7 @@ from fyndjakt.services import (
     enqueue,
     get_settings,
     health_problems,
+    health_row,
     is_stopped,
     known_comp_ids,
     record_failure,
@@ -40,6 +41,9 @@ PERIODIC = ("auctionet_crawl", "health_check", "title_batch", "watchlist_refresh
 NOTES_PER_RUN = 10
 MAX_ATTEMPTS = 3
 COMMIT_EVERY = 100  # one Auctionet page
+BACKFILL_PAGES_PER_RUN = 10  # ~1 min per run, so assessments aren't stuck behind an 8-minute step
+CRAWL_MARK = "auctionet:crawl"  # last_success_at = start of the last complete crawl
+CRAWL_OVERLAP = timedelta(hours=2)
 # "0 new items for 2 h in daytime" applies to continuous sources only; Auctionet runs nightly.
 SILENCE_LIMITS: dict[str, timedelta] = {}
 
@@ -97,6 +101,15 @@ def handle_assess(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
     assess_listing(session, int(job.payload["listing_id"]), deps)
 
 
+def handle_send_alert(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
+    """Retry of a Telegram alert that failed during assessment. Raises on failure, so run_one backs off."""
+    send_alert_for(session, deps, int(job.payload["assessment_id"]))
+
+
+def _utc(dt: datetime) -> datetime:
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
 def handle_auctionet_crawl(session: Session, job: Job, deps: Deps, ctx: dict) -> None:
     now = deps.now()
     try:
@@ -104,11 +117,15 @@ def handle_auctionet_crawl(session: Session, job: Job, deps: Deps, ctx: dict) ->
             return
         client: AuctionetClient = ctx["auctionet"]
         known = known_comp_ids(session, "auctionet")
+        mark = health_row(session, CRAWL_MARK)
+        stop_before = _utc(mark.last_success_at) - CRAWL_OVERLAP if mark.last_success_at else None
         added = 0
-        for i, item in enumerate(client.iter_new(known, category_id=FURNITURE_CATEGORY), 1):
+        items = client.iter_new(known, stop_before=stop_before, category_id=FURNITURE_CATEGORY)
+        for i, item in enumerate(items, 1):
             added += upsert_comp(session, "auctionet", parse_item(item))
             if i % COMMIT_EVERY == 0:
                 session.commit()  # short write transactions so ingest and Telegram aren't locked out
+        mark.last_success_at = now  # only a complete crawl moves the mark
         record_success(session, "auctionet", now, got_items=added > 0)
         log.info("auctionet: %d new comps", added)
     except SourceBlocked as e:
@@ -220,7 +237,7 @@ def handle_backup(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
 
 
 def handle_auctionet_backfill(session: Session, job: Job, deps: Deps, ctx: dict) -> None:
-    """One subcategory or designer query per run (<= 10 000 items), then re-enqueues itself with the rest."""
+    """Up to BACKFILL_PAGES_PER_RUN pages of one plan step per run, then re-enqueues itself with the rest."""
     now = deps.now()
     todo: list[dict] = list(job.payload.get("todo") or [])
     if not todo:
@@ -228,16 +245,24 @@ def handle_auctionet_backfill(session: Session, job: Job, deps: Deps, ctx: dict)
     if is_stopped(session, "auctionet", now):
         enqueue(session, "auctionet_backfill", {"todo": todo}, run_at=now + timedelta(hours=1))
         return
-    params, rest = todo[0], todo[1:]
+    step, rest = todo[0], todo[1:]
+    params = {k: v for k, v in step.items() if k != "page"}
+    start = int(step.get("page", 1))
     client: AuctionetClient = ctx["auctionet"]
     added = 0
     try:
-        for i, item in enumerate(client.iter_all(**params), 1):
-            added += upsert_comp(session, "auctionet", parse_item(item))
-            if i % COMMIT_EVERY == 0:
-                session.commit()  # a step takes ~8 min; don't hold the write lock for all of it
-        record_success(session, "auctionet", now, got_items=added > 0)
-        log.info("auctionet backfill %s: %d new comps, %d steps left", params, added, len(rest))
+        done, reached = False, start
+        for page_no, items, last in client.pages(start, BACKFILL_PAGES_PER_RUN, **params):
+            for item in items:
+                added += upsert_comp(session, "auctionet", parse_item(item))
+            session.commit()  # one page per write transaction
+            done, reached = last, page_no
+        if done:
+            record_success(session, "auctionet", now, got_items=added > 0)
+            log.info("auctionet backfill %s done; %d steps left", params, len(rest))
+        else:
+            rest = [{**params, "page": reached + 1}, *rest]
+            log.info("auctionet backfill %s: up to page %d, %d new comps", params, reached, added)
     except SourceBlocked as e:
         record_failure(session, "auctionet", now, f"blocked: {e.reason}", e.reason)
         notify_owner(
@@ -246,7 +271,7 @@ def handle_auctionet_backfill(session: Session, job: Job, deps: Deps, ctx: dict)
             "auctionet",
             f"Källan trasig: auctionet (blockerad: {e.reason}). Stoppad med backoff, inget kringgående.",
         )
-        rest = todo  # retry the same step after the backoff
+        rest = todo  # retry the same step after the backoff (pages already saved are simply upserted again)
     if rest:
         enqueue(session, "auctionet_backfill", {"todo": rest}, run_at=now + timedelta(seconds=10))
 
@@ -259,6 +284,7 @@ def backfill_plan(designers: list[str] | None = None) -> list[dict]:
 
 HANDLERS: dict[str, Callable[[Session, Job, Deps, dict], None]] = {
     "assess": handle_assess,
+    "send_alert": handle_send_alert,
     "auctionet_crawl": handle_auctionet_crawl,
     "auctionet_backfill": handle_auctionet_backfill,
     "health_check": handle_health_check,

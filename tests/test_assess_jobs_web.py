@@ -209,7 +209,8 @@ def test_upsert_listing_new_then_price_change(session):
     assert not new and changed
     _, new, changed = upsert_listing(session, payload.model_copy(update={"price_sek": 400}))
     assert not changed
-    assert len(list(session.scalars(select(Job).where(Job.kind == "assess")))) == 2
+    # the price change finds the first job still pending, so one assessment covers both versions
+    assert len(list(session.scalars(select(Job).where(Job.kind == "assess")))) == 1
 
 
 # --- jobs -----------------------------------------------------------------------------------------
@@ -274,7 +275,7 @@ def test_auctionet_crawl_saves_comps(session, config):
     session.commit()
     jobs.run_one(_deps(config), {"auctionet": client})
     session.expire_all()
-    assert client.params == {"category_id": 16}
+    assert client.params == {"category_id": 16, "stop_before": None}  # first crawl: no mark yet
     assert len(list(session.scalars(select(Comp)))) == len(items)
     assert session.get(SourceHealth, "auctionet").consecutive_failures == 0
 

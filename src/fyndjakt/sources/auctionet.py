@@ -187,8 +187,8 @@ def parse_item(item: dict) -> CompData:
         designer=pt.designer,
         manufacturer=pt.manufacturer,
         model_name=pt.model_name,
-        # Titles without a recognisable designer go to the LLM batch parser.
-        parse_status="rules" if pt.designer else None,
+        # Titles the rules only half understood go to the LLM batch parser, which fills just the empty fields.
+        parse_status="rules" if pt.designer and pt.model_name else None,
     )
 
 
@@ -221,8 +221,18 @@ class AuctionetClient:
             raise SourceBlocked("captcha" if "captcha" in r.text.lower() else "non-json")
         return r.json()
 
-    def iter_new(self, known_ids: set[str], max_pages: int = MAX_PAGES, **params: object) -> Iterator[dict]:
-        """Newest-ended first; stop after the first page that contains an already known id."""
+    def iter_new(
+        self,
+        known_ids: set[str],
+        max_pages: int = MAX_PAGES,
+        stop_before: datetime | None = None,
+        **params: object,
+    ) -> Iterator[dict]:
+        """Newest-ended first; stop after the first page that contains an already known id.
+
+        With stop_before (the start of the last complete crawl), keep going past known ids until the page also
+        reaches items that ended before it. A crawl that died half-way then can't leave a permanent gap behind
+        the items it did save."""
         for page in range(1, max_pages + 1):
             data = self.get_page(page, **params)
             items = data.get("items") or []
@@ -233,15 +243,24 @@ class AuctionetClient:
                     continue
                 yield item
             total = (data.get("pagination") or {}).get("total_pages") or 0
+            if stop_before is not None and hit_known:
+                ends = [i["ends_at"] for i in items if i.get("ends_at")]
+                hit_known = bool(ends) and min(ends) < stop_before.timestamp()
             if hit_known or not items or page >= total:
+                return
+
+    def pages(self, start_page: int = 1, count: int = MAX_PAGES, **params: object) -> Iterator[tuple[int, list, bool]]:
+        """(page, items, is_last) for up to count pages from start_page, within the page cap."""
+        for page in range(start_page, min(start_page + count, MAX_PAGES + 1)):
+            data = self.get_page(page, **params)
+            items = data.get("items") or []
+            total = (data.get("pagination") or {}).get("total_pages") or 0
+            last = not items or page >= total or page >= MAX_PAGES
+            yield page, items, last
+            if last:
                 return
 
     def iter_all(self, max_pages: int = MAX_PAGES, **params: object) -> Iterator[dict]:
         """Every item up to the page cap (backfill). Upserts make re-runs harmless."""
-        for page in range(1, max_pages + 1):
-            data = self.get_page(page, **params)
-            items = data.get("items") or []
+        for _page, items, _last in self.pages(1, max_pages, **params):
             yield from items
-            total = (data.get("pagination") or {}).get("total_pages") or 0
-            if not items or page >= total:
-                return

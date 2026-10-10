@@ -208,11 +208,11 @@ class FakeAuctionet:
     def __init__(self, fail_on=None):
         self.calls, self.fail_on = [], fail_on
 
-    def iter_all(self, **params):
+    def pages(self, start_page, count, **params):
         self.calls.append(params)
         if params == self.fail_on:
             raise SourceBlocked("403")
-        yield {"id": len(self.calls) * 1000, "title": "BORD", "state": "sold", "bids": [{"amount": 100}]}
+        yield start_page, [{"id": len(self.calls) * 1000, "title": "BORD", "state": "sold", "bids": []}], True
 
 
 def test_backfill_walks_plan_one_step_per_run(session, config):
@@ -308,3 +308,25 @@ def test_eval_summarize():
     assert s["precision"] == round(1 / 3, 3) and s["recall"] == round(1 / 3, 3)
     assert s["false_positives_by_source"] == {"feedback:replika": 1}
     assert s["cost_usd"] == 0.05
+
+
+def test_backfill_continues_a_long_step_in_page_chunks(session, config):
+    class Paged:
+        def __init__(self):
+            self.starts = []
+
+        def pages(self, start_page, count, **params):
+            self.starts.append(start_page)
+            for p in range(start_page, min(start_page + count, 26)):
+                yield p, [{"id": p, "title": "BORD", "state": "sold", "bids": []}], p == 25
+
+    enqueue(session, "auctionet_backfill", {"todo": [{"category_id": 18}]}, run_at=NOW - timedelta(seconds=1))
+    session.commit()
+    client, clock = Paged(), [NOW]
+    deps = Deps(config=config, now=lambda: clock[0])
+    for _ in range(4):
+        jobs.run_one(deps, {"auctionet": client})
+        clock[0] += timedelta(minutes=1)
+    assert client.starts == [1, 11, 21]
+    assert len(list(session.scalars(select(Comp)))) == 25
+    assert session.scalar(select(Job).where(Job.kind == "auctionet_backfill", Job.status == "pending")) is None
