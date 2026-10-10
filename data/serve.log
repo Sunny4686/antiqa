@@ -399,3 +399,25 @@ INFO:     127.0.0.1:61385 - "GET /health HTTP/1.1" 200 OK
 2026-10-10 18:30:49,891 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281}: up to page 20, 1000 new comps
 2026-10-10 18:31:44,636 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281} done; 3 steps left
 2026-10-10 18:32:38,358 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 10, 1000 new comps
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [79277]
+2026-10-10 18:33:18,225 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 18:33:18,226 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [80128]
+INFO:     Waiting for application startup.
+2026-10-10 18:33:18,298 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 18:33:18,298 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+2026-10-10 18:33:18,300 INFO alembic.runtime.migration: Running upgrade 0002 -> 0003, auction listings: end time and current bid
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63463 - "GET /utvalt HTTP/1.1" 200 OK
+2026-10-10 18:34:06,754 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 20, 300 new comps
+2026-10-10 18:35:04,999 INFO fyndjakt.jobs: auctionet live: 1040 lots ending within 2 days, 0:00:00 h, 463 match the watchlist
+2026-10-10 18:35:58,157 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 30, 1000 new comps

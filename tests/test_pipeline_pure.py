@@ -198,3 +198,16 @@ def test_decide_kolla_sjalv():
 @pytest.mark.parametrize(("hour", "quiet"), [(23, True), (3, True), (7, False), (12, False), (22, True)])
 def test_quiet_hours_wrap_midnight(hour, quiet):
     assert dec.in_quiet_hours(hour, 22, 7) is quiet
+
+
+def test_generic_terms_and_strict_title_match():
+    from fyndjakt.pipeline.prefilter import is_generic, strict_title_match, watch_terms
+
+    assert is_generic("ETT PAR") and is_generic("Danmark") and is_generic("teak") and is_generic("FYRA ST")
+    assert not is_generic("Swedese") and not is_generic("Lamino")
+    assert watch_terms(1, "Nils Jonsson", "TEAK", "Garmi", []).terms == ("garmi", "nils jonsson")
+    t = 'YNGVE EKSTRÖM. Fåtölj "Lamino", Swedese.'
+    assert strict_title_match(t, "Yngve Ekström", "Lamino", [])
+    assert not strict_title_match("Fåtölj Lamino-stil, 1900-tal.", "Yngve Ekström", "Lamino", [])
+    assert not strict_title_match("YNGVE EKSTRÖM. Pall, Swedese.", "Yngve Ekström", "Lamino", [])
+    assert strict_title_match("BRUNO MATHSSON. Fåtölj, Pernilla.", "Bruno Mathsson", "Pernilla 69", ["Pernilla"])

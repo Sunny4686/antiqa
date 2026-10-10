@@ -13,6 +13,8 @@ from datetime import UTC, datetime
 
 import httpx
 
+from fyndjakt.pipeline.prefilter import is_generic
+
 API = "https://auctionet.com/api/v2/items.json"
 FURNITURE_CATEGORY = 16
 FURNITURE_SUBCATEGORIES = {
@@ -117,6 +119,12 @@ def strip_html(text: str | None) -> str | None:
     return re.sub(r"\s+", " ", html.unescape(_TAG.sub(" ", text))).strip() or None
 
 
+def _maker(text: str) -> str | None:
+    """'Swedese.' -> 'Swedese'; 'ETT PAR', 'Danmark', 'teak' -> None."""
+    t = text.strip().rstrip(". ")
+    return None if not t or is_generic(t) else t
+
+
 def parse_title(title: str) -> ParsedTitle:
     """Rule-based parse of typical titles: 'DESIGNER. Typ "Modell", Tillverkare, ort år.'
 
@@ -135,12 +143,12 @@ def parse_title(title: str) -> ParsedTitle:
     f = _MAKER_FOR.search(title)
     if f:
         out.designer = out.designer or f.group(1).strip()
-        out.manufacturer = f.group(2).strip().rstrip(". ")
+        out.manufacturer = _maker(f.group(2))
     elif out.designer:
         # 'DESIGNER. Typ, Tillverkare, ...' -> the segment after the type is often the maker.
         parts = [p.strip() for p in title[m.end() :].split(",")]  # type: ignore[union-attr]
         if len(parts) >= 2 and parts[1] and not re.search(r"\d", parts[1]) and parts[1][0].isupper():
-            out.manufacturer = parts[1].rstrip(". ")
+            out.manufacturer = _maker(parts[1])
     return out
 
 

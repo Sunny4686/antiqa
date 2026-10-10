@@ -30,6 +30,75 @@ REPLICA_TERMS = ("replika", "kopia", "i stil med", "a la", "inspirerad av", "rep
 REPLICA_SUFFIX = re.compile(r"\w-stil\b")
 
 
+# Words the title parser sometimes takes for a maker or model: countries, materials, counts, furniture types.
+GENERIC_TERMS = frozenset(
+    [
+        "danmark",
+        "dänemark",
+        "denmark",
+        "sverige",
+        "sweden",
+        "schweden",
+        "norge",
+        "norway",
+        "finland",
+        "italien",
+        "italy",
+        "tyskland",
+        "germany",
+        "teak",
+        "ek",
+        "eke",
+        "oak",
+        "mahogny",
+        "mahogany",
+        "palisander",
+        "jakaranda",
+        "rosewood",
+        "bok",
+        "björk",
+        "birch",
+        "valnöt",
+        "walnut",
+        "furu",
+        "pine",
+        "alm",
+        "ask",
+        "massiv",
+        "massivt",
+        "lackerat",
+        "trä",
+        "wood",
+        "metall",
+        "stål",
+        "läder",
+        "par",
+        "stolar",
+        "fåtöljer",
+        "fåtölj",
+        "stol",
+        "bord",
+        "matbord",
+        "soffbord",
+        "byrå",
+        "skåp",
+        "hylla",
+        "soffa",
+        "matsalsmöbel",
+        "matsalsmöbler",
+        "möbel",
+        "möbler",
+        "sittgrupp",
+    ]
+)
+_COUNT_LEAD = re.compile(r"^(ett|två|tre|fyra|fem|sex|sju|åtta|nio|tio|\d+)\b")
+
+
+def is_generic(term: str) -> bool:
+    n = normalize(term)
+    return n in GENERIC_TERMS or _COUNT_LEAD.match(n) is not None or len(n) < 3
+
+
 def normalize(text: str) -> str:
     """Lowercase, strip accents except Swedish å/ä/ö, collapse whitespace."""
     out = []
@@ -69,8 +138,19 @@ def watch_terms(
     model_id: int, designer: str | None, manufacturer: str | None, model_name: str | None, aliases: list[str] | None
 ) -> WatchTerms:
     raw = [designer, manufacturer, model_name, *(aliases or [])]
-    terms = tuple(sorted({normalize(t) for t in raw if t and len(t.strip()) >= 3}))
+    terms = tuple(sorted({normalize(t) for t in raw if t and not is_generic(t)}))
     return WatchTerms(model_id, terms)
+
+
+def strict_title_match(title: str, designer: str | None, model_name: str | None, aliases: list[str] | None) -> bool:
+    """Auction lots: the designer's surname and the model name (or an alias) must both be in the title.
+    Auction houses write both, so this keeps precision high and the AI cost per scan low."""
+    text = normalize(title)
+    surname = normalize(designer).split()[-1] if designer and designer.split() else ""
+    if len(surname) < 3 or not contains_term(text, surname):
+        return False
+    names = [n for n in [model_name, *(aliases or [])] if n and not is_generic(n)]
+    return any(contains_term(text, normalize(n).strip("\"'” ")) for n in names)
 
 
 def prefilter(

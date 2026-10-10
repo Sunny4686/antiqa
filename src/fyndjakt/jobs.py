@@ -15,7 +15,7 @@ from fyndjakt.backup import backup_sqlite
 from fyndjakt.db import session_scope
 from fyndjakt.images import purge_old
 from fyndjakt.models import AICall, Job, SourceHealth, WatchModel
-from fyndjakt.pipeline.prefilter import prefilter, watch_terms
+from fyndjakt.pipeline.prefilter import prefilter, strict_title_match, watch_terms
 from fyndjakt.services import (
     IngestListing,
     enqueue,
@@ -175,6 +175,7 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
         if not models:
             return
         terms = [watch_terms(m.id, m.designer, m.manufacturer, m.model_name, m.aliases) for m in models]
+        by_id = {m.id: m for m in models}
         client: AuctionetClient = ctx["auctionet"]
         horizon = now + timedelta(hours=cfg.auctionet_live_horizon_h)
         seen = kept = 0
@@ -183,7 +184,12 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
             price, bid = live_price(item, cfg.auctionet_buyer_premium)
             description = strip_html(item.get("description"))
             pf = prefilter(item["title"], description, price, s.max_listing_price_sek, terms)
-            if not (pf.passed and pf.matched_model_ids):
+            hits = [
+                mid
+                for mid in pf.matched_model_ids
+                if strict_title_match(item["title"], by_id[mid].designer, by_id[mid].model_name, by_id[mid].aliases)
+            ]
+            if not (pf.passed and hits):
                 continue
             images = [img.get("w640") or img.get("hd") for img in item.get("images") or []]
             payload = IngestListing(
