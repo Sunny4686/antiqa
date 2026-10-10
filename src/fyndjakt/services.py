@@ -1,8 +1,9 @@
 """DB-touching helpers shared by jobs and web: settings, ingest, comps, source health, owner alerts."""
 
+import re
 from datetime import UTC, datetime, timedelta
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -37,8 +38,21 @@ def enqueue(session: Session, kind: str, payload: dict | None = None, run_at: da
 # --- ingest ---------------------------------------------------------------------------------------
 
 
+# Seller contact details inside free text. Names can't be told apart reliably and are not attempted.
+_EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
+_PHONE = re.compile(r"(?<![\d\w])(?:\+46|0046|0)[\s-]?\(?\d{1,3}\)?(?:[\s-]?\d){5,9}(?![\d\w])")
+CONTACT_REMOVED = "[kontaktuppgift borttagen]"
+
+
+def scrub_contacts(text: str | None) -> str | None:
+    if not text:
+        return text
+    return _PHONE.sub(CONTACT_REMOVED, _EMAIL.sub(CONTACT_REMOVED, text))
+
+
 class IngestListing(BaseModel):
-    """Payload for /ingest/listing. Unknown fields (e.g. seller data) are dropped, never stored."""
+    """Payload for /ingest/listing. Unknown fields (e.g. seller data) are dropped, never stored.
+    Phone numbers and e-mail addresses in title/description are removed before storage and AI calls."""
 
     model_config = ConfigDict(extra="ignore")
 
@@ -53,6 +67,11 @@ class IngestListing(BaseModel):
     lon: float | None = None
     published_at: datetime | None = None
     image_urls: list[str] = Field(default_factory=list, max_length=20)
+
+    @field_validator("title", "description")
+    @classmethod
+    def _no_contacts(cls, v: str | None) -> str | None:
+        return scrub_contacts(v)
 
 
 def upsert_listing(session: Session, data: IngestListing) -> tuple[Listing, bool, bool]:

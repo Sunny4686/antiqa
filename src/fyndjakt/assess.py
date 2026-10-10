@@ -134,7 +134,18 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     use_images = cfg.ai_send_listing_images and deps.images is not None and bool(listing.image_urls)
 
     def imgs(max_px: int, limit: int) -> list[dict]:
-        return deps.images.blocks(listing.image_urls, max_px, limit) if use_images else []
+        if not use_images:
+            return []
+        out = deps.images.blocks(listing.image_urls, max_px, limit)
+        while deps.images.blocked_events:
+            e = deps.images.blocked_events.pop()
+            notify_owner(
+                session,
+                deps,
+                f"images:{e.host}",
+                f"Bildhämtning blockerad: {e.host} ({e.reason}). Pausad 6 h, inget kringgående.",
+            )
+        return out
 
     # 2. Screening
     if not spend.can_spend():

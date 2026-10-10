@@ -82,14 +82,26 @@ def parse_callback(data: str) -> tuple[int, str] | None:
     return int(parts[1]), parts[2]
 
 
+class TelegramError(Exception):
+    """Telegram API failure. The message never contains the request URL, which carries the bot token."""
+
+
 class TelegramClient:
     def __init__(self, token: str, http: httpx.Client | None = None):
         self._base = f"https://api.telegram.org/bot{token}"
         self._http = http or httpx.Client(timeout=20.0)
 
-    def _call(self, method: str, payload: dict) -> dict:
-        r = self._http.post(f"{self._base}/{method}", json=payload)
-        r.raise_for_status()
+    def _call(self, method: str, payload: dict, timeout: float | None = None) -> dict | list:
+        try:
+            r = self._http.post(f"{self._base}/{method}", json=payload, timeout=timeout or httpx.USE_CLIENT_DEFAULT)
+        except httpx.HTTPError as e:
+            raise TelegramError(f"{method}: {type(e).__name__}") from None
+        if r.status_code != 200:
+            try:
+                detail = r.json().get("description", "")
+            except ValueError:
+                detail = ""
+            raise TelegramError(f"{method}: HTTP {r.status_code} {detail}".strip()) from None
         return r.json()["result"]
 
     def send_alert(self, chat_id: str, text: str, markup: dict, photo_url: str | None, silent: bool) -> int:
@@ -123,9 +135,7 @@ class TelegramClient:
         payload = {"timeout": timeout_s, "allowed_updates": ["callback_query"]}
         if offset is not None:
             payload["offset"] = offset
-        r = self._http.post(f"{self._base}/getUpdates", json=payload, timeout=timeout_s + 10)
-        r.raise_for_status()
-        return r.json()["result"]
+        return self._call("getUpdates", payload, timeout=timeout_s + 10)
 
     def delete_webhook(self) -> None:
         self._call("deleteWebhook", {})

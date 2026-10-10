@@ -131,7 +131,9 @@ def run_case(case: Case, session, client, loader: ImageLoader, cfg) -> Outcome:
             10**9,
             [watch_terms(m.id, m.designer, m.manufacturer, m.model_name, m.aliases) for m in models],
         )
-        scr, u = screen(client, cfg.model_fast, case.title, case.price_sek, loader.blocks(case.image_urls, 512, 1))
+        # Listing images (e.g. Blocket) follow the same flag as production; comp images come from Auctionet.
+        urls = case.image_urls if case.source == "comp" or cfg.ai_send_listing_images else []
+        scr, u = screen(client, cfg.model_fast, case.title, case.price_sek, loader.blocks(urls, 512, 1))
         cost += budget.cost_usd(cfg.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write)
         refs = [ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]
         picked = select_candidates(refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name)
@@ -153,7 +155,7 @@ def run_case(case: Case, session, client, loader: ImageLoader, cfg) -> Outcome:
             case.title,
             case.description,
             case.price_sek,
-            loader.blocks(case.image_urls, 784, 4),
+            loader.blocks(urls, 784, 4),
             specs,
         )
         cost += budget.cost_usd(cfg.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write)

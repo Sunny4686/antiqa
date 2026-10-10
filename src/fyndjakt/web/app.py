@@ -66,6 +66,9 @@ def handle_telegram_update(update: dict, deps: Deps) -> None:
             log.exception("could not mark telegram message handled")
 
 
+POLL_MAX_TRIES = 3
+
+
 class TelegramPoller(threading.Thread):
     """Local alternative to the webhook: long-polls getUpdates (removes any webhook first)."""
 
@@ -84,13 +87,22 @@ class TelegramPoller(threading.Thread):
             tg.delete_webhook()
         except Exception:
             log.exception("could not delete telegram webhook")
+        failures: dict[int, int] = {}
         while not self._stop.is_set():
             try:
                 for update in tg.get_updates(offset):
-                    offset = update["update_id"] + 1
-                    handle_telegram_update(update, self.deps)
-            except Exception:
-                log.exception("telegram polling failed")
+                    uid = update["update_id"]
+                    try:
+                        handle_telegram_update(update, self.deps)
+                    except Exception:
+                        failures[uid] = failures.get(uid, 0) + 1
+                        if failures[uid] < POLL_MAX_TRIES:
+                            raise  # offset stays put, so Telegram hands the same update back
+                        log.exception("dropping telegram update %s after %d tries", uid, failures[uid])
+                    failures.pop(uid, None)
+                    offset = uid + 1  # acknowledge only once handled (or given up on)
+            except Exception as e:
+                log.warning("telegram polling failed: %s", e)
                 self._stop.wait(30)
 
 

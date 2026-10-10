@@ -349,3 +349,19 @@ INFO:     Waiting for application shutdown.
 2026-10-10 17:55:29,920 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=22&per_page=100&category_id=280 "HTTP/1.1 200 OK"
 INFO:     Application shutdown complete.
 INFO:     Finished server process [77649]
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 17:55:33,823 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [77822]
+INFO:     Waiting for application startup.
+2026-10-10 17:55:33,899 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 17:55:33,899 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-10-10 17:59:35,329 INFO fyndjakt.jobs: auctionet backfill {'category_id': 280}: 4506 new comps, 7 steps left
+2026-10-10 18:08:34,633 INFO fyndjakt.jobs: auctionet backfill {'category_id': 23}: 9995 new comps, 6 steps left
+2026-10-10 18:11:00,110 INFO fyndjakt.jobs: auctionet backfill {'category_id': 279}: 2636 new comps, 5 steps left
