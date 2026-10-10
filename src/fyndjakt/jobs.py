@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from fyndjakt.ai import budget, enrich
 from fyndjakt.assess import Deps, assess_listing, notify_owner
+from fyndjakt.backup import backup_sqlite
 from fyndjakt.db import session_scope
 from fyndjakt.images import purge_old
 from fyndjakt.models import AICall, Job, SourceHealth
@@ -35,7 +36,7 @@ from fyndjakt.watchlist import link_comps, refresh_watchlist
 
 log = logging.getLogger(__name__)
 
-PERIODIC = ("auctionet_crawl", "health_check", "title_batch", "watchlist_refresh", "image_cleanup")
+PERIODIC = ("auctionet_crawl", "health_check", "title_batch", "watchlist_refresh", "image_cleanup", "backup")
 NOTES_PER_RUN = 10
 MAX_ATTEMPTS = 3
 # "0 new items for 2 h in daytime" applies to continuous sources only; Auctionet runs nightly.
@@ -65,6 +66,7 @@ def ensure_periodic(session: Session, now: datetime, tz: str) -> None:
         "title_batch": next_local_time(now, tz, 4),
         "watchlist_refresh": next_local_weekday(now, tz, 6, 5),
         "image_cleanup": next_local_time(now, tz, 6),
+        "backup": next_local_time(now, tz, 2),
     }
     for kind in PERIODIC:
         exists = session.scalar(select(Job.id).where(Job.kind == kind, Job.status.in_(("pending", "running"))))
@@ -205,6 +207,17 @@ def handle_image_cleanup(session: Session, job: Job, deps: Deps, _ctx: dict) -> 
         enqueue(session, "image_cleanup", run_at=next_local_time(now, deps.config.timezone, 6))
 
 
+def handle_backup(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
+    now = deps.now()
+    try:
+        url = deps.config.database_url
+        if url.startswith("sqlite:///") and ":memory:" not in url:
+            target = backup_sqlite(url.removeprefix("sqlite:///"), deps.config.backup_dir, now)
+            log.info("backup written: %s", target)
+    finally:
+        enqueue(session, "backup", run_at=next_local_time(now, deps.config.timezone, 2))
+
+
 def handle_auctionet_backfill(session: Session, job: Job, deps: Deps, ctx: dict) -> None:
     """One subcategory or designer query per run (<= 10 000 items), then re-enqueues itself with the rest."""
     now = deps.now()
@@ -251,6 +264,7 @@ HANDLERS: dict[str, Callable[[Session, Job, Deps, dict], None]] = {
     "title_batch": handle_title_batch,
     "watchlist_refresh": handle_watchlist_refresh,
     "image_cleanup": handle_image_cleanup,
+    "backup": handle_backup,
 }
 
 

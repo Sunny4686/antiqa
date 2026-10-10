@@ -43,6 +43,7 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
 - Första fyllningen av Auctionet-comps: `uv run fyndjakt auctionet-backfill [--designer "Bruno Mathsson"]`
   (köar jobb, körs av `serve`, ~1,5 h för de 10 underkategorierna).
 - Eval: `uv run python -m eval.run --dry-run` / `--limit 40` (kräver `ANTHROPIC_API_KEY`). Kör efter varje promptändring.
+- Drift (VPS, Docker Compose, Cloudflare Tunnel/Access, Telegram-webhook): se `docs/DRIFT.md`.
 - Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
 
 ## Struktur

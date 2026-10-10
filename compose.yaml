@@ -1,0 +1,25 @@
+# Drift: `docker compose up -d`. Webben nås bara via Cloudflare Tunnel (ingen port öppen mot internet).
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/fyndjakt.db
+      IMAGE_CACHE_DIR: /app/data/images
+      BACKUP_DIR: /app/data/backups
+      MUNICIPALITIES_CSV: /app/kommuner.csv
+    volumes:
+      - fyndjakt-data:/app/data
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest  # pinna en version efter första lyckade driftsättningen
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?sätt CLOUDFLARE_TUNNEL_TOKEN i .env}
+    depends_on:
+      - app
+
+volumes:
+  fyndjakt-data:

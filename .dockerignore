@@ -1,0 +1,11 @@
+.venv
+.git
+data/*.db*
+data/images
+data/backups
+eval/results
+reports
+research_notes
+docs
+tests
+.env

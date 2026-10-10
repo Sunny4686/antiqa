@@ -7,3 +7,5 @@ __pycache__/
 data/*.db*
 !data/kommuner.csv
 eval/results/
+data/backups/
+data/images/

@@ -39,6 +39,7 @@ class Config(BaseSettings):
     blocket_enabled: bool = False
 
     municipalities_csv: str = "data/kommuner.csv"
+    backup_dir: str = "data/backups"
     timezone: str = "Europe/Stockholm"
 
 
