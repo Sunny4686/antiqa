@@ -1,0 +1,175 @@
+
+Användarvillkor - Auctionet
+Auctionet.com
+Pågående
+Sök
+Hjälp
+Sälja
+Skapa konto
+Logga in
+Hjälp
+Sälja
+Skapa konto
+Logga in
+Pågående
+Sök
+ Hej! Din webbläsare verkar ha JavaScript avstängt. JavaScript behövs för att sajten ska fungera bra.
+Användarvillkor
+Köpvillkor
+Villkor för slagauktion
+Integritetspolicy
+Företagsinfo
+Användarvillkor
+Dessa Användarvillkor ska gälla från och med 2026-06-23.
+Väsentliga förändringar från tidigare version av villkoren:
+Ny definition av "Plattformen" istället för "Webbplatsen".
+Separerat användarvillkor för Tjänsten och köpvillkor.
+Tillägg och förtydliganden om Auctionet-funktioner på Auktionsföretagens webbplatser.
+Nytt avsnitt om hantering av sanktioner samt villkor för kunder kopplade till sanktioner.
+Förtydligande och tillägg om hantering av hot, trakasserier och annat störande beteende.
+Bakgrund / Introduktion
+Auction Network Sweden AB, org. nr. 556859-5150 med adress Grev Turegatan 44, 114 38 Stockholm ("
+Auctionet
+") erbjuder, via Internet, en elektronisk marknadsplats ("
+Tjänsten
+") på webbsidan auctionet.com, Auctionet-appen och Auctionet-funktioner på Auktionsföretags webbplatser ("
+Plattformen
+") för auktionsföretag som, förutom att hålla auktioner i lokaler tillhörande auktionsföretaget, även önskar hålla auktioner online (var och en ett "
+Auktionsföretag
+"). Auktionsobjekten säljs till kunder av de Auktionsföretag som finns listade på Plattformen.
+Vad gäller "Auctionet-funktioner på Auktionsföretags webbplatser" innebär det att Kund får tillgång till Tjänsten via Auktionsföretagens egna webbplatser (som i vissa sammanhang är hostad av Auctionet), d.v.s på Auktionsföretagens subdomän och integrerad i deras navigation och med deras varumärke.
+Dessa villkor gäller när kund får tillgång till, använder eller interagerar med Auctionet och Auctionets konsumenttjänster och Tjänsten, inklusive Plattformen.
+Kund ("
+Kunden
+") har möjligheten att köpa föremål ("
+Auktionsobjekt
+") från Auktionsföretag på de villkor som anges för köp ("
+Köpvillkoren
+"). Tjänsten och Plattformen får användas i enlighet med de nedan angivna villkoren avseende användandet av Tjänsten och Plattformen ("
+Användarvillkoren
+"). Auctionet tillhandhåller endast Tjänsten och administrerar Plattformen.
+Auctionet ska aldrig ses som säljare av Auktionsobjekt som tillhandahållits genom Tjänsten och Plattformen. Kund som deltar i auktion och vinner budgivning för Auktionsobjekt kommer att köpa Auktionsobjektet från det Auktionsföretag som hållit i auktionen. Kunden kommer därför att, på Auctionets Köpvillkor, ingå bindande köpeavtal med det specifika Auktionsföretaget som sålt Auktionsobjektet. Det är det specifika Auktionsföretaget som ansvarar för eventuella fel och brister och som tar emot och hanterar reklamationer som rör Auktionsobjektet i förhållande till Kunden. Auctionet ansvarar inte för klagomål från Kunden, avseende Auktionsobjektet. Auctionet ansvarar endast gentemot Kunden för förhållanden som rör Tjänsten och Plattformen.
+1. Användarvillkor
+Dessa Användarvillkor gäller mellan Kund som registrerar sig för att använda Tjänsten och Plattformen och Auctionet som tillhandahållare av Tjänsten och Plattformen. Om Kunden inte accepterar att bli bunden av dessa Användarvillkor, har Kunden inte rätt att använda eller få tillgång till Tjänsten.
+1.1 Registrering för användning av Tjänsten
+För att använda Tjänsten och för att kunna delta i auktion och köpa Auktionsobjekt måste Kunden registrera ett användarkonto. Kunden registrerar sig i Tjänsten genom att fylla i registreringsformuläret. Kunden åtar sig att ange aktuella och korrekta personuppgifter och kontaktuppgifter i sitt användarkonto samt att hålla informationen uppdaterad. Varje Kund får endast inneha ett användarkonto för budgivning.
+Kunden måste vara 18 år för att registrera sig. Tjänsten är inte tillgänglig för, och får inte användas av, personer under 18 år eller av personer som av annan orsak har begränsad rättshandlingsförmåga eller av Kunder som blivit temporärt eller definitivt avstängda. Om företag registreras som Kund ska en fysisk person med behörighet och befogenhet att binda företaget till Användarvillkoren, och eventuellt 
+Köpvillkoren
+, anges som kontaktperson. Primärt skapas ett användarkonto för användning av Tjänstens enklare funktioner. Kunden åtar sig att följa Auctionets instruktioner avseende användningen av Tjänsten. Genom att acceptera dessa Användarvillkor åtar sig Kunden att efterfölja alla sådana instruktioner.
+1.2 Användning av personuppgifter
+Alla personuppgifter som insamlas genom Tjänsten och Plattformen hanteras i överensstämmelse med lagen med kompletterande bestämmelser till EU:s dataskyddsförordning, EU:s dataskyddsförordning (2016/679) ("
+GDPR
+") samt i övrigt med Auctionets integritetspolicy.
+1.3 Användning av Tjänsten
+Kunden är ansvarig för alla handlingar som utförs under inloggning i Kundens namn och lösenord. Kunden har endast rätt att använda Tjänsten genom att använda eget inloggningsnamn eller e-postadress och lösenord. Kunden ska förvara inloggningsuppgifter på säkert sätt och se till att de inte kommer till utomstående persons kännedom. Kunden får inte heller tillåta, direkt eller indirekt, att utomstående använder Kundens inloggningsuppgifter. Lösenordet måste omedelbart ändras om det finns skäl att misstänka att informationen har avslöjats eller på annat sätt kan missbrukas.
+1.4 Tillgänglighet och tillgång till Tjänsten och Plattformen
+En Kund kan avstängas från Tjänsten och Plattformen om Kunden bryter mot dessa Användarvillkor, tillämplig lag och/eller förordningar. En Kund som har avstängts från Tjänsten till följd av brott mot Användarvillkoren, tillämplig lag och/eller förordningar har inte rätt att återregistrera sig eller använda Tjänsten via annan Kunds inloggning.
+Auctionet äger rätt att, när som helst och efter eget gottfinnande, besluta om att upphöra med att tillhandahålla Tjänsten. Detta kan vara vid t.ex. hot, trakasserier eller störande beteende från Kunder. Dessa beteenden är något som Auctionet förbjuder i relation till Tjänsten och på Plattformen.
+1.5 Garantier
+Auctionet kan inte garantera en löpande, obruten eller säker tillgång till Tjänsten och Plattformen. Handhavandet av Tjänsten och Plattformen kan störas av många faktorer utanför Auctionets kontroll. Tjänsten och Plattformen tillhandahålls "i befintligt skick", "som tillgänglig" och "med alla fel". I den mån lagen tillåter ger Auctionet inga utfästelser, garantier eller intyg av något slag, uttryckliga eller underförstådda, avseende, Tjänsten och/eller Plattformen, eller gällande säkerheten associerad med överföringen av information via Tjänsten eller Plattformen. I tillägg till detta friskriver sig Auctionet från alla garantier, uttryckliga eller underförstådda, inklusive men inte begränsade till, garantier avseende funktion, lämplighet för särskilt syfte, att intrång inte skett, äganderätt, systemintegration och avsaknaden av datorvirus, såvida inte grov vårdslöshet eller uppsåt föreligger. Denna friskrivning begränsar inte Auctionets ansvar enligt tvingande lagstiftning.
+Auctionet garanterar inte att Tjänsten och Plattformen kommer att vara felfri eller ostörd; att fel kommer åtgärdas; eller att Tjänsten och Plattformen eller de servrar som tillgängliggör Tjänsten och Plattformen är fria från skadliga komponenter, inklusive men inte begränsat till virus. Auctionet garanterar inte att information (inklusive instruktioner) på Tjänsten eller Plattformen är korrekta, fullständiga eller användbara.
+1.6 Ansvar för fel
+Auctionet ansvarar inte för direkt eller indirekt skada som kan drabba Kund vid användning av Tjänsten eller Plattformen om skadan uppkommit till följd av driftsavbrott eller andra störningar i tele-, dator-, eller annan kommunikationsförbindelse, datorutrustning, datasystem, mjukvaror eller fel eller bristande kompatibilitet mellan datorer, eller annan orsak utanför Auctionets rimliga kontroll, inbegripet alla skador på Kunds datorer, mobila enheter eller annan utrustning eller teknologi, inklusive, men inte begränsat till, skador till följd av eventuellt säkerhetsöverträdelse eller till följd av virus, buggar, åverkan, bedrägeri, fel, försummelse, avbrott, defekt, försening av drift eller överföring, dator- eller nätverksfel eller något annat tekniskt eller annan felaktig funktion, inklusive, men inte begränsat till, skador till följd av utebliven vinst, goodwill förluster, förlust av data, arbetsstopp, korrekthet eller resultat, eller datorfel eller funktionsstörning. Vidare är Auctionet inte ansvarigt för fel eller skador som uppstår till följd av felaktigt eller obehörigt nyttjande av kundnummer eller lösenord.
+Ovanstående gäller dock inte om grov vårdslöshet eller uppsåt föreligger. Denna friskrivning begränsar inte Auctionets ansvar enligt tvingande lagstiftning.
+1.7 Meddelanden
+Meddelanden från Auctionet till Kunden återfinns på Plattformen och/eller sänds till den e-postadress som Kunden registrerat i sitt användarkonto i Tjänsten.
+Meddelanden från Kunden till Auctionet ska avsändas i enlighet med vad som anges på Plattformen.
+1.8 Ändring av Användarvillkoren
+Auctionet äger rätt att ändra dessa Användarvillkor genom att skicka meddelande till Kunden via den e-postadress som Kunden angett i användarkontot eller genom att meddela detta på Plattformen. Kunden kommer att bli bunden av de nya Användarvillkoren efter utgången av 30 dagar därefter, om Kunden därefter fortsätter att använda Tjänsten, eller genom Kundens elektroniska godkännande, om så krävs.
+1.9 Åtgärder mot penningtvätt
+Auctionet och Auktionsföretagen tillämpar lagen om åtgärder mot penningtvätt och finansiering av terrorism ("
+Penningtvättslagen
+") eller motsvarande nationell lagstiftning i sin verksamhet. Penningtvättslagen innebär bl.a. en skyldighet för Auctionet och Auktionsföretaget att identifiera varje Kund samt genomföra kundkännedomsåtgärder. I samband med kundkännedomsåtgärder kan Kund bli ombedd att inkomma med vidimerad dokumentation som bl.a. styrker kundens uppgifter om affärsförbindelsens syfte och art. Auctionet äger rätt att neka Kund som inte inkommer med efterfrågad dokumentation tillträde till Tjänsten.
+1.10 Sanktioner
+Auctionet och Auktionsföretagen tillämpar och följer listor över sanktioner som finns tillgängliga från både svenska och utländska myndigheter, organ och institutioner. Auctionet och Auktionsföretagen har rätt att neka ny Kund tillträde till Tjänsten om kopplingar till sanktionerade länder upptäcks. Vad gäller befintlig Kund med kopplingar till sanktionerade länder kommer dessa att blockeras för handel genom Tjänsten. I övrigt har Auctionet rätt att neka Kunder och vidta liknande åtgärder för att följa relevanta sanktioner.
+1.11 Tillämplig lag och tvist
+Svensk lag gäller för dessa Användarvillkor. För det fall Kunden är juridisk person, är lagen om internationella köp (CISG) ej tillämplig på dessa Användarvillkor. Tvister avseende giltigheten, tolkningen, tillämpligheten eller tillämpligheten av dessa Användarvillkor, samt rättsförhållanden som uppstått härav, ska avgöras i allmän domstol. För Kunder som utgörs av juridiska personer, ska Stockholms tingsrätt vara första instans.
+Sidfotsnavigation
+Hjälp och kontakt
+Kontakta support
+Alla auktionshus
+Betalningsalternativ
+Vi skickar med
+Sociala medier
+Auctionet
+Om Auctionet
+Press
+Lediga jobb
+Anslut ditt auktionshus
+Auctionets garanti
+Mer från Auctionet
+Auctionet Magazine
+Auctionet-appen
+Auctionet Academy
+Konstnärer och formgivare
+Teman och slagauktioner
+Svenska
+Svenska
+English
+Deutsch
+Español
+Suomi
+Dansk
+SEK
+CNY
+DKK
+EUR
+GBP
+SEK
+USD
+Villkor
+Integritetspolicy
+Företagsinfo
+Cookie-inställningar
+© 2011-2026 Auctionet.com 
+Vi använder cookies
+Denna tjänst är en del av Auctionet-plattformen. Vissa cookies är nödvändiga för att tillhandahålla tjänsten, medan du kan hantera eller återkalla ditt samtycke för de som används för att:
+Anpassa funktioner och innehåll för dig utifrån hur du använder plattformen.
+Utveckla och förbättra plattformen.
+Marknadsföra nyheter och innehåll till dig på externa webbplatser.
+Du kan läsa mer i vår 
+integritetspolicy
+ och hantera dina cookieinställningar nedan.
+Cookie-inställningar
+Acceptera alla
+Back
+Cookie-inställningar
+Nedan visas de typer av cookies som används på Auctionet-plattformen. Du kan själv välja vilka typer du ger ditt samtycke till.
+Du kan läsa mer i vår 
+integritetspolicy
+ och hantera dina cookieinställningar nedan.
+Nödvändiga cookies
+Alltid aktiva
+Dessa cookies är nödvändiga för att Auctionet ska fungera korrekt.
+Användarsession
+Auctionet sparar information för att identifiera dig under ditt besök. Detta används till exempel för att hålla dig inloggad.
+Medgivande för cookies
+Auctionet sparar dina aktuella inställningar för cookies.
+Förbättrad upplevelse
+Functionality storage
+Av
+På
+Cookies som används för att komma ihåg dina inställningar, såsom språk och valuta, på Auctionet-plattformen.
+Besökta föremål
+Auctionet sparar din besökshistorik så att du enkelt kan hitta tillbaka till föremål du har besökt.
+Språk och valuta
+Auctionet sparar information om vilket språk och vilken valuta som ska användas.
+Prestanda
+Statistics storage
+Av
+På
+Dessa cookies används för att samla in pseudonymiserad statistik för att förbättra plattformens kvalitet och funktioner för alla användare.
+Statistik
+Auctionet analyserar användarbeteenden för att förbättra tjänsten.
+Tester
+Auctionet testar regelbundet nya funktioner och förbättringar.
+Marknadsföring
+Ad storage
+Av
+På
+Dessa cookies används för att visa relevant innehåll på andra webbplatser.
+Kampanjer
+Auctionet analyserar hur du använder tjänsten för att kunna tipsa dig om relevant innehåll på andra webbplatser.
+Avvisa alla
+Acceptera alla
+Spara inställningar

@@ -1,0 +1,498 @@
+{
+  "items": [
+    {
+      "id": 500656,
+      "catalog_number": null,
+      "auction_id": 815311,
+      "event_id": null,
+      "currency": "SEK",
+      "reserve_met": true,
+      "reserve_amount": 10000,
+      "estimate": 20000,
+      "upper_estimate": null,
+      "starting_bid_amount": 300,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 19000,
+      "suggested_bid_amounts": [
+        19000,
+        19500,
+        20000
+      ],
+      "state": "sold",
+      "title": "BRUNO MATHSSON. Foldable Table \"Maria Flap\". Firma Karl Mathsson 1936th.",
+      "description": "<p>Legs in birch, tabletop in oak. Height 18.5 as well as extensions à 66 cm, width 90, height 72 cm. Label \"Bruno Mathsson Firma Karl Mathsson Made in Sweden Värnamo Bruno Matsson design\" hand-signed \".36\".</p>",
+      "condition": "<p>use Wear.</p>",
+      "company_id": 68,
+      "category_id": 19,
+      "ends_at": 1476129180,
+      "published_at": 1475068571,
+      "type": "online",
+      "location": null,
+      "house": "Herrljunga Auktionsverk",
+      "url": "https://auctionet.com/en/500656-bruno-mathsson-foldable-table-maria-flap-firma-karl-mathsson-1936th",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_790bc74cae.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_790bc74cae.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_790bc74cae.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_790bc74cae.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_54ad372b52.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_54ad372b52.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_54ad372b52.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_54ad372b52.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_8e06c1a513.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_8e06c1a513.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_8e06c1a513.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_8e06c1a513.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_7473b9c206.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_7473b9c206.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_7473b9c206.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_7473b9c206.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_7243e14ab6.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_7243e14ab6.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_7243e14ab6.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_7243e14ab6.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_7d862ba38c.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_7d862ba38c.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_7d862ba38c.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_7d862ba38c.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_a57a93f337.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_a57a93f337.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_a57a93f337.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_a57a93f337.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_500656_7d23950764.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_500656_7d23950764.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_500656_7d23950764.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_500656_7d23950764.JPG"
+        }
+      ],
+      "bids": [
+        {
+          "id": 3167491,
+          "bidder": 7,
+          "amount": 18500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1476129067
+        },
+        {
+          "id": 3164541,
+          "bidder": 6,
+          "amount": 18000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1476077999
+        },
+        {
+          "id": 3164540,
+          "bidder": 5,
+          "amount": 17500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1476077998
+        },
+        {
+          "id": 3158959,
+          "bidder": 6,
+          "amount": 17000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475926594
+        },
+        {
+          "id": 3134177,
+          "bidder": 4,
+          "amount": 16500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475330641
+        },
+        {
+          "id": 3134048,
+          "bidder": 5,
+          "amount": 16000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1475327974
+        },
+        {
+          "id": 3134047,
+          "bidder": 4,
+          "amount": 16000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475327973
+        },
+        {
+          "id": 3134046,
+          "bidder": 5,
+          "amount": 15500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1475327946
+        },
+        {
+          "id": 3134045,
+          "bidder": 4,
+          "amount": 15000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475327945
+        },
+        {
+          "id": 3131163,
+          "bidder": 5,
+          "amount": 14500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1475234909
+        },
+        {
+          "id": 3131162,
+          "bidder": 2,
+          "amount": 14000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475234908
+        },
+        {
+          "id": 3131089,
+          "bidder": 5,
+          "amount": 13500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475233564
+        },
+        {
+          "id": 3126849,
+          "bidder": 4,
+          "amount": 13000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475090252
+        },
+        {
+          "id": 3126365,
+          "bidder": 3,
+          "amount": 12500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1475084246
+        },
+        {
+          "id": 3126364,
+          "bidder": 2,
+          "amount": 12000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475084244
+        },
+        {
+          "id": 3126360,
+          "bidder": 3,
+          "amount": 11500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1475084235
+        },
+        {
+          "id": 3126358,
+          "bidder": 2,
+          "amount": 11000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475084234
+        },
+        {
+          "id": 3125958,
+          "bidder": 3,
+          "amount": 10500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475080209
+        },
+        {
+          "id": 3125427,
+          "bidder": 2,
+          "amount": 10000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1475073016
+        },
+        {
+          "id": 3125329,
+          "bidder": 1,
+          "amount": 1200,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1475071591
+        }
+      ]
+    },
+    {
+      "id": 577560,
+      "catalog_number": null,
+      "auction_id": 979209,
+      "event_id": null,
+      "currency": "SEK",
+      "reserve_met": true,
+      "reserve_amount": 3500,
+      "estimate": 5000,
+      "upper_estimate": null,
+      "starting_bid_amount": 300,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 4200,
+      "suggested_bid_amounts": [
+        4200,
+        4400,
+        4600
+      ],
+      "state": "sold",
+      "title": "TABLE \"SUPERELLIPSE\", Bruno Mathsson & Piet Hein for Fritz Hansen.",
+      "description": "<p>\"Superellipse\" Bruno Mathsson &amp; Piet Hein for Fritz Hansen, Denmark 1983. The top in white laminate with edges in brushed aluminum, chrome-plated legs. Labelled \"Fritz Hansen\" Dimensions 180 x 120 cm, height 70 cm.</p>",
+      "condition": "<p>Minor traces of wear on the table surface, and minor damage to the underside.</p>",
+      "company_id": 4,
+      "category_id": 19,
+      "ends_at": 1489524600,
+      "published_at": 1488558955,
+      "type": "online",
+      "location": null,
+      "house": "Garpenhus Auktioner",
+      "url": "https://auctionet.com/en/577560-table-superellipse-bruno-mathsson-piet-hein-for-fritz-hansen",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_984d66db12.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_984d66db12.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_984d66db12.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_984d66db12.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_d17250edbf.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_d17250edbf.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_d17250edbf.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_d17250edbf.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_3c2eea2b00.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_3c2eea2b00.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_3c2eea2b00.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_3c2eea2b00.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_74482e97d6.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_74482e97d6.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_74482e97d6.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_74482e97d6.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_91c5dec32a.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_91c5dec32a.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_91c5dec32a.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_91c5dec32a.JPG"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_577560_d3471fff83.JPG",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_577560_d3471fff83.JPG",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_577560_d3471fff83.JPG",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_577560_d3471fff83.JPG"
+        }
+      ],
+      "bids": [
+        {
+          "id": 3653935,
+          "bidder": 2,
+          "amount": 4000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1488649727
+        },
+        {
+          "id": 3653934,
+          "bidder": 1,
+          "amount": 3800,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1488649701
+        },
+        {
+          "id": 3653933,
+          "bidder": 2,
+          "amount": 3700,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1488649701
+        },
+        {
+          "id": 3650956,
+          "bidder": 1,
+          "amount": 3500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1488573102
+        }
+      ]
+    },
+    {
+      "id": 4715911,
+      "catalog_number": null,
+      "auction_id": 9070441,
+      "event_id": null,
+      "currency": "GBP",
+      "reserve_met": false,
+      "reserve_amount": null,
+      "estimate": 500,
+      "upper_estimate": null,
+      "starting_bid_amount": 25,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 220,
+      "suggested_bid_amounts": [
+        220,
+        240,
+        260
+      ],
+      "state": "unsold",
+      "title": "BRUNO MATHSSON (1907-1988) FOR DUX. A 'JETSON' SWIVEL CHAIR.",
+      "description": "<p>The circa 1970's Swedish swivel armchair, designed by Bruno Mathsson for Dux, the white leather upholstered seat with blue suede cushion, raised on a chromed swivel base, 97cm height, 66cm width, 76cm depth.</p>",
+      "condition": "<p>In fairly worn condition with marks and wear throughout, more noticeable to the arm rests, structurally solid, a cool space age piece!</p>",
+      "company_id": 365,
+      "category_id": 18,
+      "ends_at": 1778591340,
+      "published_at": 1777985851,
+      "type": "online",
+      "location": null,
+      "house": "Bishop & Miller",
+      "url": "https://auctionet.com/en/4715911-bruno-mathsson-1907-1988-for-dux-a-jetson-swivel-chair",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_3f7e92fd00.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_3f7e92fd00.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_3f7e92fd00.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_3f7e92fd00.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_3ac610f04d.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_3ac610f04d.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_3ac610f04d.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_3ac610f04d.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_1210adcbd4.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_1210adcbd4.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_1210adcbd4.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_1210adcbd4.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_22e432038c.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_22e432038c.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_22e432038c.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_22e432038c.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_87810fc535.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_87810fc535.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_87810fc535.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_87810fc535.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_4715911_bd765451ab.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_4715911_bd765451ab.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_4715911_bd765451ab.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_4715911_bd765451ab.jpg"
+        }
+      ],
+      "bids": [
+        {
+          "id": 40286114,
+          "bidder": 1,
+          "amount": 200,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1778492226
+        },
+        {
+          "id": 40286033,
+          "bidder": 1,
+          "amount": 160,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1778491918
+        },
+        {
+          "id": 40286027,
+          "bidder": 1,
+          "amount": 150,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1778491912
+        },
+        {
+          "id": 40286022,
+          "bidder": 1,
+          "amount": 100,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1778491904
+        },
+        {
+          "id": 40286019,
+          "bidder": 1,
+          "amount": 25,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1778491897
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 89,
+    "total_entries": 8810
+  }
+}

@@ -1,0 +1,666 @@
+{
+  "items": [
+    {
+      "id": 5398293,
+      "catalog_number": null,
+      "auction_id": 9685862,
+      "event_id": null,
+      "currency": "SEK",
+      "reserve_met": true,
+      "reserve_amount": 5000,
+      "estimate": 8000,
+      "upper_estimate": null,
+      "starting_bid_amount": 350,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 5500,
+      "suggested_bid_amounts": [
+        5500,
+        6000,
+        6500
+      ],
+      "state": "sold",
+      "title": "BØRGE MOGENSEN. Skåp / bokhylla, Karl Andersson & söner.",
+      "description": "<p>Etikettmärkta. Ekfanér. Tredelat. Två delar i med dörrpar varav ett i glas. En sektion med hyllor. Längd 135, bredd 54, höjd 190 cm.</p>",
+      "condition": "<p>Mindre hål i bakstycke. Fanérbortfall, solblekta partier. Märken samt fläckar.</p>",
+      "company_id": 10,
+      "category_id": 23,
+      "ends_at": 1791639420,
+      "published_at": 1790979640,
+      "type": "online",
+      "location": "Gothenburg",
+      "house": "Göteborgs Auktionsverk",
+      "placement": "Östra rummet",
+      "url": "https://auctionet.com/en/5398293-borge-mogensen-cabinet-bookcase-karl-andersson-soner",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_7842191a1b43c5b5b9045eae7603b95c.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_7842191a1b43c5b5b9045eae7603b95c.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_7842191a1b43c5b5b9045eae7603b95c.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_7842191a1b43c5b5b9045eae7603b95c.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_93147292c267f32b8a6e2df4f020a75d.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_93147292c267f32b8a6e2df4f020a75d.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_93147292c267f32b8a6e2df4f020a75d.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_93147292c267f32b8a6e2df4f020a75d.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_6d34f77ce5b2e94bb40ba0c43a7bbee1.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_6d34f77ce5b2e94bb40ba0c43a7bbee1.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_6d34f77ce5b2e94bb40ba0c43a7bbee1.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_6d34f77ce5b2e94bb40ba0c43a7bbee1.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_27443c1a83fd7c48c29d6202289bbe7e.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_27443c1a83fd7c48c29d6202289bbe7e.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_27443c1a83fd7c48c29d6202289bbe7e.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_27443c1a83fd7c48c29d6202289bbe7e.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_fcbd02c0e247350eac5415b40a44baf3.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_fcbd02c0e247350eac5415b40a44baf3.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_fcbd02c0e247350eac5415b40a44baf3.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_fcbd02c0e247350eac5415b40a44baf3.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_cfb4e96a800413b601f1871c0d4dbc85.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_cfb4e96a800413b601f1871c0d4dbc85.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_cfb4e96a800413b601f1871c0d4dbc85.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_cfb4e96a800413b601f1871c0d4dbc85.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_2c3b251065a1ed09303aca9535db03d2.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_2c3b251065a1ed09303aca9535db03d2.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_2c3b251065a1ed09303aca9535db03d2.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_2c3b251065a1ed09303aca9535db03d2.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_bf726081b97da2e26b7afb508e01ceae.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_bf726081b97da2e26b7afb508e01ceae.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_bf726081b97da2e26b7afb508e01ceae.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_bf726081b97da2e26b7afb508e01ceae.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_7cdd1faa56373afdc466d7dd0e080f1f.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_7cdd1faa56373afdc466d7dd0e080f1f.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_7cdd1faa56373afdc466d7dd0e080f1f.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_7cdd1faa56373afdc466d7dd0e080f1f.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_f67a3242715983bed0ea8be9ad0b451f.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_f67a3242715983bed0ea8be9ad0b451f.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_f67a3242715983bed0ea8be9ad0b451f.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_f67a3242715983bed0ea8be9ad0b451f.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_fbcebe9a7c1865bc73dd564192bb5e35.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_fbcebe9a7c1865bc73dd564192bb5e35.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_fbcebe9a7c1865bc73dd564192bb5e35.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_fbcebe9a7c1865bc73dd564192bb5e35.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_45739b61314e060818e741adfac64fa7.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_45739b61314e060818e741adfac64fa7.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_45739b61314e060818e741adfac64fa7.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_45739b61314e060818e741adfac64fa7.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_94aa02ec891fdfbecf02763775d9d821.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_94aa02ec891fdfbecf02763775d9d821.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_94aa02ec891fdfbecf02763775d9d821.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_94aa02ec891fdfbecf02763775d9d821.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_e2595a608967610aae8305ce6be435c5.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_e2595a608967610aae8305ce6be435c5.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_e2595a608967610aae8305ce6be435c5.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_e2595a608967610aae8305ce6be435c5.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_ada4144ccd61a1d62ca573a27269c66f.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_ada4144ccd61a1d62ca573a27269c66f.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_ada4144ccd61a1d62ca573a27269c66f.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_ada4144ccd61a1d62ca573a27269c66f.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5398293_c27783a33e5f289ccc401cd28734ccc2.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5398293_c27783a33e5f289ccc401cd28734ccc2.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5398293_c27783a33e5f289ccc401cd28734ccc2.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5398293_c27783a33e5f289ccc401cd28734ccc2.jpg"
+        }
+      ],
+      "bids": [
+        {
+          "id": 43227022,
+          "bidder": 1,
+          "amount": 5000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791577331
+        },
+        {
+          "id": 43071234,
+          "bidder": 1,
+          "amount": 3779,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1791023731
+        },
+        {
+          "id": 43071230,
+          "bidder": 1,
+          "amount": 3023,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1791023722
+        }
+      ]
+    },
+    {
+      "id": 5446957,
+      "catalog_number": null,
+      "auction_id": 9683034,
+      "event_id": null,
+      "currency": "SEK",
+      "reserve_met": true,
+      "reserve_amount": 1000,
+      "estimate": 2000,
+      "upper_estimate": null,
+      "starting_bid_amount": 300,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 4700,
+      "suggested_bid_amounts": [
+        4700,
+        4900,
+        5100
+      ],
+      "state": "sold",
+      "title": "ARKIVSKÅP, ek, tidigt 1900-tal.",
+      "description": "<p>Höjd 162 cm, Bredd 77 cm, Djup 56 cm.</p>",
+      "condition": "<p>Bruks- och åldersrelaterat slitage.</p>",
+      "company_id": 405,
+      "category_id": 23,
+      "ends_at": 1791639060,
+      "published_at": 1790949815,
+      "type": "online",
+      "location": "Stockholm",
+      "house": "Formstad Auktioner",
+      "placement": "Tillfällig depå",
+      "url": "https://auctionet.com/en/5446957-filing-cabinet-oak-early-20th-century",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_7f174cb8e6a5833325cf1786aecfd8c2.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_7f174cb8e6a5833325cf1786aecfd8c2.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_7f174cb8e6a5833325cf1786aecfd8c2.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_7f174cb8e6a5833325cf1786aecfd8c2.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_f9ad3a77551a14322db3fc8613c214a0.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_f9ad3a77551a14322db3fc8613c214a0.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_f9ad3a77551a14322db3fc8613c214a0.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_f9ad3a77551a14322db3fc8613c214a0.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_8f03ce83862c0125e7666cb144ff0e1e.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_8f03ce83862c0125e7666cb144ff0e1e.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_8f03ce83862c0125e7666cb144ff0e1e.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_8f03ce83862c0125e7666cb144ff0e1e.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_5326ae4f83f9e17e02ae96033d9000ec.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_5326ae4f83f9e17e02ae96033d9000ec.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_5326ae4f83f9e17e02ae96033d9000ec.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_5326ae4f83f9e17e02ae96033d9000ec.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_f0cc096d034b8aed2ea108303a2acedf.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_f0cc096d034b8aed2ea108303a2acedf.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_f0cc096d034b8aed2ea108303a2acedf.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_f0cc096d034b8aed2ea108303a2acedf.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_1b8cc74f57a222eda300850f03fd0400.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_1b8cc74f57a222eda300850f03fd0400.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_1b8cc74f57a222eda300850f03fd0400.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_1b8cc74f57a222eda300850f03fd0400.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_08e7f3fbb982ba7ca5a9f869b11f251c.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_08e7f3fbb982ba7ca5a9f869b11f251c.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_08e7f3fbb982ba7ca5a9f869b11f251c.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_08e7f3fbb982ba7ca5a9f869b11f251c.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5446957_2aca52f2e591620fb77e17d50ae602ef.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5446957_2aca52f2e591620fb77e17d50ae602ef.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5446957_2aca52f2e591620fb77e17d50ae602ef.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5446957_2aca52f2e591620fb77e17d50ae602ef.jpg"
+        }
+      ],
+      "bids": [
+        {
+          "id": 43186336,
+          "bidder": 2,
+          "amount": 4500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791453757
+        },
+        {
+          "id": 43186335,
+          "bidder": 3,
+          "amount": 4300,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791453757
+        },
+        {
+          "id": 43186331,
+          "bidder": 3,
+          "amount": 4200,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791453744
+        },
+        {
+          "id": 43186330,
+          "bidder": 2,
+          "amount": 4000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791453744
+        },
+        {
+          "id": 43184295,
+          "bidder": 3,
+          "amount": 3800,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791447114
+        },
+        {
+          "id": 43183680,
+          "bidder": 1,
+          "amount": 3600,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791445182
+        },
+        {
+          "id": 43183679,
+          "bidder": 2,
+          "amount": 3500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791445182
+        },
+        {
+          "id": 43172031,
+          "bidder": 2,
+          "amount": 3400,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791391968
+        },
+        {
+          "id": 43172030,
+          "bidder": 3,
+          "amount": 3200,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791391968
+        },
+        {
+          "id": 43142173,
+          "bidder": 3,
+          "amount": 2900,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791290244
+        },
+        {
+          "id": 43142172,
+          "bidder": 4,
+          "amount": 2700,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791290244
+        },
+        {
+          "id": 43119839,
+          "bidder": 3,
+          "amount": 2500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791204581
+        },
+        {
+          "id": 43119838,
+          "bidder": 2,
+          "amount": 2300,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791204581
+        },
+        {
+          "id": 43097037,
+          "bidder": 2,
+          "amount": 1600,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791114747
+        },
+        {
+          "id": 43097036,
+          "bidder": 1,
+          "amount": 1500,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791114747
+        },
+        {
+          "id": 43096055,
+          "bidder": 1,
+          "amount": 1200,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791112270
+        },
+        {
+          "id": 43094229,
+          "bidder": 2,
+          "amount": 1100,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791106331
+        },
+        {
+          "id": 43066735,
+          "bidder": 1,
+          "amount": 1000,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791013194
+        }
+      ]
+    },
+    {
+      "id": 5392855,
+      "catalog_number": null,
+      "auction_id": 9595041,
+      "event_id": null,
+      "currency": "DKK",
+      "reserve_met": true,
+      "reserve_amount": 900,
+      "estimate": 1800,
+      "upper_estimate": null,
+      "starting_bid_amount": 300,
+      "hammered": false,
+      "prefer_starting_bid_amount_to_estimate": false,
+      "next_bid_amount": 2471,
+      "suggested_bid_amounts": [
+        2471,
+        2671,
+        2871
+      ],
+      "state": "sold",
+      "title": "Lav skænk af mahogni i Heppelwhite -stil. Dansk møbelproducent, 20. århundrede.",
+      "description": "<p>Lav skænk af mahogni i Heppelwhite / Chippendale-stil. Front med fire låger. Formentlig dansk møbelproducent. Fra det 20. årh.</p>\n\n<p>Mål: 210B x 50D x 85H cm.</p>",
+      "condition": "<p>Brugs- og aldersrelateret slitage, herunder ridser og skrammer.</p>",
+      "company_id": 603,
+      "category_id": 23,
+      "ends_at": 1791638743,
+      "published_at": 1790845017,
+      "type": "online",
+      "location": null,
+      "house": "Sørensen Auktioner",
+      "placement": "32",
+      "url": "https://auctionet.com/en/5392855-low-sideboard-in-mahogany-in-hepplewhite-style-danish-furniture-manufacturer-20th",
+      "images": [
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_205911879b2d5c6dd94dfb421c698cc1.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_205911879b2d5c6dd94dfb421c698cc1.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_205911879b2d5c6dd94dfb421c698cc1.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_205911879b2d5c6dd94dfb421c698cc1.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_5db68da8e01626d962138fcb13d56ddd.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_5db68da8e01626d962138fcb13d56ddd.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_5db68da8e01626d962138fcb13d56ddd.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_5db68da8e01626d962138fcb13d56ddd.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_ce445f24399dfab4925d94ba4b28ddae.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_ce445f24399dfab4925d94ba4b28ddae.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_ce445f24399dfab4925d94ba4b28ddae.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_ce445f24399dfab4925d94ba4b28ddae.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_34c6d26d59bedbe01a69a43554ef20ca.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_34c6d26d59bedbe01a69a43554ef20ca.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_34c6d26d59bedbe01a69a43554ef20ca.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_34c6d26d59bedbe01a69a43554ef20ca.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_45edc2fb9609594401d30d705a2fa4c5.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_45edc2fb9609594401d30d705a2fa4c5.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_45edc2fb9609594401d30d705a2fa4c5.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_45edc2fb9609594401d30d705a2fa4c5.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_09788977989894dc68d940b2f0a881f6.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_09788977989894dc68d940b2f0a881f6.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_09788977989894dc68d940b2f0a881f6.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_09788977989894dc68d940b2f0a881f6.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_064a344e6be1e3848cf5a2f7a5e287c8.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_064a344e6be1e3848cf5a2f7a5e287c8.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_064a344e6be1e3848cf5a2f7a5e287c8.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_064a344e6be1e3848cf5a2f7a5e287c8.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_975adef101068ebb2c73ab13aef73182.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_975adef101068ebb2c73ab13aef73182.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_975adef101068ebb2c73ab13aef73182.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_975adef101068ebb2c73ab13aef73182.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_8f7cc29b579c1999d173bc0809269377.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_8f7cc29b579c1999d173bc0809269377.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_8f7cc29b579c1999d173bc0809269377.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_8f7cc29b579c1999d173bc0809269377.jpg"
+        },
+        {
+          "thumb": "https://images.auctionet.com/thumbs/thumb_item_5392855_f292d3b59a7489c7440e2bae08ff0962.jpg",
+          "mini": "https://images.auctionet.com/thumbs/mini_item_5392855_f292d3b59a7489c7440e2bae08ff0962.jpg",
+          "w640": "https://images.auctionet.com/thumbs/w640_item_5392855_f292d3b59a7489c7440e2bae08ff0962.jpg",
+          "hd": "https://images.auctionet.com/thumbs/hd_item_5392855_f292d3b59a7489c7440e2bae08ff0962.jpg"
+        }
+      ],
+      "bids": [
+        {
+          "id": 43238864,
+          "bidder": 2,
+          "amount": 2271,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638563
+        },
+        {
+          "id": 43238815,
+          "bidder": 4,
+          "amount": 2071,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638440
+        },
+        {
+          "id": 43238814,
+          "bidder": 2,
+          "amount": 2002,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791638440
+        },
+        {
+          "id": 43238753,
+          "bidder": 2,
+          "amount": 1970,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791638307
+        },
+        {
+          "id": 43238752,
+          "bidder": 4,
+          "amount": 1870,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638307
+        },
+        {
+          "id": 43238745,
+          "bidder": 2,
+          "amount": 1769,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638293
+        },
+        {
+          "id": 43238738,
+          "bidder": 4,
+          "amount": 1669,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791638279
+        },
+        {
+          "id": 43238737,
+          "bidder": 2,
+          "amount": 1602,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638279
+        },
+        {
+          "id": 43238726,
+          "bidder": 4,
+          "amount": 1305,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791638252
+        },
+        {
+          "id": 43238725,
+          "bidder": 2,
+          "amount": 1205,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638252
+        },
+        {
+          "id": 43238681,
+          "bidder": 4,
+          "amount": 1104,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791638142
+        },
+        {
+          "id": 43238680,
+          "bidder": 2,
+          "amount": 1004,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791638142
+        },
+        {
+          "id": 43238512,
+          "bidder": 2,
+          "amount": 1001,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": true,
+          "timestamp": 1791637638
+        },
+        {
+          "id": 43238511,
+          "bidder": 3,
+          "amount": 951,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791637638
+        },
+        {
+          "id": 43223902,
+          "bidder": 2,
+          "amount": 900,
+          "your_bid": false,
+          "reserve_met": true,
+          "auto": false,
+          "timestamp": 1791570286
+        },
+        {
+          "id": 43160548,
+          "bidder": 1,
+          "amount": 352,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1791361004
+        },
+        {
+          "id": 43160547,
+          "bidder": 1,
+          "amount": 301,
+          "your_bid": false,
+          "reserve_met": false,
+          "auto": false,
+          "timestamp": 1791361002
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "total_pages": 2000,
+    "total_entries": 643061
+  }
+}

@@ -1,5 +1,11 @@
 # PRD: Fyndjakt (helautomatisk version)
 
+> **Ändring 2026-10-10 (efter M0):** Blockets villkor och robots.txt förbjuder uttryckligen automatiserad
+> åtkomst utan skriftligt tillstånd. Ägaren har beslutat att inte skrapa otillåtet. Blocket-pollern, och
+> reservvägen med en poller hemma, är **pausade tills skriftligt tillstånd finns**. Fram till dess kommer
+> Blocket-annonser in via bevakningspush, delning eller passivt webbläsartillägg till `/ingest/listing`.
+> Auctionet (öppet JSON-API, tillåtande villkor) gäller oförändrat. Se `docs/recon/RESULTAT.md`.
+
 Ersätter PRD-prompten i `reports/Fyndjakt svenska designmöbler.md` på en punkt: insamlingen sker
 **helautomatiskt genom skrapning** av Blocket och Auctionet i stället för via bevakningar, push och
 manuell delning. Beslutet är ägarens, taget med kännedom om att det sannolikt bryter mot sajternas

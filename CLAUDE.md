@@ -1,6 +1,6 @@
 # Fyndjakt
 
-Intern tjänst som helautomatiskt skrapar nya möbelannonser på Blocket, bedömer dem med bildanalys
+Intern tjänst som tar in nya möbelannonser från Blocket (via tillåtna vägar), bedömer dem med bildanalys
 mot slutpriser från Auctionet och skickar Telegram-larm om undervärderade skandinaviska designmöbler.
 En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få rörliga delar.
 
@@ -22,9 +22,16 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
 
 ## Skyddsräcken för skrapning (hårda krav)
 
+- **Ingen automatiserad hämtning från blocket.se** (sök, annonssidor, API) utan Blockets skriftliga
+  tillstånd. Villkoren och robots.txt förbjuder det (se `docs/recon/RESULTAT.md`). Blocket-data kommer in
+  bara via push, delning eller passivt tillägg till `/ingest/*`. Att byta adress (VPS/Pi/proxy) ändrar
+  inget och räknas som kringgående.
+- Följ varje källas robots.txt och villkor. Läs dem på nytt innan en ny källa eller sökväg används.
+
 - Ingen inloggning. Inget kringgående av CAPTCHA/blockering, ingen proxy- eller IP-rotation.
 - Vid 403/429/CAPTCHA: backoff, stoppa källan och larma ägaren.
-- Blocket högst 1 sökanrop per 2–5 min (jitter); Auctionet högst 1 förfrågan per 5 s.
+- Auctionet (öppet JSON-API) högst 1 förfrågan per 5 s. Blocket-takten (1 sökanrop per 2–5 min) gäller
+  först om tillstånd ges.
 - Spara aldrig säljares namn, telefon eller profil-id. Lokala bildkopior raderas efter 7 dagar.
 
 ## Kommandon
