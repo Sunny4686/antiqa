@@ -1,6 +1,7 @@
 """SQLite job queue and a single worker thread (runs inside the web process)."""
 
 import logging
+import re
 import threading
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
@@ -36,6 +37,7 @@ from fyndjakt.sources.auctionet import (
     SourceBlocked,
     live_price,
     parse_item,
+    parse_title,
     strip_html,
 )
 from fyndjakt.watchlist import link_comps, refresh_watchlist
@@ -162,6 +164,19 @@ LIVE_EVERY = timedelta(minutes=30)
 LIVE_SOURCE = "auctionet_live"
 
 
+# Periods and styles outside Scandinavian modern design: not worth an image check.
+_OUT_OF_ERA = re.compile(
+    r"1[5-8]\d\d-tal|(?:1[5-8]|17|18)00-tal|gustaviansk|rokoko|barock|empire|karl johan|allmoge|louis|biedermeier"
+    r"|nyrenässans|jugend|art nouveau|antik",
+    re.I,
+)
+
+
+def is_unattributed(title: str) -> bool:
+    """No designer in the title and not obviously from another era: the house may not know what it has."""
+    return parse_title(title).designer is None and not _OUT_OF_ERA.search(title)
+
+
 def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> None:
     """Ongoing Auctionet lots ending soon: keep those that name a watchlist model and assess them.
     Bids change the price, which re-runs only the arithmetic (the AI verdict is reused)."""
@@ -189,7 +204,8 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
                 for mid in pf.matched_model_ids
                 if strict_title_match(item["title"], by_id[mid].designer, by_id[mid].model_name, by_id[mid].aliases)
             ]
-            if not (pf.passed and hits):
+            anonymous = cfg.auctionet_live_anonymous and is_unattributed(item["title"])
+            if not (pf.passed and (hits or anonymous)):
                 continue
             images = [img.get("w640") or img.get("hd") for img in item.get("images") or []]
             payload = IngestListing(

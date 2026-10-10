@@ -41,6 +41,8 @@ class Config(BaseSettings):
     auctionet_live_enabled: bool = True
     auctionet_buyer_premium: float = 0.25  # buyer's premium incl. VAT; check the house's terms per lot
     auctionet_live_horizon_h: float = 48.0  # look at auctions ending within this window
+    # Also image-screen lots the house didn't attribute ("FÅTÖLJ, 1960-tal"): the unknown-value case.
+    auctionet_live_anonymous: bool = True
     # Blocket poller is not built. Stays false until permission is documented.
     blocket_enabled: bool = False
 

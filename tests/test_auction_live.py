@@ -70,7 +70,12 @@ def _lot(lot_id, title, next_bid, ends_in_h=3):
 
 def test_live_job_keeps_watchlist_lots_and_reprices_without_new_ai(session, config, world):  # noqa: F811
     m, _listing = world
-    lots = [_lot(1, 'YNGVE EKSTRÖM. Fåtölj "Lamino", Swedese.', 600), _lot(2, "Pinnstol, 1900-tal.", 200)]
+    lots = [
+        _lot(1, 'YNGVE EKSTRÖM. Fåtölj "Lamino", Swedese.', 600),
+        _lot(2, "FÅTÖLJ, 1960-tal.", 200),  # unattributed: goes to the image check
+        _lot(3, "BYRÅ, gustaviansk, 1700-tal.", 900),  # another era: skipped
+        _lot(4, "ARNE JACOBSEN. Stol, Fritz Hansen.", 300),  # attributed by the house, not on the watchlist
+    ]
     enqueue(session, "auctionet_live", run_at=NOW - timedelta(seconds=1))
     session.commit()
     verify = _verify(m.id)
@@ -79,14 +84,15 @@ def test_live_job_keeps_watchlist_lots_and_reprices_without_new_ai(session, conf
     jobs.run_one(deps, {"auctionet": LiveAuctionet(lots)})
     session.expire_all()
     live = list(session.scalars(select(Listing).where(Listing.source == "auctionet_live")))
-    assert [lst.external_id for lst in live] == ["1"]  # the plain chair isn't on the watchlist
-    lot = live[0]
+    assert sorted(lst.external_id for lst in live) == ["1", "2"]
+    lot = next(lst for lst in live if lst.external_id == "1")
     assert lot.price_sek == 750 and lot.current_bid_sek == 500 and lot.municipality == "Kungsbacka"
     assert lot.ends_at.replace(tzinfo=UTC) == NOW + timedelta(hours=3)
     nxt = session.scalar(select(Job).where(Job.kind == "auctionet_live", Job.status == "pending"))
     assert nxt.run_at.replace(tzinfo=UTC) == NOW + timedelta(minutes=30)
 
-    assert session.scalar(select(Job).where(Job.kind == "assess")).payload == {"listing_id": lot.id}
+    queued = [j.payload["listing_id"] for j in session.scalars(select(Job).where(Job.kind == "assess"))]
+    assert lot.id in queued and len(queued) == 2
     first = assess_listing(session, lot.id, deps)
     session.commit()
     assert first.decision == "FYND"

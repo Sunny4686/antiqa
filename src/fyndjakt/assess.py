@@ -165,6 +165,10 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         specs = [
             CandidateSpec(model.id, model_label(model), model.identifying_features, model.replica_traps, model.marks)
         ]
+    elif _screened_without_candidate(session, listing.id):
+        # The picture hasn't changed with the price: an earlier screening found nothing to verify.
+        listing.status = "assessed"
+        return _final(session, listing, decision=dec.INGET, note="Ingen kandidat (tidigare bildscreening)")
     else:
         # 2. Screening
         if not spend.can_spend():
@@ -314,6 +318,16 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     listing.status = "assessed"
     _maybe_notify(session, deps, s, listing, final, model)
     return final
+
+
+def _screened_without_candidate(session: Session, listing_id: int) -> bool:
+    last_final = session.scalar(
+        select(Assessment)
+        .where(Assessment.listing_id == listing_id, Assessment.stage == "final")
+        .order_by(Assessment.id.desc())
+        .limit(1)
+    )
+    return bool(last_final and last_final.note and last_final.note.startswith("Ingen kandidat"))
 
 
 def _reusable_verdict(

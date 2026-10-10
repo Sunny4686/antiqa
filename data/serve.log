@@ -574,3 +574,9 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     127.0.0.1:49442 - "GET /utvalt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49527 - "GET /utvalt HTTP/1.1" 200 OK
+2026-10-10 18:48:37,136 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 70, 100 new comps
+2026-10-10 18:49:31,406 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 80, 1000 new comps
+2026-10-10 18:50:25,578 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 90, 1000 new comps
+2026-10-10 18:51:19,967 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17} done; 2 steps left
+2026-10-10 18:52:13,692 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 10, 1000 new comps
