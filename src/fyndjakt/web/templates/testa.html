@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Testa annons · Fyndjakt{% endblock %}
+{% block content %}
+<h1>Testa en annons</h1>
+<p class="muted">Klistra in en annons du själv hittat (t.ex. på Blocket i mobilen) och ladda upp bilderna. Fyndjakt kör
+hela bedömningen: förfilter, bildscreening, verifiering mot bevakningslistan, värdering mot Auctionet, avstånd och
+marginal. Ingenting hämtas automatiskt från annonssajten. Bilderna raderas efter 7 dagar; telefonnummer och e-post i
+texten tas bort.</p>
+<form class="grid" method="post" action="/testa" enctype="multipart/form-data">
+  <label>Rubrik</label><input name="title" required placeholder="t.ex. Fåtölj i ek och läder, 60-tal">
+  <label>Pris (kr)</label><input name="price_sek" type="number" min="0" placeholder="800">
+  <label>Ort</label><input name="municipality" placeholder="t.ex. Kungsbacka">
+  <label>Beskrivning</label><textarea name="description" rows="5" placeholder="Säljarens text"></textarea>
+  <label>Länk (valfri)</label><input name="url" type="url" placeholder="https://www.blocket.se/…">
+  <label>Bilder (högst 4)</label><input name="images" type="file" accept="image/*" multiple>
+  <span></span><button type="submit">Bedöm</button>
+</form>
+<p class="muted">Kostnad per bedömning: normalt under 0,05 kr; den starka modellen används bara när marginalen ser stor ut.</p>
+{% endblock %}

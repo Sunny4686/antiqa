@@ -343,3 +343,32 @@ def test_deal_can_be_edited_and_unsold_removes_own_comp(client):  # noqa: F811
     with session_scope() as s:
         assert s.scalar(select(func.count(Comp.id)).where(Comp.source == "own_sale")) == 0
         assert s.scalar(select(func.count(Deal.id))) == 1
+
+
+def test_testa_page_saves_upload_and_queues_assessment(client):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.images import usable_urls
+    from fyndjakt.models import Job, Listing
+
+    assert "Testa en annons" in client.get("/testa").text
+    r = client.post(
+        "/testa",
+        data={"title": "Fåtölj i ek, ring 0701234567", "price_sek": "900", "municipality": "Kungsbacka"},
+        files=[("images", ("a.png", _png(), "image/png")), ("images", ("empty.png", b"", "image/png"))],
+        follow_redirects=False,
+    )
+    assert r.status_code == 303
+    lid = int(r.headers["location"].rsplit("/", 1)[1])
+    with session_scope() as s:
+        lst = s.get(Listing, lid)
+        assert lst.source == "manual" and "0701234567" not in lst.title
+        assert len(lst.image_urls) == 1 and lst.image_urls[0].startswith("local:")
+        assert usable_urls(lst.image_urls, remote_allowed=False) == lst.image_urls
+        assert s.scalar(select(Job).where(Job.kind == "assess")).payload == {"listing_id": lid}
+        ident = lst.image_urls[0][6:]
+    page = client.get(f"/annons/{lid}").text
+    assert f"/bild/{ident}" in page and "Bedöms nu" in page
+    img = client.get(f"/bild/{ident}")
+    assert img.status_code == 200 and img.headers["content-type"] == "image/jpeg"
+    assert client.get("/bild/../../etc").status_code == 404
+    assert client.get("/bild/" + "0" * 64).status_code == 404

@@ -3,12 +3,13 @@
 import hmac
 import logging
 import threading
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
 import anthropic
 from fastapi import Depends, FastAPI, Form, Header, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
@@ -16,7 +17,7 @@ from sqlalchemy.orm import Session
 from fyndjakt.assess import Deps
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
-from fyndjakt.images import ImageLoader
+from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
 from fyndjakt.jobs import Worker
 from fyndjakt.migrate import upgrade
 from fyndjakt.models import Assessment, Feedback, Listing, WatchModel
@@ -38,7 +39,8 @@ def build_deps() -> Deps:
         ai=anthropic.Anthropic(api_key=cfg.anthropic_api_key) if cfg.anthropic_api_key else None,
         telegram=TelegramClient(cfg.telegram_bot_token) if cfg.telegram_bot_token else None,
         municipalities=load_municipalities(cfg.municipalities_csv),
-        images=ImageLoader(cfg.image_cache_dir, cfg.user_agent) if cfg.ai_send_listing_images else None,
+        # Always present for the owner's own uploads; remote listing images still need ai_send_listing_images.
+        images=ImageLoader(cfg.image_cache_dir, cfg.user_agent),
     )
 
 
@@ -67,6 +69,7 @@ def handle_telegram_update(update: dict, deps: Deps) -> None:
 
 
 POLL_MAX_TRIES = 3
+MAX_UPLOADS = 4
 
 
 class TelegramPoller(threading.Thread):
@@ -216,9 +219,55 @@ def _routes():
                 "model": model,
                 "feedback": feedback,
                 "buttons": FEEDBACK_BUTTONS,
-                "show_images": get_config().ai_send_listing_images,
+                "images": usable_urls(listing.image_urls, get_config().ai_send_listing_images),
+                "pending": final is None and listing.status == "new",
             },
         )
+
+    @r.get("/testa", response_class=HTMLResponse)
+    def testa(request: Request):
+        return templates.TemplateResponse(request, "testa.html", {})
+
+    @r.post("/testa")
+    async def testa_save(
+        request: Request,
+        title: str = Form(...),
+        price_sek: str = Form(""),
+        municipality: str = Form(""),
+        description: str = Form(""),
+        url: str = Form(""),
+        session: Session = Depends(db),
+    ):
+        form = await request.form()
+        deps: Deps = request.app.state.deps
+        image_urls = []
+        for f in form.getlist("images")[:MAX_UPLOADS]:
+            data = await f.read() if hasattr(f, "read") else b""
+            if not data:
+                continue
+            try:
+                image_urls.append(deps.images.save_upload(data))
+            except Exception:
+                raise HTTPException(400, f"Kunde inte läsa bilden {getattr(f, 'filename', '')}") from None
+        payload = IngestListing(
+            source="manual",
+            external_id=uuid.uuid4().hex,
+            title=title.strip(),
+            price_sek=int(price_sek) if price_sek.strip().isdigit() else None,
+            municipality=municipality.strip() or None,
+            description=description.strip() or None,
+            url=url.strip() or None,
+            image_urls=image_urls,
+        )
+        listing, _new, _changed = upsert_listing(session, payload)
+        return RedirectResponse(f"/annons/{listing.id}", status_code=303)
+
+    @r.get("/bild/{ident}")
+    def bild(request: Request, ident: str) -> Response:
+        path = request.app.state.deps.images.local_path(LOCAL_PREFIX + ident)
+        if path is None:
+            raise HTTPException(404)
+        return Response(path.read_bytes(), media_type="image/jpeg", headers={"Cache-Control": "private, max-age=3600"})
 
     @r.post("/annons/{listing_id}/feedback", response_class=HTMLResponse)
     def annons_feedback(listing_id: int, label: str = Form(...), session: Session = Depends(db)):

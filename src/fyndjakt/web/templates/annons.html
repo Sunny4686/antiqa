@@ -7,7 +7,12 @@
   · källa {{ listing.source }}
   {% if listing.url %}· <a href="{{ listing.url }}" target="_blank" rel="noopener">Öppna annons</a>{% endif %}
 </p>
-{% if show_images %}{% for u in listing.image_urls[:4] %}<img src="{{ u }}" alt="" style="max-height:180px;margin-right:.4rem">{% endfor %}{% endif %}
+{% for u in images[:4] %}<img src="{{ '/bild/' ~ u[6:] if u.startswith('local:') else u }}" alt="" style="max-height:180px;margin-right:.4rem;border-radius:4px">{% endfor %}
+{% if pending %}
+<p class="muted" hx-get="/annons/{{ listing.id }}" hx-trigger="every 3s" hx-select="main" hx-target="main" hx-swap="outerHTML">
+  ⏳ Bedöms nu: förfilter, bildscreening, verifiering mot bevakningslistan… sidan uppdateras själv.
+</p>
+{% endif %}
 {% if listing.description %}<p style="white-space:pre-line">{{ listing.description }}</p>{% endif %}
 
 {% if final %}

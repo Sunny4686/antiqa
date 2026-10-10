@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from fyndjakt.ai import budget
 from fyndjakt.ai.steps import CandidateSpec, Usage, screen, verify
 from fyndjakt.config import Config
-from fyndjakt.images import ImageLoader
+from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
 from fyndjakt.models import AICall, Assessment, Listing, TelegramMessage, WatchModel
 from fyndjakt.notify.telegram import AlertData, TelegramClient, format_alert, keyboard
 from fyndjakt.pipeline import candidates as cand
@@ -133,12 +133,13 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         return _final(session, listing, decision=dec.INGET, note=pf.reason)
 
     spend = _Spend(session, deps, s.daily_ai_budget_usd)
-    use_images = cfg.ai_send_listing_images and deps.images is not None and bool(listing.image_urls)
+    image_urls = usable_urls(listing.image_urls, cfg.ai_send_listing_images)
+    use_images = deps.images is not None and bool(image_urls)
 
     def imgs(max_px: int, limit: int) -> list[dict]:
         if not use_images:
             return []
-        out = deps.images.blocks(listing.image_urls, max_px, limit)
+        out = deps.images.blocks(image_urls, max_px, limit)
         while deps.images.blocked_events:
             e = deps.images.blocked_events.pop()
             notify_owner(
@@ -406,7 +407,8 @@ def send_alert_for(session: Session, deps: Deps, assessment_id: int) -> None:
         contradictions=a.contradictions,
         needs_underside_photo=a.needs_underside_photo,
     )
-    photo = listing.image_urls[0] if deps.config.ai_send_listing_images and listing.image_urls else None
+    remote = [u for u in listing.image_urls if not u.startswith(LOCAL_PREFIX)]
+    photo = remote[0] if deps.config.ai_send_listing_images and remote else None
     msg_id = deps.telegram.send_alert(
         deps.config.telegram_chat_id,
         format_alert(data),

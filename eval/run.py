@@ -25,7 +25,7 @@ from fyndjakt.ai.steps import CandidateSpec, screen, verify
 from fyndjakt.assess import model_label
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
-from fyndjakt.images import ImageLoader
+from fyndjakt.images import ImageLoader, usable_urls
 from fyndjakt.migrate import upgrade
 from fyndjakt.models import Comp, Feedback, Listing, WatchModel
 from fyndjakt.pipeline.candidates import ModelRef, select_candidates
@@ -132,7 +132,7 @@ def run_case(case: Case, session, client, loader: ImageLoader, cfg) -> Outcome:
             [watch_terms(m.id, m.designer, m.manufacturer, m.model_name, m.aliases) for m in models],
         )
         # Listing images (e.g. Blocket) follow the same flag as production; comp images come from Auctionet.
-        urls = case.image_urls if case.source == "comp" or cfg.ai_send_listing_images else []
+        urls = case.image_urls if case.source == "comp" else usable_urls(case.image_urls, cfg.ai_send_listing_images)
         scr, u = screen(client, cfg.model_fast, case.title, case.price_sek, loader.blocks(urls, 512, 1))
         cost += budget.cost_usd(cfg.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write)
         refs = [ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]

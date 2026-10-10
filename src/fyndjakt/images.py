@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import io
+import re
 import time
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -13,6 +14,20 @@ from PIL import Image
 MAX_DOWNLOAD_BYTES = 10 * 1024 * 1024
 RETENTION_S = 7 * 24 * 3600
 BLOCK_PAUSE_S = 6 * 3600
+
+
+LOCAL_PREFIX = "local:"  # images the owner uploaded; stored in the cache dir, deleted after 7 days like the rest
+_LOCAL_ID = re.compile(r"^[0-9a-f]{64}$")
+
+
+def usable_urls(urls: list[str], remote_allowed: bool) -> list[str]:
+    """Own uploads are always usable; remote listing images only when fetching them is permitted."""
+    return [u for u in urls if u.startswith(LOCAL_PREFIX) or remote_allowed]
+
+
+def local_id(url: str) -> str | None:
+    ident = url.removeprefix(LOCAL_PREFIX) if url.startswith(LOCAL_PREFIX) else ""
+    return ident if _LOCAL_ID.match(ident) else None
 
 
 class ImageSourceBlocked(Exception):
@@ -57,7 +72,26 @@ class ImageLoader:
         self.blocked_until: dict[str, float] = {}
         self.blocked_events: list[ImageSourceBlocked] = []  # drained by the caller to alert the owner
 
+    def save_upload(self, data: bytes) -> str:
+        """Store an uploaded image (re-encoded, EXIF stripped) and return its local: url."""
+        if len(data) > MAX_DOWNLOAD_BYTES:
+            raise ValueError("image too large")
+        jpeg = resize_jpeg(data, 1600, quality=88)
+        ident = hashlib.sha256(jpeg).hexdigest()
+        (self.dir / f"{ident}.img").write_bytes(jpeg)
+        return LOCAL_PREFIX + ident
+
+    def local_path(self, url: str) -> Path | None:
+        ident = local_id(url)
+        path = self.dir / f"{ident}.img" if ident else None
+        return path if path and path.exists() else None
+
     def _original(self, url: str) -> bytes:
+        if url.startswith(LOCAL_PREFIX):
+            path = self.local_path(url)
+            if path is None:
+                raise FileNotFoundError("upload no longer kept")
+            return path.read_bytes()
         path = self.dir / (hashlib.sha256(url.encode()).hexdigest() + ".img")
         if path.exists():
             if self._clock() - path.stat().st_mtime <= RETENTION_S:
