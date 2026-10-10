@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /cms/
+Disallow: /*/pdf$
+
+Sitemap: https://www.bukowskis.com/sitemaps/sitemap.xml.gz
