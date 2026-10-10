@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>
+  body { font: 14px system-ui, sans-serif; width: 18rem; margin: .8rem; }
+  label { display: block; margin: .5rem 0 .2rem; color: #555; font-size: .85rem; }
+  input[type=text], input[type=password] { width: 100%; box-sizing: border-box; padding: .3rem; }
+  .row { display: flex; gap: .5rem; align-items: center; margin-top: .6rem; }
+  .muted { color: #777; font-size: .8rem; }
+</style>
+<b>Fyndjakt</b>
+<div class="row"><input type="checkbox" id="enabled"><label for="enabled" style="margin:0">Skicka det jag bläddrar förbi</label></div>
+<label>Server</label><input type="text" id="server">
+<label>Token (INGEST_TOKEN)</label><input type="password" id="token">
+<p class="muted">Skickat hittills: <span id="sent">0</span> skärmbilder. Tillägget scrollar aldrig själv och gör inga anrop till Blocket eller Facebook.
+Ladda om sidan efter att du slagit på det.</p>
+<div class="row"><button id="save">Spara</button><button id="reset">Nollställ räknare</button></div>
+<script src="popup.js"></script>

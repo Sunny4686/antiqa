@@ -15,6 +15,16 @@ Allt kan köras på en egen dator under testperioden:
 Begränsning: `/ingest/listing` nås bara från datorn själv. Vid flytt till server kopieras `data/fyndjakt.db` med,
 och `TELEGRAM_POLLING` sätts till `false` före `telegram-webhook`.
 
+## Blocket och Marketplace via webbläsartillägget
+
+1. Chrome: `chrome://extensions` → slå på Utvecklarläge → "Läs in okomprimerat" → välj mappen `extension/`.
+2. Klicka på Fyndjakt-ikonen: bocka i "Skicka det jag bläddrar förbi", server `http://127.0.0.1:8000`
+   (eller serverns https-adress), token = `INGEST_TOKEN` ur `.env`. Spara och ladda om sidan.
+3. Öppna Blocket → Möbler & inredning, sortera på nyast, välj område; eller Marketplace → Möbler. Scrolla i lugn
+   takt; varje gång du stannar skickas en skärmbild. Siffran på ikonen räknar skickade skärmbilder.
+4. Fyndjakt läser korten ur skärmbilden, skär ut bilderna och bedömer varje möbel; fynd kommer i Telegram och på
+   `/utvalt`. Kostnad ungefär 0,1–0,2 kr per skärmbild plus 0,09 kr per möbel som bildscreenas.
+
 ## Engångsuppsättning (server)
 
 1. **VPS:** installera Docker och Docker Compose, klona repot.

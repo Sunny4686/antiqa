@@ -26,6 +26,9 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
   tillstånd. Villkoren och robots.txt förbjuder det (se `docs/recon/RESULTAT.md`). Blocket-data kommer in
   bara via push, delning eller passivt tillägg till `/ingest/*`. Att byta adress (VPS/Pi/proxy) ändrar
   inget och räknas som kringgående.
+- Webbläsartillägget (`extension/`) är passivt: det tar en skärmbild av det ägaren själv bläddrar förbi och
+  skickar den till Fyndjakt. Det får aldrig scrolla, klicka, öppna sidor eller göra egna anrop till sajterna.
+  Skärmbilder raderas när de lästs (senast efter ett dygn).
 - Följ varje källas robots.txt och villkor. Läs dem på nytt innan en ny källa eller sökväg används.
 - Ingen inloggning. Inget kringgående av CAPTCHA/blockering, ingen proxy- eller IP-rotation.
 - Vid 403/429/CAPTCHA: backoff, stoppa källan och larma ägaren.
@@ -44,6 +47,8 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
   (köar jobb, körs av `serve`, ~1,5 h för de 10 underkategorierna).
 - Eval: `uv run python -m eval.run --dry-run` / `--limit 40` (kräver `ANTHROPIC_API_KEY`). Kör efter varje promptändring.
 - Drift (VPS, Docker Compose, Cloudflare Tunnel/Access, Telegram-webhook): se `docs/DRIFT.md`.
+- Webbläsartillägget: Chrome → `chrome://extensions` → Utvecklarläge → "Läs in okomprimerat" → `extension/`.
+  Det postar till `POST /ingest/screenshot` (jobb `screen_capture`, `capture.py`).
 - Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
 
 ## Struktur

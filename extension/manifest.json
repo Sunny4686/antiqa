@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Fyndjakt – skärmläsare",
+  "version": "0.1.0",
+  "description": "Skickar det du själv bläddrar förbi på Blocket och Facebook Marketplace till din Fyndjakt. Gör inga egna anrop till sajterna och scrollar aldrig själv.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.blocket.se/*",
+    "https://www.facebook.com/marketplace/*",
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "optional_host_permissions": ["https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.blocket.se/*", "https://www.facebook.com/marketplace/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": { "default_popup": "popup.html", "default_title": "Fyndjakt" }
+}

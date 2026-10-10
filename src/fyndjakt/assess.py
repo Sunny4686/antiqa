@@ -38,6 +38,7 @@ class Deps:
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
     screen_fn: Callable = screen
     verify_fn: Callable = verify
+    capture_fn: Callable | None = None  # reads a screenshot into listing cards (fyndjakt.capture)
 
 
 MAX_REFERENCE_IMAGES = 4

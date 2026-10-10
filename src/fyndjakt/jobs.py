@@ -5,16 +5,18 @@ import re
 import threading
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
+from fyndjakt import capture
 from fyndjakt.ai import budget, enrich
 from fyndjakt.assess import Deps, assess_listing, notify_owner, send_alert_for
 from fyndjakt.backup import backup_sqlite
 from fyndjakt.db import session_scope
-from fyndjakt.images import purge_old
+from fyndjakt.images import image_block, purge_old, resize_jpeg
 from fyndjakt.models import AICall, Job, SourceHealth, WatchModel
 from fyndjakt.pipeline.prefilter import prefilter, strict_title_match, watch_terms
 from fyndjakt.services import (
@@ -247,6 +249,67 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
         enqueue(session, "auctionet_live", run_at=now + LIVE_EVERY)
 
 
+def handle_screen_capture(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
+    """Read one screenshot from the browser extension into listings; the screenshot is deleted afterwards."""
+    path = Path(job.payload["path"])
+    if path.exists() and deps.ai is not None and _budget_left(session, deps) <= 0:
+        # Keep the screenshot and read it when the new day's budget opens.
+        enqueue(
+            session, "screen_capture", job.payload, run_at=budget.next_local_midnight(deps.now(), deps.config.timezone)
+        )
+        return
+    try:
+        _read_capture(session, deps, path, job.payload)
+    except Exception:
+        if job.attempts >= MAX_ATTEMPTS:
+            path.unlink(missing_ok=True)
+        raise
+    path.unlink(missing_ok=True)  # may show people's names: never kept after reading
+
+
+def _read_capture(session: Session, deps: Deps, path: Path, payload: dict) -> None:
+    source = capture.source_for(payload.get("page_url", ""))
+    if not path.exists() or deps.ai is None or deps.images is None or source is None:
+        return
+    raw = path.read_bytes()
+    read = deps.capture_fn or capture.read_screenshot
+    page, u = read(deps.ai, deps.config.model_fast, image_block(resize_jpeg(raw, 1568)))
+    session.add(
+        AICall(
+            purpose="capture",
+            model=u.model,
+            tokens_in=u.tokens_in,
+            tokens_out=u.tokens_out,
+            cache_read_tokens=u.cache_read,
+            cache_write_tokens=u.cache_write,
+            cost_usd=budget.cost_usd(
+                deps.config.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write
+            ),
+        )
+    )
+    links = [capture.LinkBox(**lk) for lk in payload.get("links") or []]
+    for card in page.cards:
+        if not card.is_furniture or not card.title.strip():
+            continue
+        photo = capture.crop(raw, card.image_box)
+        if photo is None:
+            continue
+        href = capture.link_for(card.image_box, links)
+        ext = (capture.item_id(href) if href else None) or capture.fallback_id(card.title, card.price_sek, card.place)
+        upsert_listing(
+            session,
+            IngestListing(
+                source=source,
+                external_id=ext,
+                title=card.title[:512],
+                price_sek=card.price_sek if card.price_sek is None or card.price_sek >= 0 else None,
+                municipality=card.place,
+                url=href,
+                image_urls=[deps.images.save_upload(photo)],
+            ),
+        )
+
+
 def handle_health_check(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
     now = deps.now()
     hour = now.astimezone(ZoneInfo(deps.config.timezone)).hour
@@ -325,6 +388,8 @@ def handle_image_cleanup(session: Session, job: Job, deps: Deps, _ctx: dict) -> 
     now = deps.now()
     try:
         removed = purge_old(deps.config.image_cache_dir, now.timestamp())
+        # Unread screenshots never linger beyond a day (they can show people's names).
+        removed += purge_old(deps.config.capture_dir, now.timestamp(), retention_s=24 * 3600)
         log.info("image cleanup: %d files removed", removed)
     finally:
         enqueue(session, "image_cleanup", run_at=next_local_time(now, deps.config.timezone, 6))
@@ -392,6 +457,7 @@ HANDLERS: dict[str, Callable[[Session, Job, Deps, dict], None]] = {
     "send_alert": handle_send_alert,
     "auctionet_crawl": handle_auctionet_crawl,
     "auctionet_live": handle_auctionet_live,
+    "screen_capture": handle_screen_capture,
     "auctionet_backfill": handle_auctionet_backfill,
     "health_check": handle_health_check,
     "title_batch": handle_title_batch,

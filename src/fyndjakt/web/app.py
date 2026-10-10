@@ -1,6 +1,7 @@
 """FastAPI app: Swedish UI behind Cloudflare Access, plus token-protected /ingest and /telegram endpoints."""
 
 import hmac
+import json
 import logging
 import threading
 import uuid
@@ -16,6 +17,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.orm import Session
 
+from fyndjakt import capture
 from fyndjakt.assess import Deps, remote_images_allowed
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
@@ -25,7 +27,7 @@ from fyndjakt.migrate import upgrade
 from fyndjakt.models import Assessment, Feedback, Listing, SourceHealth, WatchModel
 from fyndjakt.notify.telegram import FEEDBACK_BUTTONS, FEEDBACK_LABELS, TelegramClient, parse_callback
 from fyndjakt.pipeline.geo import load_municipalities
-from fyndjakt.services import IngestListing, get_settings, upsert_listing
+from fyndjakt.services import IngestListing, enqueue, get_settings, upsert_listing
 from fyndjakt.sources.auctionet import AuctionetClient
 from fyndjakt.web.pages import build_router
 
@@ -72,6 +74,7 @@ def handle_telegram_update(update: dict, deps: Deps) -> None:
 
 POLL_MAX_TRIES = 3
 MAX_UPLOADS = 4
+MAX_SCREENSHOT_BYTES = 15 * 1024 * 1024
 
 
 class TelegramPoller(threading.Thread):
@@ -177,6 +180,31 @@ def _routes():
         _check_token(get_config().ingest_token, (authorization or "").removeprefix("Bearer ").strip() or None)
         listing, is_new, price_changed = upsert_listing(session, payload)
         return {"id": listing.id, "new": is_new, "price_changed": price_changed}
+
+    @r.post("/ingest/screenshot")
+    async def ingest_screenshot(
+        request: Request, authorization: str | None = Header(default=None), session: Session = Depends(db)
+    ) -> dict:
+        """From the browser extension: a screenshot of what the owner is looking at + the visible links."""
+        _check_token(get_config().ingest_token, (authorization or "").removeprefix("Bearer ").strip() or None)
+        form = await request.form()
+        page_url = str(form.get("page_url", ""))
+        if capture.source_for(page_url) is None:
+            raise HTTPException(400, "Bara Blocket och Facebook Marketplace")
+        image = form.get("image")
+        data = await image.read() if hasattr(image, "read") else b""
+        if not data or len(data) > MAX_SCREENSHOT_BYTES:
+            raise HTTPException(400, "Skärmbild saknas eller är för stor")
+        try:
+            links = [capture.LinkBox(**lk).__dict__ for lk in json.loads(str(form.get("links", "[]")))[:400]]
+        except (ValueError, TypeError):
+            raise HTTPException(400, "Ogiltig länklista") from None
+        folder = Path(get_config().capture_dir)
+        folder.mkdir(parents=True, exist_ok=True)
+        path = folder / f"{uuid.uuid4().hex}.img"
+        path.write_bytes(data)
+        enqueue(session, "screen_capture", {"path": str(path), "page_url": page_url, "links": links})
+        return {"queued": True}
 
     @r.post("/telegram/webhook")
     async def telegram_webhook(
