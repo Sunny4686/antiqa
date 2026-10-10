@@ -15,6 +15,7 @@ def main() -> None:
     wh.add_argument("base_url", help="t.ex. https://fyndjakt.example.se")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    logging.getLogger("httpx").setLevel(logging.WARNING)  # request lines contain the Telegram bot token
 
     if args.cmd == "migrate":
         from fyndjakt.migrate import upgrade

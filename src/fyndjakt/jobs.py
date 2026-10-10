@@ -39,6 +39,7 @@ log = logging.getLogger(__name__)
 PERIODIC = ("auctionet_crawl", "health_check", "title_batch", "watchlist_refresh", "image_cleanup", "backup")
 NOTES_PER_RUN = 10
 MAX_ATTEMPTS = 3
+COMMIT_EVERY = 100  # one Auctionet page
 # "0 new items for 2 h in daytime" applies to continuous sources only; Auctionet runs nightly.
 SILENCE_LIMITS: dict[str, timedelta] = {}
 
@@ -104,10 +105,10 @@ def handle_auctionet_crawl(session: Session, job: Job, deps: Deps, ctx: dict) ->
         client: AuctionetClient = ctx["auctionet"]
         known = known_comp_ids(session, "auctionet")
         added = 0
-        for item in client.iter_new(known, category_id=FURNITURE_CATEGORY):
+        for i, item in enumerate(client.iter_new(known, category_id=FURNITURE_CATEGORY), 1):
             added += upsert_comp(session, "auctionet", parse_item(item))
-            if added % 100 == 0:
-                session.flush()
+            if i % COMMIT_EVERY == 0:
+                session.commit()  # short write transactions so ingest and Telegram aren't locked out
         record_success(session, "auctionet", now, got_items=added > 0)
         log.info("auctionet: %d new comps", added)
     except SourceBlocked as e:
@@ -231,10 +232,10 @@ def handle_auctionet_backfill(session: Session, job: Job, deps: Deps, ctx: dict)
     client: AuctionetClient = ctx["auctionet"]
     added = 0
     try:
-        for item in client.iter_all(**params):
+        for i, item in enumerate(client.iter_all(**params), 1):
             added += upsert_comp(session, "auctionet", parse_item(item))
-            if added and added % 200 == 0:
-                session.flush()
+            if i % COMMIT_EVERY == 0:
+                session.commit()  # a step takes ~8 min; don't hold the write lock for all of it
         record_success(session, "auctionet", now, got_items=added > 0)
         log.info("auctionet backfill %s: %d new comps, %d steps left", params, added, len(rest))
     except SourceBlocked as e:

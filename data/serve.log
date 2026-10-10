@@ -133,3 +133,219 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 2026-10-10 17:45:18,658 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=19&per_page=100&category_id=24 "HTTP/1.1 200 OK"
 2026-10-10 17:45:23,986 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=20&per_page=100&category_id=24 "HTTP/1.1 200 OK"
 2026-10-10 17:45:29,267 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=21&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:45:34,616 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=22&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:45:39,971 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=23&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:45:45,353 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=24&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:45:50,687 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=25&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:45:56,039 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=26&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:01,406 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=27&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:06,761 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=28&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:12,078 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=29&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:17,498 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=30&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:22,859 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=31&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:28,215 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=32&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:33,607 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=33&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:38,972 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=34&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:44,295 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=35&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:49,651 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=36&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:46:55,040 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=37&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:00,395 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=38&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:05,777 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=39&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:11,105 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=40&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:16,532 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=41&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:21,996 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=42&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:27,409 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=43&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:32,778 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=44&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:38,166 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=45&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:43,537 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=46&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:48,890 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=47&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:54,227 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=48&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:47:59,695 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=49&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:05,045 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=50&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:10,402 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=51&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:15,825 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=52&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:21,217 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=53&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:26,635 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=54&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:32,021 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=55&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:37,416 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=56&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:42,972 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=57&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:48,334 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=58&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:53,785 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=59&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:48:59,174 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=60&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:04,593 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=61&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:10,006 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=62&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:15,444 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=63&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:20,862 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=64&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:26,300 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=65&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:31,685 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=66&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:37,092 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=67&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:42,440 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=68&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:47,878 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=69&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:53,304 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=70&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:49:58,684 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=71&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:04,086 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=72&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:09,614 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=73&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:15,104 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=74&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:20,488 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=75&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:25,855 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=76&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:31,364 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=77&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:36,864 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=78&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:42,323 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=79&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:47,689 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=80&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:53,094 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=81&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:50:58,453 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=82&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:03,829 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=83&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:09,230 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=84&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:14,787 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=85&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:20,233 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=86&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:25,662 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=87&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:31,094 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=88&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:36,612 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=89&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:42,001 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=90&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:47,399 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=91&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:52,836 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=92&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:51:58,264 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=93&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:03,678 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=94&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:09,221 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=95&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:14,612 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=96&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:19,987 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=97&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:25,355 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=98&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:30,731 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=99&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:36,193 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=100&per_page=100&category_id=24 "HTTP/1.1 200 OK"
+2026-10-10 17:52:36,247 INFO fyndjakt.jobs: auctionet backfill {'category_id': 24}: 9998 new comps, 8 steps left
+2026-10-10 17:52:41,500 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=1&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:52:46,796 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=2&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:52:52,128 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=3&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:52:57,622 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=4&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:02,942 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=5&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:08,298 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=6&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:13,586 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=7&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-10-10 17:53:18,928 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=8&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:24,371 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=9&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+INFO:     Application shutdown complete.
+INFO:     Finished server process [77125]
+ins: setup plugin alembic.autogenerate.types
+2026-10-10 17:53:21,205 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 17:53:21,205 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 17:53:21,205 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 17:53:21,205 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [77611]
+INFO:     Waiting for application startup.
+2026-10-10 17:53:21,281 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 17:53:21,281 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+ERROR:    Traceback (most recent call last):
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1946, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1192, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: database is locked
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/starlette/routing.py", line 654, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 247, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 247, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/.local/share/uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/src/fyndjakt/web/app.py", line 106, in lifespan
+    worker.start()
+  File "/Users/jay/antiqa/src/fyndjakt/jobs.py", line 306, in start
+    session.execute(update(Job).where(Job.status == "running").values(status="pending"))
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2473, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 2363, in _execute_internal
+    compile_state_cls.orm_execute_statement(
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/orm/bulk_persistence.py", line 1693, in orm_execute_statement
+    return super().orm_execute_statement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/orm/context.py", line 316, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1451, in execute
+    return meth(
+           ^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/sql/elements.py", line 533, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1671, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1825, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1965, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2335, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1946, in _exec_single_context
+    self.dialect.do_execute(
+  File "/Users/jay/antiqa/.venv/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 1192, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) database is locked
+[SQL: UPDATE jobs SET status=? WHERE jobs.status = ?]
+[parameters: ('pending', 'running')]
+(Background on this error at: https://sqlalche.me/e/21/e3q8)
+
+ERROR:    Application startup failed. Exiting.
+2026-10-10 17:53:37,985 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 17:53:37,985 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 17:53:37,985 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 17:53:37,985 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 17:53:37,985 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 17:53:37,986 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 17:53:37,986 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [77649]
+INFO:     Waiting for application startup.
+2026-10-10 17:53:38,068 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 17:53:38,068 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-10-10 17:53:38,266 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/deleteWebhook "HTTP/1.1 200 OK"
+2026-10-10 17:53:38,297 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/getUpdates "HTTP/1.1 200 OK"
+2026-10-10 17:53:38,423 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=1&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:43,679 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=2&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:48,951 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=3&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:54,232 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=4&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:53:59,467 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=5&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:03,328 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/getUpdates "HTTP/1.1 200 OK"
+2026-10-10 17:54:04,724 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=6&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:10,036 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=7&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:15,257 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=8&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:20,512 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=9&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:25,824 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=10&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:28,366 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/getUpdates "HTTP/1.1 200 OK"
+2026-10-10 17:54:31,135 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=11&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:36,415 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=12&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:41,869 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=13&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:47,175 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=14&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:52,486 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=15&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:54:53,405 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/getUpdates "HTTP/1.1 200 OK"
+2026-10-10 17:54:57,869 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=16&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:55:03,202 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=17&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:55:08,560 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=18&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:55:13,907 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=19&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:55:18,437 INFO httpx: HTTP Request: POST https://api.telegram.org/bot<token>/getUpdates "HTTP/1.1 200 OK"
+2026-10-10 17:55:19,246 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=20&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2026-10-10 17:55:24,571 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=21&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+2026-10-10 17:55:29,920 INFO httpx: HTTP Request: GET https://auctionet.com/api/v2/items.json?is=ended&page=22&per_page=100&category_id=280 "HTTP/1.1 200 OK"
+INFO:     Application shutdown complete.
+INFO:     Finished server process [77649]
