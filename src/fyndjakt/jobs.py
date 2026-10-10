@@ -47,6 +47,7 @@ from fyndjakt.watchlist import link_comps, refresh_watchlist
 log = logging.getLogger(__name__)
 
 PERIODIC = (
+    "inbox_scan",
     "auctionet_live",
     "auctionet_crawl",
     "health_check",

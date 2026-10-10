@@ -132,3 +132,10 @@ def test_import_page_upload(client):  # noqa: F811
     with session_scope() as s:
         lst = s.scalar(select(Listing))
         assert (lst.title, lst.price_sek, lst.municipality, len(lst.image_urls)) == ("Pinnstol", 50, "Alingsås", 1)
+
+
+def test_inbox_scan_is_a_periodic_job():
+    from fyndjakt.jobs import HANDLERS, PERIODIC
+
+    assert "inbox_scan" in PERIODIC and "inbox_scan" in HANDLERS
+    assert all(kind in HANDLERS for kind in PERIODIC)
