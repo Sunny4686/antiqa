@@ -330,3 +330,36 @@ def test_backfill_continues_a_long_step_in_page_chunks(session, config):
     assert client.starts == [1, 11, 21]
     assert len(list(session.scalars(select(Comp)))) == 25
     assert session.scalar(select(Job).where(Job.kind == "auctionet_backfill", Job.status == "pending")) is None
+
+
+def test_merge_models_folds_synonyms_into_the_most_sold(session):
+    from fyndjakt.watchlist import merge_models, refresh_watchlist
+
+    a = WatchModel(designer="Carl Malmsten", model_name="Herrgården", n_sales=459, active=True, auto_generated=True)
+    b = WatchModel(designer="Carl Malmsten", model_name="Herrgård", n_sales=8, active=True, auto_generated=True)
+    own = WatchModel(designer="Carl Malmsten", model_name="Herrgårdsstol", n_sales=1, active=True, auto_generated=False)
+    session.add_all([a, b, own])
+    session.flush()
+    for i in range(3):
+        session.add(
+            Comp(
+                source="auctionet",
+                external_id=f"h{i}",
+                title='CARL MALMSTEN. Stol "Herrgård"',
+                designer="Carl Malmsten",
+                model_name="Herrgård",
+                hammer_sek=4000,
+                state="sold",
+                model_id=b.id,
+            )
+        )
+    session.flush()
+    keeper = merge_models(session, [a.id, b.id, own.id])
+    assert keeper is own  # owner-made models win and are never folded away
+    assert not b.active and own.active and a.active is False
+    assert "Herrgård" in own.aliases
+    # the weekly refresh must not bring "Herrgård" back or overwrite the keeper's stats
+    refresh_watchlist(session)
+    session.flush()
+    assert not session.get(WatchModel, b.id).active
+    assert {c.model_id for c in session.scalars(select(Comp).where(Comp.external_id.like("h%")))} == {own.id}

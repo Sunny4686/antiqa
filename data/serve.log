@@ -759,3 +759,20 @@ INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 INFO:     127.0.0.1:64041 - "GET /importera HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [82818]
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 20:20:46,143 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [82912]
+INFO:     Waiting for application startup.
+2026-10-10 20:20:46,222 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 20:20:46,223 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)

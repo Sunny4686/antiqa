@@ -13,6 +13,8 @@ def main() -> None:
     bf.add_argument("--designer", action="append", default=[], help="Extra formgivarfråga, kan upprepas")
     imp = sub.add_parser("import", help="Importera annonser från en mapp, CSV, JSON eller zip")
     imp.add_argument("path")
+    tr = sub.add_parser("train", help="Träningsrunda: slå ihop synonymer och skriv visuella profiler (kostnadstak)")
+    tr.add_argument("--max-usd", type=float, default=3.0)
     wh = sub.add_parser("telegram-webhook", help="Registrera Telegram-webhooken")
     wh.add_argument("base_url", help="t.ex. https://fyndjakt.example.se")
     args = parser.parse_args()
@@ -55,6 +57,34 @@ def main() -> None:
         print(f"Importerade {len(res.imported)} annonser (bedöms av `fyndjakt serve`).")
         for e in res.errors:
             print("  fel:", e)
+    elif args.cmd == "train":
+        from datetime import UTC, datetime
+
+        import anthropic
+
+        from fyndjakt import training
+        from fyndjakt.config import get_config
+        from fyndjakt.images import ImageLoader
+        from fyndjakt.migrate import upgrade
+
+        upgrade()
+        cfg = get_config()
+        if not cfg.anthropic_api_key:
+            raise SystemExit("ANTHROPIC_API_KEY saknas i .env")
+        rep = training.run(
+            cfg,
+            anthropic.Anthropic(api_key=cfg.anthropic_api_key),
+            ImageLoader(cfg.image_cache_dir, cfg.user_agent),
+            args.max_usd,
+            datetime.now(UTC),
+        )
+        print(f"Sammanslagna: {len(rep.merged)}")
+        for line in rep.merged:
+            print("  ", line)
+        print(f"Visuella profiler: {rep.profiles}")
+        print(
+            f"Kostnad: {rep.spent_usd:.2f} USD" + (" (taket nått, kör igen för resten)" if rep.stopped_at_cap else "")
+        )
     elif args.cmd == "telegram-webhook":
         import httpx
 

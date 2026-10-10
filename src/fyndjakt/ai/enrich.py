@@ -126,16 +126,41 @@ def collect_batches(
     return still_open
 
 
-def write_model_notes(client: anthropic.Anthropic, model: str, m: WatchModel) -> tuple[ModelNotes, object]:
+def write_model_notes(
+    client: anthropic.Anthropic,
+    model: str,
+    m: WatchModel,
+    photos: list[dict] | None = None,
+    siblings: list[str] | None = None,
+) -> tuple[ModelNotes, object]:
+    """Notes for one model. With photos (sold, confirmed examples) the description is grounded in what the
+    pictures show; siblings (same designer's other models) are named so the notes say how to tell them apart."""
     prompt = (
         f"Formgivare: {m.designer or '-'}\nModell: {m.model_name or '-'}\nTillverkare: {m.manufacturer or '-'}\n"
         f"Kategori: {m.category or '-'}\nAntal sålda på auktion: {m.n_sales}, median {m.median_sek} kr"
     )
+    if siblings:
+        prompt += "\nAndra modeller av samma formgivare att skilja från: " + ", ".join(siblings[:15])
+    content: list[dict] = []
+    if photos:
+        content.append(
+            {
+                "type": "text",
+                "text": f"{len(photos)} foton av sålda, bekräftade exemplar av modellen (olika auktioner):",
+            }
+        )
+        content += photos
+        prompt += (
+            "\n\nBeskriv i identifying_features vad som syns på fotona och känns igen på en suddig mobilbild: "
+            "silhuett, proportioner, ben/stomme, armstöd, sits och rygg, material och typiska klädslar. Skriv sist "
+            "en mening om hur modellen skiljs från syskonmodellerna."
+        )
+    content.append({"type": "text", "text": prompt})
     resp = client.messages.parse(
         model=model,
         max_tokens=4000,
         system=[{"type": "text", "text": NOTES_SYSTEM, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"role": "user", "content": content}],
         output_format=ModelNotes,
     )
     return resp.parsed_output, resp.usage
@@ -163,3 +188,28 @@ def apply_notes(m: WatchModel, notes: ModelNotes, now: datetime) -> None:
     m.replica_traps = m.replica_traps or notes.replica_traps
     m.aliases = sorted({*(m.aliases or []), *(a.strip() for a in notes.aliases if a.strip())})
     m.notes_generated_at = now
+
+
+SYNONYM_SYSTEM = """Du är expert på skandinavisk möbeldesign. Du får en formgivares modellnamn så som de skrivits av
+olika auktionshus. Gruppera namn som betyder EXAKT samma modell (stavningsvarianter, bestämd form, danska/svenska/
+engelska namn för samma modell, t.ex. "Sjuan" = "7'er" = "Syveren"). Håll isär varianter som säljs som egna
+modeller (t.ex. hög och låg version, olika modellnummer). Ta bara med grupper med minst två namn."""
+
+
+class SynonymGroups(BaseModel):
+    groups: list[list[str]]
+
+
+def group_synonyms(
+    client: anthropic.Anthropic, model: str, designer: str, names: list[str]
+) -> tuple[list[list[str]], object]:
+    resp = client.messages.parse(
+        model=model,
+        max_tokens=1500,
+        system=[{"type": "text", "text": SYNONYM_SYSTEM}],
+        messages=[{"role": "user", "content": f"Formgivare: {designer}\nModellnamn:\n" + "\n".join(names)}],
+        output_format=SynonymGroups,
+    )
+    known = set(names)
+    groups = [[n for n in g if n in known] for g in resp.parsed_output.groups]
+    return [g for g in groups if len(set(g)) >= 2], resp.usage

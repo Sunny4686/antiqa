@@ -26,6 +26,35 @@ def catalog_text(models: list[WatchModel]) -> str:
     )
 
 
+def model_photos(
+    session: Session,
+    loader: ImageLoader,
+    model_id: int,
+    n: int = 5,
+    max_px: int = 512,
+    exclude_comp_ids: set[int] | None = None,
+) -> list[dict]:
+    """Up to n photos of different sold comps of a model, most expensive first (clearest examples)."""
+    out: list[dict] = []
+    comps = session.scalars(
+        select(Comp)
+        .where(Comp.model_id == model_id, Comp.state == "sold", Comp.hammer_sek.is_not(None))
+        .order_by(desc(Comp.hammer_sek))
+        .limit(n * 3)
+    )
+    for c in comps:
+        if len(out) >= n:
+            break
+        if exclude_comp_ids and c.id in exclude_comp_ids or not c.image_urls:
+            continue
+        out += loader.blocks(c.image_urls[:1], max_px, 1)
+    return out
+
+
+def siblings(models: list[WatchModel], m: WatchModel) -> list[str]:
+    return [o.model_name for o in models if o.id != m.id and o.designer == m.designer and o.model_name]
+
+
 def reference_blocks(
     session: Session,
     loader: ImageLoader,

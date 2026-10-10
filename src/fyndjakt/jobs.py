@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from fyndjakt import capture, importer
 from fyndjakt.ai import budget, enrich
+from fyndjakt.ai.catalog import model_photos, siblings
 from fyndjakt.assess import Deps, assess_listing, notify_owner, send_alert_for
 from fyndjakt.backup import backup_sqlite
 from fyndjakt.db import session_scope
@@ -399,7 +400,11 @@ def handle_watchlist_refresh(session: Session, job: Job, deps: Deps, _ctx: dict)
         for m in enrich.models_needing_notes(session, NOTES_PER_RUN):
             if _budget_left(session, deps) <= 0:
                 break
-            notes, usage = enrich.write_model_notes(deps.ai, deps.config.model_strong, m)
+            photos = model_photos(session, deps.images, m.id) if deps.images else []
+            all_models = list(session.scalars(select(WatchModel).where(WatchModel.active.is_(True))))
+            notes, usage = enrich.write_model_notes(
+                deps.ai, deps.config.model_strong, m, photos=photos, siblings=siblings(all_models, m)
+            )
             _log_usage(session, deps, "model_notes", deps.config.model_strong, usage)
             enrich.apply_notes(m, notes, now)
             session.flush()
