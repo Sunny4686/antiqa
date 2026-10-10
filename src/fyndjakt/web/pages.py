@@ -78,8 +78,22 @@ def build_router(templates: Jinja2Templates, db) -> APIRouter:  # noqa: ANN001
     @r.post("/bevakningslista/import")
     async def watchlist_import(file: UploadFile, session: Session = Depends(db)):
         text = (await file.read()).decode("utf-8-sig")
-        for row in csv.DictReader(io.StringIO(text)):
-            m = session.get(WatchModel, int(row["id"])) if (row.get("id") or "").isdigit() else None
+        rows = list(csv.DictReader(io.StringIO(text)))
+        # Validate everything before changing anything: a short row would otherwise blank existing fields,
+        # and an unknown id would silently create a duplicate.
+        errors = []
+        for n, row in enumerate(rows, start=2):
+            if None in row.values() or None in row:
+                errors.append(f"rad {n}: fel antal kolumner")
+                continue
+            rid = (row.get("id") or "").strip()
+            if rid and (not rid.isdigit() or session.get(WatchModel, int(rid)) is None):
+                errors.append(f"rad {n}: okänt id {rid} (lämna id tomt för en ny modell)")
+        if errors:
+            raise HTTPException(400, "Importen avbröts, inget ändrades. " + "; ".join(errors[:20]))
+        for row in rows:
+            rid = (row.get("id") or "").strip()
+            m = session.get(WatchModel, int(rid)) if rid else None
             if m is None:
                 m = WatchModel(auto_generated=False)
                 session.add(m)
@@ -136,10 +150,15 @@ def build_router(templates: Jinja2Templates, db) -> APIRouter:  # noqa: ANN001
     # --- deals ------------------------------------------------------------------------------------
 
     @r.get("/affarer", response_class=HTMLResponse)
-    def deals(request: Request, session: Session = Depends(db)):
+    def deals(request: Request, redigera: int | None = None, session: Session = Depends(db)):
         rows = list(session.scalars(select(Deal).order_by(desc(Deal.id))))
+        editing = session.get(Deal, redigera) if redigera else None
+        if redigera and editing is None:
+            raise HTTPException(404)
         return templates.TemplateResponse(
-            request, "affarer.html", {"deals": rows, "net": stats.deal_net, "today": date.today().isoformat()}
+            request,
+            "affarer.html",
+            {"deals": rows, "net": stats.deal_net, "today": date.today().isoformat(), "d": editing},
         )
 
     @r.post("/affarer")
@@ -169,6 +188,9 @@ def build_router(templates: Jinja2Templates, db) -> APIRouter:  # noqa: ANN001
         d.note = note or None
         session.flush()
         # A sold deal becomes a comp (source own_sale) so our own prices feed the valuation.
+        own = session.scalar(select(Comp).where(Comp.source == "own_sale", Comp.external_id == str(d.id)))
+        if (d.sale_sek is None or d.sold_at is None) and own is not None:
+            session.delete(own)  # sale undone: its price must stop feeding the valuation
         if d.sale_sek is not None and d.sold_at is not None:
             m = session.get(WatchModel, d.model_id) if d.model_id else None
             values = {
@@ -181,12 +203,11 @@ def build_router(templates: Jinja2Templates, db) -> APIRouter:  # noqa: ANN001
                 "parse_status": "rules",
                 "state": "sold",
             }
-            c = session.scalar(select(Comp).where(Comp.source == "own_sale", Comp.external_id == str(d.id)))
-            if c is None:
+            if own is None:
                 session.add(Comp(source="own_sale", external_id=str(d.id), **values))
             else:
                 for k, v in values.items():
-                    setattr(c, k, v)
+                    setattr(own, k, v)
         return RedirectResponse("/affarer", status_code=303)
 
     # --- statistics -------------------------------------------------------------------------------

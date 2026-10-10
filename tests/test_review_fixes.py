@@ -20,6 +20,7 @@ from fyndjakt.services import IngestListing, scrub_contacts
 from tests.conftest import NOW
 from tests.test_assess_jobs_web import FakeTelegram, _deps
 from tests.test_assess_jobs_web import world as world  # noqa: F401  (pytest fixture)
+from tests.test_pages_m3 import client as client  # noqa: F401  (pytest fixture)
 
 
 def _png() -> bytes:
@@ -276,3 +277,69 @@ def test_failed_alert_is_retried_as_job_without_new_ai_calls(session, config, wo
     session.expire_all()
     assert session.scalar(select(func.count(TelegramMessage.id))) == 1
     assert jobs.run_one(_deps(config, tg, verify_fn=verify, now=later), {}) is False  # nothing left to send
+
+
+# --- web ------------------------------------------------------------------------------------------
+
+
+def test_inbox_hides_fynd_that_a_reassessment_dropped(client):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.models import Assessment, Listing
+
+    with session_scope() as s:
+        lst = Listing(source="blocket_share", external_id="r1", title="Lamino fåtölj", price_sek=900)
+        s.add(lst)
+        s.flush()
+        s.add(Assessment(listing_id=lst.id, stage="final", decision="FYND"))
+        s.flush()
+        s.add(Assessment(listing_id=lst.id, stage="final", decision="INGET"))
+    assert "Lamino fåtölj" not in client.get("/inkorg").text
+    assert "Lamino fåtölj" in client.get("/inkorg?alla=1").text
+
+
+def test_allowed_regions_can_be_cleared(client):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.services import get_settings
+
+    client.post("/installningar", data={"allowed_regions": "Hallands län, Skåne län"})
+    client.post("/installningar", data={"allowed_regions": "", "min_roi": ""})
+    with session_scope() as s:
+        st = get_settings(s)
+        assert st.allowed_regions == [] and st.min_roi == 0.5
+
+
+def test_csv_import_rejects_short_rows_and_unknown_ids(client):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.models import WatchModel
+
+    client.post("/bevakningslista/0", data={"designer": "Alf Svensson", "model_name": "Kontur", "notes": "x"})
+    header = client.get("/bevakningslista/export.csv").text.splitlines()[0]
+    short = f"{header}\n1\n"
+    r = client.post("/bevakningslista/import", files={"file": ("w.csv", short.encode(), "text/csv")})
+    assert r.status_code == 400 and "rad 2" in r.text
+    cols = header.count(",")
+    unknown = f"{header}\n999" + "," * cols + "\n"
+    r = client.post("/bevakningslista/import", files={"file": ("w.csv", unknown.encode(), "text/csv")})
+    assert r.status_code == 400 and "okänt id 999" in r.text
+    with session_scope() as s:
+        models = list(s.scalars(select(WatchModel)))
+        assert len(models) == 1 and models[0].designer == "Alf Svensson"
+
+
+def test_deal_can_be_edited_and_unsold_removes_own_comp(client):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.models import Comp, Deal
+
+    client.post("/affarer", data={"title": "Lamino", "purchase_sek": "800", "bought_at": "2026-09-01"})
+    with session_scope() as s:
+        did = s.scalar(select(Deal.id))
+    page = client.get(f"/affarer?redigera={did}").text
+    assert f'name="deal_id" value="{did}"' in page and 'value="800"' in page
+    assert client.get("/affarer?redigera=999").status_code == 404
+    client.post("/affarer", data={"deal_id": str(did), "title": "Lamino", "sale_sek": "6000", "sold_at": "2026-10-01"})
+    with session_scope() as s:
+        assert s.scalar(select(func.count(Comp.id)).where(Comp.source == "own_sale")) == 1
+    client.post("/affarer", data={"deal_id": str(did), "title": "Lamino", "sale_sek": "", "sold_at": ""})
+    with session_scope() as s:
+        assert s.scalar(select(func.count(Comp.id)).where(Comp.source == "own_sale")) == 0
+        assert s.scalar(select(func.count(Deal.id))) == 1

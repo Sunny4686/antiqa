@@ -10,7 +10,7 @@ import anthropic
 from fastapi import Depends, FastAPI, Form, Header, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import desc, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
 from fyndjakt.assess import Deps
@@ -175,20 +175,25 @@ def _routes():
 
     @r.get("/inkorg", response_class=HTMLResponse)
     def inkorg(request: Request, alla: bool = False, session: Session = Depends(db)):
+        # Latest final assessment per listing first, then filter: a FYND that a re-assessment turned into
+        # INGET must disappear rather than show its old verdict next to the new price.
+        latest = (
+            select(func.max(Assessment.id))
+            .where(Assessment.stage == "final")
+            .group_by(Assessment.listing_id)
+            .scalar_subquery()
+        )
         q = (
             select(Assessment, Listing)
             .join(Listing, Listing.id == Assessment.listing_id)
-            .where(Assessment.stage == "final")
+            .where(Assessment.id.in_(latest))
             .order_by(desc(Assessment.id))
             .limit(200)
         )
         if not alla:
             q = q.where(Assessment.decision.in_(("FYND", "KOLLA_SJALV")))
-        rows = session.execute(q).all()
-        latest: dict[int, tuple[Assessment, Listing]] = {}
-        for a, lst in rows:
-            latest.setdefault(lst.id, (a, lst))
-        return templates.TemplateResponse(request, "inkorg.html", {"rows": list(latest.values()), "alla": alla})
+        rows = [tuple(r) for r in session.execute(q).all()]
+        return templates.TemplateResponse(request, "inkorg.html", {"rows": rows, "alla": alla})
 
     @r.get("/annons/{listing_id}", response_class=HTMLResponse)
     def annons(request: Request, listing_id: int, session: Session = Depends(db)):
@@ -235,8 +240,8 @@ def _routes():
         s = get_settings(session)
         for name, (_label, kind) in SETTINGS_FIELDS.items():
             raw = str(form.get(name, "")).strip()
-            if raw == "":
-                continue
+            if raw == "" and not (kind == "list" and name in form):
+                continue  # blank number: keep the old value; an emptied list field clears the list
             try:
                 if kind == "list":
                     setattr(s, name, [p.strip() for p in raw.split(",") if p.strip()])
