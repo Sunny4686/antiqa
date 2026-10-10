@@ -68,8 +68,7 @@ class CandidateSpec:
     marks: str | None
 
 
-def _images(urls: list[str], limit: int) -> list[dict]:
-    return [{"type": "image", "source": {"type": "url", "url": u}} for u in urls[:limit]]
+# Image blocks come pre-built (downscaled base64, see fyndjakt.images); an empty list means text only.
 
 
 def _usage(model: str, resp: object) -> Usage:
@@ -80,10 +79,10 @@ def _usage(model: str, resp: object) -> Usage:
 
 
 def screen(
-    client: anthropic.Anthropic, model: str, title: str, price_sek: int | None, image_urls: list[str]
+    client: anthropic.Anthropic, model: str, title: str, price_sek: int | None, image_blocks: list[dict]
 ) -> tuple[Screening, Usage]:
     content = [
-        *_images(image_urls, 1),
+        *image_blocks[:1],
         {"type": "text", "text": f"Rubrik: {title}\nPris: {price_sek if price_sek is not None else 'okänt'} kr"},
     ]
     resp = client.messages.parse(
@@ -102,7 +101,7 @@ def verify(
     title: str,
     description: str | None,
     price_sek: int | None,
-    image_urls: list[str],
+    image_blocks: list[dict],
     candidates: list[CandidateSpec],
 ) -> tuple[Verification, Usage]:
     cand_text = "\n\n".join(
@@ -118,7 +117,7 @@ def verify(
         model=model,
         max_tokens=2000,
         system=[{"type": "text", "text": VERIFY_SYSTEM, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": [*_images(image_urls, 4), {"type": "text", "text": text}]}],
+        messages=[{"role": "user", "content": [*image_blocks[:4], {"type": "text", "text": text}]}],
         output_format=Verification,
     )
     return resp.parsed_output, _usage(model, resp)

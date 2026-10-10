@@ -19,9 +19,10 @@ class Config(BaseSettings):
         "claude-haiku-4-5": (1.0, 5.0),
         "claude-sonnet-5-5": (2.0, 10.0),
     }
-    # Sending listing image URLs to the AI (and Telegram) makes those services fetch images from
-    # the listing site. Keep off unless that access is covered (see docs/recon/blocket_tillstand.md).
+    # Downloads listing images (downscaled for the AI, URL to Telegram), i.e. requests to the listing
+    # site's image CDN. Keep off unless that access is covered (see docs/recon/blocket_tillstand.md).
     ai_send_listing_images: bool = False
+    image_cache_dir: str = "data/images"
 
     # Telegram
     telegram_bot_token: str | None = None

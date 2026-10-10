@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from fyndjakt.assess import Deps
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
+from fyndjakt.images import ImageLoader
 from fyndjakt.jobs import Worker
 from fyndjakt.migrate import upgrade
 from fyndjakt.models import Assessment, Feedback, Listing, WatchModel
@@ -35,6 +36,7 @@ def build_deps() -> Deps:
         ai=anthropic.Anthropic(api_key=cfg.anthropic_api_key) if cfg.anthropic_api_key else None,
         telegram=TelegramClient(cfg.telegram_bot_token) if cfg.telegram_bot_token else None,
         municipalities=load_municipalities(cfg.municipalities_csv),
+        images=ImageLoader(cfg.image_cache_dir, cfg.user_agent) if cfg.ai_send_listing_images else None,
     )
 
 

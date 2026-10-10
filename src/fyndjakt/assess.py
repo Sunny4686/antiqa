@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from fyndjakt.ai import budget
 from fyndjakt.ai.steps import CandidateSpec, Usage, screen, verify
 from fyndjakt.config import Config
+from fyndjakt.images import ImageLoader
 from fyndjakt.models import AICall, Assessment, Listing, TelegramMessage, WatchModel
 from fyndjakt.notify.telegram import AlertData, TelegramClient, format_alert, keyboard
 from fyndjakt.pipeline import candidates as cand
@@ -31,6 +32,7 @@ class Deps:
     config: Config
     ai: anthropic.Anthropic | None = None
     telegram: TelegramClient | None = None
+    images: ImageLoader | None = None
     municipalities: dict = field(default_factory=dict)
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
     screen_fn: Callable = screen
@@ -129,13 +131,16 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         return _final(session, listing, decision=dec.INGET, note=pf.reason)
 
     spend = _Spend(session, deps, s.daily_ai_budget_usd)
-    images = listing.image_urls if cfg.ai_send_listing_images else []
+    use_images = cfg.ai_send_listing_images and deps.images is not None and bool(listing.image_urls)
+
+    def imgs(max_px: int, limit: int) -> list[dict]:
+        return deps.images.blocks(listing.image_urls, max_px, limit) if use_images else []
 
     # 2. Screening
     if not spend.can_spend():
         listing.status = "assessed"
         return _final(session, listing, decision=dec.INGET, note="AI hoppades över (budget eller saknad nyckel)")
-    scr, usage = deps.screen_fn(deps.ai, cfg.model_fast, listing.title, listing.price_sek, images)
+    scr, usage = deps.screen_fn(deps.ai, cfg.model_fast, listing.title, listing.price_sek, imgs(512, 1))
     spend.log("screen", usage)
     session.add(
         Assessment(
@@ -177,7 +182,7 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         listing.status = "assessed"
         return _final(session, listing, decision=dec.INGET, spend=spend, note="AI-budget slut före verifiering")
     ver, usage = deps.verify_fn(
-        deps.ai, cfg.model_fast, listing.title, listing.description, listing.price_sek, images, specs
+        deps.ai, cfg.model_fast, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
     )
     spend.log("verify", usage)
     picked_ids = {r.id for r in picked}
@@ -216,7 +221,7 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     final_ver = ver
     if dec.should_escalate(ver.match, m25.net_sek if m25 else None, s.min_net_margin_sek) and spend.can_spend():
         strong, usage = deps.verify_fn(
-            deps.ai, cfg.model_strong, listing.title, listing.description, listing.price_sek, images, specs
+            deps.ai, cfg.model_strong, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
         )
         spend.log("verify_strong", usage)
         session.add(
