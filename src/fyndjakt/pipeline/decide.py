@@ -57,8 +57,7 @@ def decide(d: DecisionInput, t: Thresholds) -> str:
     if (
         d.net_sek is not None
         and d.net_sek >= t.min_net_margin_sek
-        and d.roi is not None
-        and d.roi >= t.min_roi
+        and (d.roi is None or d.roi >= t.min_roi)  # roi is None only for a free listing (price 0)
         and near
         and CONFIDENCE_ORDER[d.confidence] >= CONFIDENCE_ORDER["medel"]
     ):

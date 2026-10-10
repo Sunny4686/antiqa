@@ -68,6 +68,8 @@ class _Spend:
             return False
         left = budget.budget_left(self.session, self.deps.now(), self.deps.config.timezone, self.daily)
         if left > 0:
+            # Release the write lock before the network call; also keeps finished steps if a later one fails.
+            self.session.commit()
             return True
         day = self.deps.now().astimezone(ZoneInfo(self.deps.config.timezone)).date().isoformat()
         notify_owner(
@@ -93,7 +95,7 @@ class _Spend:
                 cost_usd=c,
             )
         )
-        self.session.flush()
+        self.session.commit()  # the money is spent even if a later step fails and the job is retried
         self.tokens_in += u.tokens_in + u.cache_read + u.cache_write
         self.tokens_out += u.tokens_out
         self.cost += c
@@ -211,21 +213,28 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     model = by_id.get(ver.candidate_id) if ver.candidate_id in picked_ids else None
 
     # 5-7. Value, geography, margin
-    condition = None if ver.condition_guess == "okänt" else ver.condition_guess
-    val = (
-        value(comps_for_model(session, model), prior_comps(session, model), condition) if model else value([], [], None)
-    )
     where = geo.locate(listing.lat, listing.lon, listing.municipality, deps.municipalities)
     distance = geo.haversine_km(s.home_lat, s.home_lon, where[0], where[1]) if where else None
     region = where[2] if where else None
     transport = (
         geo.transport_sek(distance, s.transport_base_sek, s.transport_sek_per_km) if distance is not None else None
     )
-    m25 = m75 = None
-    if val.p25 is not None and listing.price_sek is not None:
-        t = transport if transport is not None else s.transport_base_sek
-        m25 = margin(val.p25, listing.price_sek, t, s.net_ratio, s.fixed_fees_sek)
-        m75 = margin(val.p75, listing.price_sek, t, s.net_ratio, s.fixed_fees_sek)
+
+    def priced(condition_guess: str):  # noqa: ANN202
+        condition = None if condition_guess == "okänt" else condition_guess
+        v = (
+            value(comps_for_model(session, model), prior_comps(session, model), condition)
+            if model
+            else value([], [], None)
+        )
+        lo = hi = None
+        if v.p25 is not None and listing.price_sek is not None:
+            t = transport if transport is not None else s.transport_base_sek
+            lo = margin(v.p25, listing.price_sek, t, s.net_ratio, s.fixed_fees_sek)
+            hi = margin(v.p75, listing.price_sek, t, s.net_ratio, s.fixed_fees_sek)
+        return v, lo, hi
+
+    val, m25, m75 = priced(ver.condition_guess)
 
     # 8. Escalation to the strong model
     disagree = False
@@ -249,6 +258,8 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         disagree = strong.candidate_id != ver.candidate_id or strong.match == "no"
         if not disagree:
             final_ver = strong
+            if strong.condition_guess != ver.condition_guess:
+                val, m25, m75 = priced(strong.condition_guess)  # the decision uses the strong model's condition
 
     replica = pf.replica_flag or bool(final_ver.replica_signals)
     confidence = dec.combine_confidence(final_ver.confidence, final_ver.match, val.level, replica, disagree)

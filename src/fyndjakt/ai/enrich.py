@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from fyndjakt.ai import budget
 from fyndjakt.models import AIBatch, Comp, WatchModel
 
 TITLE_SYSTEM = """Du tolkar titlar från svenska auktionshus för möbler. Ange formgivare, tillverkare och modellnamn
@@ -35,7 +36,7 @@ Skriv "osäkert" hellre än att gissa. Svara på svenska."""
 
 
 # Rough Batches cost per title (~300 tokens in, ~60 out, half price) used to keep a batch inside the budget.
-EST_USD_PER_TITLE = 0.0004
+EST_USD_PER_TITLE = budget.BATCH_EST_USD_PER_REQUEST
 
 
 class ModelNotes(BaseModel):

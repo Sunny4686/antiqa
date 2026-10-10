@@ -6,10 +6,13 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from fyndjakt.models import AICall
+from fyndjakt.models import AIBatch, AICall
 
 CACHE_READ_FACTOR = 0.1
 CACHE_WRITE_FACTOR = 1.25
+# Estimated cost per request of an open (not yet collected) batch, already at the batch discount.
+# Open batches count against today's budget until their real cost is logged at collection.
+BATCH_EST_USD_PER_REQUEST = 0.0004
 
 
 def cost_usd(
@@ -35,9 +38,13 @@ def local_day_start_utc(now: datetime, tz: str) -> datetime:
 
 
 def spent_today(session: Session, now: datetime, tz: str) -> float:
+    """Logged cost since local midnight plus the reservation for batches that are still open."""
     start = local_day_start_utc(now, tz)
     total = session.scalar(select(func.coalesce(func.sum(AICall.cost_usd), 0.0)).where(AICall.created_at >= start))
-    return float(total or 0.0)
+    reserved = session.scalar(
+        select(func.coalesce(func.sum(AIBatch.n_requests), 0)).where(AIBatch.status == "submitted")
+    )
+    return float(total or 0.0) + float(reserved or 0) * BATCH_EST_USD_PER_REQUEST
 
 
 def budget_left(session: Session, now: datetime, tz: str, daily_budget_usd: float) -> float:
@@ -45,4 +52,7 @@ def budget_left(session: Session, now: datetime, tz: str, daily_budget_usd: floa
 
 
 def next_local_midnight(now: datetime, tz: str) -> datetime:
-    return local_day_start_utc(now, tz) + timedelta(days=1)
+    """Calendar arithmetic in local time: a local day is 23 or 25 hours at DST changes."""
+    zone = ZoneInfo(tz)
+    tomorrow = now.astimezone(zone).date() + timedelta(days=1)
+    return datetime(tomorrow.year, tomorrow.month, tomorrow.day, tzinfo=zone).astimezone(UTC)

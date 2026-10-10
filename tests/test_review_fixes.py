@@ -2,14 +2,24 @@
 
 import io
 import os
+from datetime import UTC, datetime
 
 import httpx
 import pytest
 from PIL import Image
+from sqlalchemy import func, select
 
+from fyndjakt.ai import budget
+from fyndjakt.ai.steps import Usage, Verification
+from fyndjakt.assess import assess_listing
 from fyndjakt.images import RETENTION_S, ImageLoader
+from fyndjakt.models import AIBatch, AICall
 from fyndjakt.notify.telegram import TelegramClient, TelegramError
+from fyndjakt.pipeline import decide as dec
 from fyndjakt.services import IngestListing, scrub_contacts
+from tests.conftest import NOW
+from tests.test_assess_jobs_web import FakeTelegram, _deps
+from tests.test_assess_jobs_web import world as world  # noqa: F401  (pytest fixture)
 
 
 def _png() -> bytes:
@@ -159,3 +169,78 @@ def test_poller_acknowledges_update_only_after_handling(monkeypatch):
     poller._stop.wait = lambda _s: None
     poller.run()
     assert calls == [5, 5] and D.telegram.offsets == [None, None, 6]
+
+
+# --- budget, valuation and decision ---------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("now", "expected"),
+    [
+        (datetime(2026, 3, 29, 12, tzinfo=UTC), datetime(2026, 3, 29, 22, tzinfo=UTC)),  # after spring forward
+        (datetime(2026, 10, 25, 21, 30, tzinfo=UTC), datetime(2026, 10, 25, 23, tzinfo=UTC)),  # 22:30 local, CET
+        (datetime(2026, 10, 24, 12, tzinfo=UTC), datetime(2026, 10, 24, 22, tzinfo=UTC)),  # before fall back
+    ],
+)
+def test_next_local_midnight_across_dst(now, expected):
+    assert budget.next_local_midnight(now, "Europe/Stockholm") == expected
+
+
+def test_open_batch_reserves_budget(session):
+    session.add(AICall(purpose="screen", model="claude-haiku-4-5", cost_usd=0.5, created_at=NOW))
+    session.add(AIBatch(batch_id="b1", purpose="comp_titles", model="claude-haiku-4-5", n_requests=1000))
+    session.add(AIBatch(batch_id="b2", purpose="comp_titles", model="m", n_requests=999, status="collected"))
+    session.flush()
+    assert budget.spent_today(session, NOW, "Europe/Stockholm") == pytest.approx(0.5 + 1000 * 0.0004)
+
+
+def test_free_listing_can_be_fynd():
+    d = dec.DecisionInput(3000, None, 10.0, None, "hög", "model", True, 5000)
+    assert dec.decide(d, dec.Thresholds(1500, 0.5, 120.0)) == dec.FYND
+
+
+def _verify_with_strong_condition(candidate_id, strong_condition):
+    def fn(client, model_id, title, desc, price, images, cands):
+        strong = model_id == "claude-sonnet-5-5"
+        return (
+            Verification(
+                evidence=["Böjda armstöd"],
+                contradictions=[],
+                replica_signals=[],
+                label_ocr=None,
+                candidate_id=candidate_id,
+                match="yes",
+                condition_guess=strong_condition if strong else "gott",
+                needs_underside_photo=False,
+                confidence="hög",
+            ),
+            Usage(model_id, 5000, 400, 0, 0),
+        )
+
+    return fn
+
+
+def test_strong_models_condition_drives_value_and_decision(session, config, world):  # noqa: F811
+    m, listing = world
+    listing.price_sek = 1300
+    tg = FakeTelegram()
+    a = assess_listing(
+        session, listing.id, _deps(config, tg, verify_fn=_verify_with_strong_condition(m.id, "renoveringsobjekt"))
+    )
+    # gott: net 7000*0.78-800-1300 = 3360 (escalates, FYND); renoveringsobjekt: P25 7000/0.85*0.55 = 4529,
+    # net 4529*0.78-800-1300 = 1433, below the 1500 minimum
+    assert a.condition_guess == "renoveringsobjekt"
+    assert a.value_p25 == round(7000 / 0.85 * 0.55)
+    assert a.net_margin_sek < 1500 and a.decision != "FYND" and not tg.alerts
+
+
+def test_ai_cost_survives_a_failing_later_step(session, config, world):  # noqa: F811
+    m, listing = world
+
+    def broken_verify(*a, **k):
+        raise RuntimeError("API timeout")
+
+    with pytest.raises(RuntimeError):
+        assess_listing(session, listing.id, _deps(config, verify_fn=broken_verify))
+    session.rollback()  # what session_scope does when the job fails
+    assert session.scalar(select(func.count(AICall.id)).where(AICall.purpose == "screen")) == 1
