@@ -35,3 +35,383 @@
 2026-10-10 20:28:19,548 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
 2026-10-10 20:28:21,208 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
 2026-10-10 20:28:22,822 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:36,690 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:36,692 INFO fyndjakt.training: profile Josef Frank – Flora (4 photos), 0.056 USD so far
+2026-10-10 20:28:47,976 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:28:47,978 INFO fyndjakt.training: profile Axel Einar Hjorth – Utö (3 photos), 0.067 USD so far
+2026-10-10 20:29:01,314 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:29:01,318 INFO fyndjakt.training: profile Josef Frank – Schatullskrivbordet (3 photos), 0.079 USD so far
+2026-10-10 20:29:15,997 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:29:16,000 INFO fyndjakt.training: profile Hans J Wegner – Hjertestolen (3 photos), 0.093 USD so far
+2026-10-10 20:29:28,292 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:29:28,298 INFO fyndjakt.training: profile Josef Frank – Diplomat (5 photos), 0.105 USD so far
+2026-10-10 20:29:42,070 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:29:42,073 INFO fyndjakt.training: profile Carl Malmsten – Lillbo (3 photos), 0.118 USD so far
+2026-10-10 20:29:56,026 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:29:56,032 INFO fyndjakt.training: profile Hans Olsen – Roundette (5 photos), 0.131 USD so far
+2026-10-10 20:30:12,209 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:30:12,212 INFO fyndjakt.training: profile Arne Jacobsen – Ägget (3 photos), 0.145 USD so far
+2026-10-10 20:30:30,786 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:30:30,797 INFO fyndjakt.training: profile Mats Theselius – Bruno (3 photos), 0.163 USD so far
+2026-10-10 20:30:45,010 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:30:45,015 INFO fyndjakt.training: profile Poul Kjaerholm – PK61 (5 photos), 0.177 USD so far
+2026-10-10 20:31:00,687 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:31:00,691 INFO fyndjakt.training: profile Hans J Wegner – Kinastolen (4 photos), 0.190 USD so far
+2026-10-10 20:31:13,305 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:31:13,307 INFO fyndjakt.training: profile Jonas Lindvall – Miss Holly (5 photos), 0.203 USD so far
+2026-10-10 20:31:28,041 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:31:28,044 INFO fyndjakt.training: profile Carl Malmsten – Guldheden (5 photos), 0.216 USD so far
+2026-10-10 20:31:40,551 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:31:40,554 INFO fyndjakt.training: profile Vico Magistretti – Maralunga (5 photos), 0.229 USD so far
+2026-10-10 20:31:55,098 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:31:55,103 INFO fyndjakt.training: profile Hans J Wegner – RY-20 (4 photos), 0.241 USD so far
+2026-10-10 20:32:05,012 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:32:05,014 INFO fyndjakt.training: profile Carl Malmsten – Jättepaddan (3 photos), 0.250 USD so far
+2026-10-10 20:32:22,396 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:32:22,400 INFO fyndjakt.training: profile Eero Saarinen – Tulip (5 photos), 0.266 USD so far
+2026-10-10 20:32:37,791 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:32:37,804 INFO fyndjakt.training: profile Ole Wanscher – Colonial Chair (5 photos), 0.280 USD so far
+2026-10-10 20:32:52,578 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:32:52,583 INFO fyndjakt.training: profile Svante Skogh – Uddebo (5 photos), 0.293 USD so far
+2026-10-10 20:33:02,273 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:33:02,275 INFO fyndjakt.training: profile Arne Norell – Sirocco (5 photos), 0.302 USD so far
+2026-10-10 20:33:16,551 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:33:16,554 INFO fyndjakt.training: profile Hans J Wegner – GE-290 (5 photos), 0.315 USD so far
+2026-10-10 20:33:33,088 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:33:33,101 INFO fyndjakt.training: profile Bruno Mathsson – Jetson (5 photos), 0.329 USD so far
+2026-10-10 20:33:46,472 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:33:46,476 INFO fyndjakt.training: profile Nils Jonsson – Gigant (5 photos), 0.342 USD so far
+2026-10-10 20:34:05,670 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:34:05,675 INFO fyndjakt.training: profile Johannes Andersen – Capri (4 photos), 0.361 USD so far
+2026-10-10 20:34:18,570 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:34:18,573 INFO fyndjakt.training: profile Markus Johansson – Rainbow (3 photos), 0.373 USD so far
+2026-10-10 20:34:29,051 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:34:29,056 INFO fyndjakt.training: profile Arne Jacobsen – Svanen (5 photos), 0.382 USD so far
+2026-10-10 20:34:41,317 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:34:41,321 INFO fyndjakt.training: profile Arne Norell – Ari (3 photos), 0.393 USD so far
+2026-10-10 20:34:56,815 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:34:56,819 INFO fyndjakt.training: profile Svante Skogh – Cortina (5 photos), 0.407 USD so far
+2026-10-10 20:35:10,100 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:35:10,103 INFO fyndjakt.training: profile Sara Larsson – Collect low (3 photos), 0.419 USD so far
+2026-10-10 20:35:24,290 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:35:24,294 INFO fyndjakt.training: profile Karin Mobring – Natura (5 photos), 0.432 USD so far
+2026-10-10 20:35:37,109 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:35:37,143 INFO fyndjakt.training: profile Carl Malmsten – Ambassadör (5 photos), 0.444 USD so far
+2026-10-10 20:35:51,111 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:35:51,115 INFO fyndjakt.training: profile Nils Jonsson – Trio (5 photos), 0.457 USD so far
+2026-10-10 20:36:05,302 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:36:05,306 INFO fyndjakt.training: profile Svante Skogh – Bodö (3 photos), 0.469 USD so far
+2026-10-10 20:36:16,833 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:36:16,837 INFO fyndjakt.training: profile Poul Cadovius – Royal System (5 photos), 0.481 USD so far
+2026-10-10 20:36:31,171 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:36:31,177 INFO fyndjakt.training: profile Gunni Omann – 75. (5 photos), 0.494 USD so far
+2026-10-10 20:36:46,013 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:36:46,017 INFO fyndjakt.training: profile Børge Mogensen – Asserbo (5 photos), 0.506 USD so far
+2026-10-10 20:37:05,093 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:37:05,098 INFO fyndjakt.training: profile Folke Ohlsson – USA 75 (5 photos), 0.525 USD so far
+2026-10-10 20:37:23,553 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:37:23,557 INFO fyndjakt.training: profile Hans J Wegner – Y-stolen (5 photos), 0.543 USD so far
+2026-10-10 20:37:36,842 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:37:36,848 INFO fyndjakt.training: profile Olavi Hänninen – Paletti (3 photos), 0.556 USD so far
+2026-10-10 20:37:48,352 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:37:48,353 INFO fyndjakt.training: profile Thomas Sandell & Jonas Bohlin – Snö (5 photos), 0.567 USD so far
+2026-10-10 20:38:01,118 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:38:01,122 INFO fyndjakt.training: profile Nils Jonsson – Arild (5 photos), 0.579 USD so far
+2026-10-10 20:38:13,751 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:38:13,754 INFO fyndjakt.training: profile Arne Norell – Löven (4 photos), 0.590 USD so far
+2026-10-10 20:38:26,840 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:38:26,842 INFO fyndjakt.training: profile Nils Jonsson – Garmi (5 photos), 0.602 USD so far
+2026-10-10 20:38:43,905 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:38:43,912 INFO fyndjakt.training: profile Bruno Mathsson – Birgitta (5 photos), 0.615 USD so far
+2026-10-10 20:39:00,784 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:39:00,788 INFO fyndjakt.training: profile Børge Mogensen – Folkestolen (5 photos), 0.630 USD so far
+2026-10-10 20:39:15,223 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:39:15,227 INFO fyndjakt.training: profile Nils Jonsson – Trento (5 photos), 0.642 USD so far
+2026-10-10 20:39:30,430 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:39:30,439 INFO fyndjakt.training: profile Nirvan Richter – Massiv (5 photos), 0.654 USD so far
+2026-10-10 20:39:46,865 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:39:46,869 INFO fyndjakt.training: profile Axel Einar Hjorth – Typenko (5 photos), 0.669 USD so far
+2026-10-10 20:40:03,467 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:40:03,470 INFO fyndjakt.training: profile Carl Malmsten – Häggbom (5 photos), 0.683 USD so far
+2026-10-10 20:40:19,806 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:40:19,812 INFO fyndjakt.training: profile Martina Elgemark – Höllviken (5 photos), 0.701 USD so far
+2026-10-10 20:40:35,487 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:40:35,500 INFO fyndjakt.training: profile David Rosén – Napoli (5 photos), 0.714 USD so far
+2026-10-10 20:40:50,212 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:40:50,216 INFO fyndjakt.training: profile Bertil Fridhagen – Diamant (5 photos), 0.728 USD so far
+2026-10-10 20:41:04,787 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:41:04,792 INFO fyndjakt.training: profile Axel Einar Hjorth – Du Barry (3 photos), 0.740 USD so far
+2026-10-10 20:41:18,546 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:41:18,550 INFO fyndjakt.training: profile Bruno Mathsson – Karin (5 photos), 0.754 USD so far
+2026-10-10 20:41:37,914 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:41:37,926 INFO fyndjakt.training: profile Carl Malmsten – Pyramid (5 photos), 0.772 USD so far
+2026-10-10 20:41:52,484 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:41:52,488 INFO fyndjakt.training: profile Carl Malmsten – Vardags (5 photos), 0.785 USD so far
+2026-10-10 20:42:05,808 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:42:05,810 INFO fyndjakt.training: profile Karin Mobring – Amiral (5 photos), 0.796 USD so far
+2026-10-10 20:42:23,857 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:42:23,862 INFO fyndjakt.training: profile Henry Kjærnulf – Razorblade (5 photos), 0.811 USD so far
+2026-10-10 20:42:41,741 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:42:41,747 INFO fyndjakt.training: profile Yngvar Sandström – Tokyo (3 photos), 0.829 USD so far
+2026-10-10 20:42:55,897 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:42:55,901 INFO fyndjakt.training: profile Illum Wikkelsø – Capella (3 photos), 0.842 USD so far
+2026-10-10 20:43:10,209 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:43:10,213 INFO fyndjakt.training: profile Carl Malmsten – Herrgården (5 photos), 0.855 USD so far
+2026-10-10 20:43:22,585 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:43:22,590 INFO fyndjakt.training: profile Piet Hein & Bruno Mathsson – Superellips (4 photos), 0.866 USD so far
+2026-10-10 20:43:36,996 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:43:37,013 INFO fyndjakt.training: profile Vico Magistretti – Carimate (5 photos), 0.878 USD so far
+2026-10-10 20:43:51,379 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:43:51,383 INFO fyndjakt.training: profile Sam Larsson – Fenix (4 photos), 0.890 USD so far
+2026-10-10 20:44:04,840 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:44:04,842 INFO fyndjakt.training: profile Yngve Ekström – Björka (5 photos), 0.902 USD so far
+2026-10-10 20:44:20,214 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:44:20,217 INFO fyndjakt.training: profile Carl Malmsten – Brunnsviken (4 photos), 0.917 USD so far
+2026-10-10 20:44:33,699 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:44:33,713 INFO fyndjakt.training: profile Carl Malmsten – Solna (4 photos), 0.930 USD so far
+2026-10-10 20:44:46,001 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:44:46,004 INFO fyndjakt.training: profile Bertil Fridhagen – Bonett (3 photos), 0.941 USD so far
+2026-10-10 20:45:01,104 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:45:01,108 INFO fyndjakt.training: profile Ola Wihlborg – Stockholm (5 photos), 0.954 USD so far
+2026-10-10 20:45:15,030 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:45:15,035 INFO fyndjakt.training: profile Alvar Aalto – 112B (5 photos), 0.966 USD so far
+2026-10-10 20:45:35,519 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:45:35,527 INFO fyndjakt.training: profile Carl Malmsten – Jöns (5 photos), 0.986 USD so far
+2026-10-10 20:45:48,306 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:45:48,311 INFO fyndjakt.training: profile Christine Schwarzer – Flower (5 photos), 0.997 USD so far
+2026-10-10 20:46:04,278 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:46:04,282 INFO fyndjakt.training: profile Ole Wanscher – Rungstedlund (5 photos), 1.011 USD so far
+2026-10-10 20:46:18,786 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:46:18,788 INFO fyndjakt.training: profile Carl Malmsten – Sekreterarmöbel (5 photos), 1.025 USD so far
+2026-10-10 20:46:32,474 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:46:32,479 INFO fyndjakt.training: profile Carl Malmsten – Lillasyster (4 photos), 1.037 USD so far
+2026-10-10 20:46:46,152 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:46:46,158 INFO fyndjakt.training: profile Kaare Klint – Kirkestolen (5 photos), 1.049 USD so far
+2026-10-10 20:46:59,817 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:46:59,823 INFO fyndjakt.training: profile Carl Malmsten – Undantaget (5 photos), 1.062 USD so far
+2026-10-10 20:47:14,534 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:47:14,539 INFO fyndjakt.training: profile Yngve Ekström – Lamino (5 photos), 1.074 USD so far
+2026-10-10 20:47:28,329 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:47:28,334 INFO fyndjakt.training: profile Kajsa & Nils Strinning – String (5 photos), 1.088 USD so far
+2026-10-10 20:47:42,620 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:47:42,625 INFO fyndjakt.training: profile Carl Malmsten – Calmare Nyckel (5 photos), 1.101 USD so far
+2026-10-10 20:47:55,767 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:47:55,775 INFO fyndjakt.training: profile Broberg & Ridderstråle – Stella (5 photos), 1.113 USD so far
+2026-10-10 20:48:10,269 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:48:10,274 INFO fyndjakt.training: profile Carl Malmsten – Juni (5 photos), 1.126 USD so far
+2026-10-10 20:48:22,904 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:48:22,913 INFO fyndjakt.training: profile Gunilla Allard – Cinema (5 photos), 1.138 USD so far
+2026-10-10 20:48:36,681 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:48:36,687 INFO fyndjakt.training: profile Erik Wörtz – Korsör (5 photos), 1.150 USD so far
+2026-10-10 20:48:56,943 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:48:56,952 INFO fyndjakt.training: profile Gustav Axel Berg – Torparen (4 photos), 1.169 USD so far
+2026-10-10 20:49:10,693 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:49:10,697 INFO fyndjakt.training: profile Bruno Mathsson – Eva låg (3 photos), 1.181 USD so far
+2026-10-10 20:49:25,639 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:49:25,644 INFO fyndjakt.training: profile Borge Mogesen – Öresund (4 photos), 1.195 USD so far
+2026-10-10 20:49:41,019 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:49:41,022 INFO fyndjakt.training: profile Thomas Pedersen – Stingray (4 photos), 1.208 USD so far
+2026-10-10 20:49:54,957 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:49:54,962 INFO fyndjakt.training: profile Lennart Bender – Corona (3 photos), 1.222 USD so far
+2026-10-10 20:50:06,866 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:50:06,872 INFO fyndjakt.training: profile Yngvar Sandström – Triva-serien (5 photos), 1.233 USD so far
+2026-10-10 20:50:23,243 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:50:23,250 INFO fyndjakt.training: profile Bruno Mathsson – Eva (5 photos), 1.249 USD so far
+2026-10-10 20:50:36,189 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:50:36,195 INFO fyndjakt.training: profile Andreas Hansen – Spider (5 photos), 1.262 USD so far
+2026-10-10 20:50:53,701 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:50:53,711 INFO fyndjakt.training: profile Börge Lindau – Oblado (5 photos), 1.279 USD so far
+2026-10-10 20:51:08,973 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:51:08,978 INFO fyndjakt.training: profile Bruno Mathsson – Pernilla Roto (3 photos), 1.293 USD so far
+2026-10-10 20:51:27,276 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:51:27,280 INFO fyndjakt.training: profile Olof Pira – Pira (5 photos), 1.311 USD so far
+2026-10-10 20:51:40,432 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:51:40,436 INFO fyndjakt.training: profile Erik Wörtz – Kolding (3 photos), 1.323 USD so far
+2026-10-10 20:51:55,399 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:51:55,403 INFO fyndjakt.training: profile Carl Malmsten – Ulfåsa (5 photos), 1.336 USD so far
+2026-10-10 20:52:09,377 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:52:09,382 INFO fyndjakt.training: profile Bruno Mathsson – Miranda (5 photos), 1.348 USD so far
+2026-10-10 20:52:21,711 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:52:21,715 INFO fyndjakt.training: profile Thomas Harlev – Esbjerg (3 photos), 1.359 USD so far
+2026-10-10 20:52:38,814 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:52:38,820 INFO fyndjakt.training: profile Kaare Klint – Safaristolen (5 photos), 1.374 USD so far
+2026-10-10 20:52:50,516 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:52:50,524 INFO fyndjakt.training: profile Børge Mogensen – Tallboy (3 photos), 1.384 USD so far
+2026-10-10 20:53:03,998 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:53:04,004 INFO fyndjakt.training: profile Titti Fabiani – Book (5 photos), 1.396 USD so far
+2026-10-10 20:53:15,936 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:53:15,940 INFO fyndjakt.training: profile Marit Stigsdotter – Serena (5 photos), 1.407 USD so far
+2026-10-10 20:53:30,121 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:53:30,124 INFO fyndjakt.training: profile Sigurd Resell – Falcon chair (4 photos), 1.421 USD so far
+2026-10-10 20:53:48,093 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:53:48,098 INFO fyndjakt.training: profile Sven Markelius – Orkesterstolen (5 photos), 1.435 USD so far
+2026-10-10 20:54:01,974 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:54:01,982 INFO fyndjakt.training: profile Kerstin Hörlin-Holmquist – Stora Adam (5 photos), 1.448 USD so far
+2026-10-10 20:54:17,776 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:54:17,782 INFO fyndjakt.training: profile Bruno Mathsson – Mimat (4 photos), 1.460 USD so far
+2026-10-10 20:54:31,305 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:54:31,311 INFO fyndjakt.training: profile Börge Mogensen – Öresund (5 photos), 1.472 USD so far
+2026-10-10 20:54:46,665 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:54:46,669 INFO fyndjakt.training: profile Ragnar Helsén – Oxford (5 photos), 1.485 USD so far
+2026-10-10 20:55:01,442 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:55:01,451 INFO fyndjakt.training: profile Finn Juhl – Diplomat (5 photos), 1.500 USD so far
+2026-10-10 20:55:21,078 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:55:21,085 INFO fyndjakt.training: profile Ingemar Thillmark – Läckö (3 photos), 1.518 USD so far
+2026-10-10 20:55:34,567 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:55:34,573 INFO fyndjakt.training: profile John Kandell – Pilaster (5 photos), 1.531 USD so far
+2026-10-10 20:55:50,415 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:55:50,421 INFO fyndjakt.training: profile Arne Jacobsen – Sjuan (5 photos), 1.546 USD so far
+2026-10-10 20:56:05,873 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:56:05,878 INFO fyndjakt.training: profile Kerstin Hörlin-Holmquist – Skrindan (5 photos), 1.559 USD so far
+2026-10-10 20:56:21,955 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:56:21,960 INFO fyndjakt.training: profile Yngve Ekström – Småland (5 photos), 1.573 USD so far
+2026-10-10 20:56:36,689 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:56:36,694 INFO fyndjakt.training: profile Bertil Fridhagen – Reno (5 photos), 1.586 USD so far
+2026-10-10 20:56:53,583 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:56:53,588 INFO fyndjakt.training: profile Jan Ekström – Gazell (3 photos), 1.601 USD so far
+2026-10-10 20:57:09,749 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:57:09,753 INFO fyndjakt.training: profile Bertil Fridhagen – Dinett (5 photos), 1.615 USD so far
+2026-10-10 20:57:22,904 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:57:22,907 INFO fyndjakt.training: profile Umberto Asnago – Progetti (4 photos), 1.627 USD so far
+2026-10-10 20:57:36,140 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:57:36,147 INFO fyndjakt.training: profile Sam Larsson – Sam (5 photos), 1.638 USD so far
+2026-10-10 20:57:49,678 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:57:49,682 INFO fyndjakt.training: profile Carl Malmsten – Vidar (3 photos), 1.650 USD so far
+2026-10-10 20:58:11,442 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:58:11,451 INFO fyndjakt.training: profile Yngve Ekström – Kurva (3 photos), 1.673 USD so far
+2026-10-10 20:58:26,111 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:58:26,116 INFO fyndjakt.training: profile Bruno Mathsson – Pernilla 69 (3 photos), 1.685 USD so far
+2026-10-10 20:58:47,280 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:58:47,287 INFO fyndjakt.training: profile Göran Malmvall – KA72 (5 photos), 1.696 USD so far
+2026-10-10 20:59:01,209 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:59:01,214 INFO fyndjakt.training: profile Bruno Mathsson – Mirja (5 photos), 1.708 USD so far
+2026-10-10 20:59:19,861 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:59:19,867 INFO fyndjakt.training: profile Jahn Aamodt – Timeout (5 photos), 1.727 USD so far
+2026-10-10 20:59:36,153 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:59:36,161 INFO fyndjakt.training: profile Charles & Ray Eames – Eames Plastic Side Chair (5 photos), 1.742 USD so far
+2026-10-10 20:59:54,806 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 20:59:54,811 INFO fyndjakt.training: profile Nils Jonsson – Bjärni (5 photos), 1.759 USD so far
+2026-10-10 21:00:11,010 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:00:11,019 INFO fyndjakt.training: profile Gerard Van Den Berg – Loge (4 photos), 1.773 USD so far
+2026-10-10 21:00:26,064 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:00:26,069 INFO fyndjakt.training: profile Bertil Fridhagen – Sörgården (3 photos), 1.787 USD so far
+2026-10-10 21:00:41,486 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:00:41,497 INFO fyndjakt.training: profile Philippe Starck – Costes (5 photos), 1.800 USD so far
+2026-10-10 21:00:58,689 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:00:58,695 INFO fyndjakt.training: profile Børge Mogensen – Öresund (5 photos), 1.815 USD so far
+2026-10-10 21:01:16,341 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:01:16,348 INFO fyndjakt.training: profile Bruno Mathsson – Eva Hög (5 photos), 1.831 USD so far
+2026-10-10 21:01:30,137 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:01:30,142 INFO fyndjakt.training: profile Carl Malmsten – Lata Greven (3 photos), 1.843 USD so far
+2026-10-10 21:01:42,659 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:01:42,666 INFO fyndjakt.training: profile Yngve Ekström – Kontrapunkt (3 photos), 1.853 USD so far
+2026-10-10 21:01:55,349 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:01:55,358 INFO fyndjakt.training: profile Erik Wörtz – Ulvö (5 photos), 1.865 USD so far
+2026-10-10 21:02:11,857 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:02:11,861 INFO fyndjakt.training: profile Carl Malmsten – Farmor (5 photos), 1.880 USD so far
+2026-10-10 21:02:29,677 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:02:29,682 INFO fyndjakt.training: profile Tomas Jelinek – Stockholm (5 photos), 1.899 USD so far
+2026-10-10 21:02:49,121 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:02:49,125 INFO fyndjakt.training: profile Preben Sørensen – PS System (5 photos), 1.918 USD so far
+2026-10-10 21:03:04,624 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:03:04,632 INFO fyndjakt.training: profile Carl Malmsten – Lilla Åland (5 photos), 1.934 USD so far
+2026-10-10 21:03:15,393 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:03:15,402 INFO fyndjakt.training: profile Johan Hellström – Effect (3 photos), 1.943 USD so far
+2026-10-10 21:03:34,510 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:03:34,517 INFO fyndjakt.training: profile Carl Malmsten – Samsas (5 photos), 1.960 USD so far
+2026-10-10 21:03:46,584 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:03:46,586 INFO fyndjakt.training: profile Yngve Ekström – Krus (5 photos), 1.970 USD so far
+2026-10-10 21:03:58,875 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:03:58,880 INFO fyndjakt.training: profile Jonas Bohlin – Zink (5 photos), 1.982 USD so far
+2026-10-10 21:04:14,236 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:04:14,240 INFO fyndjakt.training: profile Bruno Mathsson – Pernilla (5 photos), 1.996 USD so far
+2026-10-10 21:04:28,128 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:04:28,132 INFO fyndjakt.training: profile Kerstin Hörlin-Holmqvist – Skrindan (3 photos), 2.007 USD so far
+2026-10-10 21:04:39,801 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:04:39,805 INFO fyndjakt.training: profile Martina Elgemark – Emmaboda (5 photos), 2.018 USD so far
+2026-10-10 21:04:52,413 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:04:52,416 INFO fyndjakt.training: profile Tord Björklund – Klinte (5 photos), 2.030 USD so far
+2026-10-10 21:05:01,874 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:05:01,882 INFO fyndjakt.training: profile Gunilla Allard – Chicago (4 photos), 2.039 USD so far
+2026-10-10 21:05:17,334 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:05:17,338 INFO fyndjakt.training: profile Preben Fabricius & Jørgen Kastholm – Tulip (3 photos), 2.053 USD so far
+2026-10-10 21:05:30,173 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:05:30,184 INFO fyndjakt.training: profile Bernt Petersen – Kludestolen (4 photos), 2.064 USD so far
+2026-10-10 21:06:05,482 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:06:05,487 INFO fyndjakt.training: profile Børge Mogensen – Shaker (5 photos), 2.088 USD so far
+2026-10-10 21:06:30,022 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:06:30,027 INFO fyndjakt.training: profile Bruno Mathsson & Piet Hein – Superellips (5 photos), 2.114 USD so far
+2026-10-10 21:06:44,195 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:06:44,200 INFO fyndjakt.training: profile Carl Malmsten – Själevad (5 photos), 2.126 USD so far
+2026-10-10 21:06:57,615 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:06:57,623 INFO fyndjakt.training: profile Sandra Kragnert – Fusion (5 photos), 2.137 USD so far
+2026-10-10 21:07:11,533 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:07:11,537 INFO fyndjakt.training: profile Erik Wörtz – Viborg (4 photos), 2.149 USD so far
+2026-10-10 21:07:31,824 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:07:31,826 INFO fyndjakt.training: profile Kai Kristiansen – FM-reolen (4 photos), 2.169 USD so far
+2026-10-10 21:07:49,317 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:07:49,325 INFO fyndjakt.training: profile Boris Berlin & Aleksej Iskos – Soft Edge (5 photos), 2.186 USD so far
+2026-10-10 21:08:06,088 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:08:06,093 INFO fyndjakt.training: profile Bruno Mathsson – Annika (5 photos), 2.200 USD so far
+2026-10-10 21:08:22,388 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:08:22,396 INFO fyndjakt.training: profile Alf Svensson – TeVe (5 photos), 2.215 USD so far
+2026-10-10 21:08:36,347 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:08:36,361 INFO fyndjakt.training: profile Harald Relling – Wing (4 photos), 2.226 USD so far
+2026-10-10 21:08:54,607 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:08:54,610 INFO fyndjakt.training: profile Carl Malmsten – Gustavus (5 photos), 2.245 USD so far
+2026-10-10 21:09:08,854 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:09:08,861 INFO fyndjakt.training: profile Yngve Ekström – Arka (5 photos), 2.258 USD so far
+2026-10-10 21:09:22,143 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:09:22,148 INFO fyndjakt.training: profile Bengt Ruda – Cikada (5 photos), 2.270 USD so far
+2026-10-10 21:09:40,322 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:09:40,327 INFO fyndjakt.training: profile Kerstin Hörlin-Holmquist – Lilla Eva (4 photos), 2.289 USD so far
+2026-10-10 21:09:53,157 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:09:53,167 INFO fyndjakt.training: profile Bertil Fridhagen – Facett (5 photos), 2.301 USD so far
+2026-10-10 21:10:06,309 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:10:06,317 INFO fyndjakt.training: profile Poul Cadovius – System Cado (4 photos), 2.312 USD so far
+2026-10-10 21:10:18,414 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:10:18,422 INFO fyndjakt.training: profile Claesson Koivisto Rune – Brasilia (3 photos), 2.323 USD so far
+2026-10-10 21:10:36,442 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:10:36,450 INFO fyndjakt.training: profile Bruno Mathsson – Ingrid (5 photos), 2.337 USD so far
+2026-10-10 21:10:50,077 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:10:50,083 INFO fyndjakt.training: profile Knut & Marianne Hagberg – Stockholm (5 photos), 2.350 USD so far
+2026-10-10 21:11:04,963 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:11:04,969 INFO fyndjakt.training: profile Yngve Ekström – Primo (5 photos), 2.363 USD so far
+2026-10-10 21:11:20,572 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:11:20,580 INFO fyndjakt.training: profile Verner Panton – Panton Chair (5 photos), 2.377 USD so far
+2026-10-10 21:11:31,248 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:11:31,255 INFO fyndjakt.training: profile Alvar Aalto – modell 611 (3 photos), 2.386 USD so far
+2026-10-10 21:11:42,081 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:11:42,086 INFO fyndjakt.training: profile Knut Och Marianne Hagberg – Stockholm (5 photos), 2.397 USD so far
+2026-10-10 21:11:57,994 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:11:58,003 INFO fyndjakt.training: profile Carl Malmsten – Talavid (5 photos), 2.411 USD so far
+2026-10-10 21:12:11,151 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:12:11,156 INFO fyndjakt.training: profile Christina Fürst – Kaskad (5 photos), 2.423 USD so far
+2026-10-10 21:12:25,700 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:12:25,704 INFO fyndjakt.training: profile Svante Skogh – Vindö (5 photos), 2.436 USD so far
+2026-10-10 21:12:40,472 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:12:40,476 INFO fyndjakt.training: profile Bruno Mathsson – Mina (5 photos), 2.449 USD so far
+2026-10-10 21:12:53,453 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:12:53,458 INFO fyndjakt.training: profile Svante Skogh – Rosetto (5 photos), 2.460 USD so far
+2026-10-10 21:13:07,255 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:13:07,262 INFO fyndjakt.training: profile Kerstin Hörlin-Holmquist – Charlotte (5 photos), 2.472 USD so far
+2026-10-10 21:13:20,939 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:13:20,957 INFO fyndjakt.training: profile Lievore Altherr Molina För Arper – Catifa 46 (4 photos), 2.485 USD so far
+2026-10-10 21:13:35,400 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-10-10 21:13:35,404 INFO fyndjakt.training: profile Pottery Barn – Malabar (3 photos), 2.497 USD so far
+Sammanslagna: 13
+   Carl Malmsten: Herrgården = Herrgård -> Herrgården
+   Carl Malmsten: Calmare Nyckel = Calmar Slott -> Calmare Nyckel
+   Bruno Mathsson: Jetson = JETSON 66 -> Jetson
+   Børge Mogensen: Öresund = Øresund -> Öresund
+   Børge Mogensen: Folkestolen = Folkestole -> Folkestolen
+   Arne Jacobsen: Sjuan = 7'er = Syveren -> Sjuan
+   Arne Norell: Sirocco = Scirocco -> Sirocco
+   Poul Cadovius: Royal System = Royal -> Royal System
+   Hans J Wegner: Y-stolen = Y-stol -> Y-stolen
+   Poul Kjaerholm: PK61 = PK-61 -> PK61
+   Charles & Ray Eames: Eames Plastic Chair = Eames Plastic Side Chair -> Eames Plastic Side Chair
+   Alf Svensson: TeVe = Te-Ve = TeVe-Stolen -> TeVe
+   Folke Ohlsson: USA 75 = Monterey -> USA 75
+Visuella profiler: 182
+Kostnad: 2.50 USD

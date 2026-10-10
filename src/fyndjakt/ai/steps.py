@@ -100,7 +100,7 @@ def screen(
     system[-1]["cache_control"] = {"type": "ephemeral"}  # the catalog is the same for every listing
     resp = client.messages.parse(
         model=model,
-        max_tokens=600,
+        max_tokens=1500,
         system=system,
         messages=[{"role": "user", "content": content}],
         output_format=Screening,
