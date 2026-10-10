@@ -137,6 +137,8 @@ def test_utvalt_shows_running_fynd_cards_soonest_first(client):
             s.add(Assessment(listing_id=lst.id, stage="final", decision=decision, net_margin_sek=2000))
     page = client.get("/utvalt").text
     assert page.index("Lot soon") < page.index("Lot late")
-    assert "Lot over" not in page and "Lot no" not in page
+    assert "Lot over" not in page  # ended
+    cards, table = page.split("Närmast fynd")
+    assert "Lot no" not in cards and "Lot no" in table  # INGET lots are listed as watched, not as cards
     assert "https://images.auctionet.com/soon.jpg" in page and "slutar om 1 h" in page
     assert client.get("/", follow_redirects=False).headers["location"] == "/utvalt"
