@@ -11,6 +11,8 @@ def main() -> None:
     sub.add_parser("migrate", help="Uppgradera databasen")
     bf = sub.add_parser("auctionet-backfill", help="Köa första fyllningen av Auctionet-comps (körs av workern)")
     bf.add_argument("--designer", action="append", default=[], help="Extra formgivarfråga, kan upprepas")
+    imp = sub.add_parser("import", help="Importera annonser från en mapp, CSV, JSON eller zip")
+    imp.add_argument("path")
     wh = sub.add_parser("telegram-webhook", help="Registrera Telegram-webhooken")
     wh.add_argument("base_url", help="t.ex. https://fyndjakt.example.se")
     args = parser.parse_args()
@@ -32,6 +34,27 @@ def main() -> None:
         with session_scope() as session:
             enqueue(session, "auctionet_backfill", {"todo": plan})
         print(f"Köat: {len(plan)} steg (≤ 10 000 objekt vardera, 1 förfrågan / 5 s). Körs av `fyndjakt serve`.")
+    elif args.cmd == "import":
+        from pathlib import Path
+
+        from fyndjakt import importer
+        from fyndjakt.config import get_config
+        from fyndjakt.db import session_scope
+        from fyndjakt.images import ImageLoader
+        from fyndjakt.migrate import upgrade
+
+        upgrade()
+        cfg = get_config()
+        path = Path(args.path)
+        with session_scope() as session:
+            loader = ImageLoader(cfg.image_cache_dir, cfg.user_agent)
+            if path.suffix.lower() == ".zip":
+                res = importer.import_zip(session, loader, path, cfg.ai_send_listing_images)
+            else:
+                res = importer.import_path(session, loader, path, cfg.ai_send_listing_images)
+        print(f"Importerade {len(res.imported)} annonser (bedöms av `fyndjakt serve`).")
+        for e in res.errors:
+            print("  fel:", e)
     elif args.cmd == "telegram-webhook":
         import httpx
 

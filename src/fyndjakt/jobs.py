@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from fyndjakt import capture
+from fyndjakt import capture, importer
 from fyndjakt.ai import budget, enrich
 from fyndjakt.assess import Deps, assess_listing, notify_owner, send_alert_for
 from fyndjakt.backup import backup_sqlite
@@ -84,6 +84,7 @@ def next_local_weekday(now: datetime, tz: str, weekday: int, hour: int) -> datet
 def ensure_periodic(session: Session, now: datetime, tz: str) -> None:
     first_run = {
         "auctionet_live": now,
+        "inbox_scan": now,
         "auctionet_crawl": next_local_time(now, tz, 3),
         "health_check": now,
         "title_batch": next_local_time(now, tz, 4),
@@ -247,6 +248,27 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
         log.warning("auctionet live failed (%d in a row): %r", row.consecutive_failures, e)
     finally:
         enqueue(session, "auctionet_live", run_at=now + LIVE_EVERY)
+
+
+INBOX_EVERY = timedelta(minutes=1)
+
+
+def handle_inbox_scan(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
+    """Listings the owner dropped into the inbox folder (his own exports); local files only."""
+    now = deps.now()
+    try:
+        if deps.images is not None:
+            res = importer.scan_inbox(
+                session,
+                deps.images,
+                Path(deps.config.inbox_dir),
+                now,
+                remote_allowed=deps.config.ai_send_listing_images,
+            )
+            if res.imported or res.errors:
+                log.info("inbox: %d listings imported, %d errors", len(res.imported), len(res.errors))
+    finally:
+        enqueue(session, "inbox_scan", run_at=now + INBOX_EVERY)
 
 
 def handle_screen_capture(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:
@@ -458,6 +480,7 @@ HANDLERS: dict[str, Callable[[Session, Job, Deps, dict], None]] = {
     "auctionet_crawl": handle_auctionet_crawl,
     "auctionet_live": handle_auctionet_live,
     "screen_capture": handle_screen_capture,
+    "inbox_scan": handle_inbox_scan,
     "auctionet_backfill": handle_auctionet_backfill,
     "health_check": handle_health_check,
     "title_batch": handle_title_batch,

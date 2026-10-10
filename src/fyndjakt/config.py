@@ -27,6 +27,7 @@ class Config(BaseSettings):
     # site's image CDN. Keep off unless that access is covered (see docs/recon/blocket_tillstand.md).
     ai_send_listing_images: bool = False
     image_cache_dir: str = "data/images"
+    inbox_dir: str = "data/inbox"  # drop listing folders / CSV / zip here; see fyndjakt.importer
     capture_dir: str = "data/captures"  # screenshots from the browser extension, deleted once read
 
     # Telegram

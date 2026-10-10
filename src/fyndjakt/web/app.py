@@ -3,6 +3,7 @@
 import hmac
 import json
 import logging
+import shutil
 import threading
 import uuid
 from contextlib import asynccontextmanager
@@ -17,7 +18,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.orm import Session
 
-from fyndjakt import capture
+from fyndjakt import capture, importer
 from fyndjakt.assess import Deps, remote_images_allowed
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
@@ -75,6 +76,7 @@ def handle_telegram_update(update: dict, deps: Deps) -> None:
 POLL_MAX_TRIES = 3
 MAX_UPLOADS = 4
 MAX_SCREENSHOT_BYTES = 15 * 1024 * 1024
+MAX_IMPORT_FILES = 200
 
 
 class TelegramPoller(threading.Thread):
@@ -363,6 +365,48 @@ def _routes():
         )
         listing, _new, _changed = upsert_listing(session, payload)
         return RedirectResponse(f"/annons/{listing.id}", status_code=303)
+
+    @r.get("/importera", response_class=HTMLResponse)
+    def importera(request: Request):
+        return templates.TemplateResponse(
+            request, "importera.html", {"inbox": str(Path(get_config().inbox_dir).resolve()), "result": None}
+        )
+
+    @r.post("/importera", response_class=HTMLResponse)
+    async def importera_save(request: Request, session: Session = Depends(db)):
+        """Upload a zip, a CSV/JSON/TXT or loose images + a text file; imported right away."""
+        form = await request.form()
+        deps: Deps = request.app.state.deps
+        tmp = Path(get_config().inbox_dir) / f"_upload-{uuid.uuid4().hex}"
+        tmp.mkdir(parents=True, exist_ok=True)
+        try:
+            for f in form.getlist("files")[:MAX_IMPORT_FILES]:
+                if not hasattr(f, "read") or not f.filename:
+                    continue
+                name = Path(f.filename).name
+                data = await f.read()
+                if len(data) > MAX_SCREENSHOT_BYTES * 4:
+                    raise HTTPException(400, f"{name} är för stor")
+                (tmp / name).write_bytes(data)
+            zips = [p for p in tmp.iterdir() if p.suffix.lower() == ".zip"]
+            result = importer.ImportResult()
+            remote = get_config().ai_send_listing_images
+            for z in zips:
+                r = importer.import_zip(session, deps.images, z, remote)
+                result.imported += r.imported
+                result.errors += r.errors
+                z.unlink()
+            if any(tmp.iterdir()):
+                r = importer.import_path(session, deps.images, tmp, remote)
+                result.imported += r.imported
+                result.errors += r.errors
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        return templates.TemplateResponse(
+            request,
+            "importera.html",
+            {"inbox": str(Path(get_config().inbox_dir).resolve()), "result": result},
+        )
 
     @r.get("/bild/{ident}")
     def bild(request: Request, ident: str) -> Response:
