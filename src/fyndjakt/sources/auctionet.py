@@ -192,6 +192,16 @@ def parse_item(item: dict) -> CompData:
     )
 
 
+def live_price(item: dict, buyer_premium: float) -> tuple[int | None, int | None]:
+    """(all-in cost to lead right now incl. buyer's premium, current leading bid) for an ongoing lot.
+    An unmet reserve sets the floor: the lot won't sell below it."""
+    bids = [b["amount"] for b in item.get("bids") or [] if b.get("amount")]
+    lead = item.get("next_bid_amount") or item.get("starting_bid_amount") or item.get("estimate")
+    if lead and item.get("reserve_amount") and not item.get("reserve_met"):
+        lead = max(lead, item["reserve_amount"])
+    return (round(lead * (1 + buyer_premium)) if lead else None), (max(bids) if bids else None)
+
+
 class AuctionetClient:
     """Serialised, rate-limited client. One shared instance per process."""
 
@@ -209,7 +219,8 @@ class AuctionetClient:
             if wait > 0:
                 time.sleep(wait)
             try:
-                r = self._http.get(API, params={"is": "ended", "page": page, "per_page": per_page, **params})
+                query = {"is": params.pop("is_", "ended"), "page": page, "per_page": per_page, **params}
+                r = self._http.get(API, params=query)
             finally:
                 self._last = time.monotonic()
         if r.status_code in (403, 429):
@@ -247,6 +258,19 @@ class AuctionetClient:
                 ends = [i["ends_at"] for i in items if i.get("ends_at")]
                 hit_known = bool(ends) and min(ends) < stop_before.timestamp()
             if hit_known or not items or page >= total:
+                return
+
+    def iter_live(self, horizon: datetime, max_pages: int = 30, **params: object) -> Iterator[dict]:
+        """Ongoing lots, soonest ending first, up to those ending at horizon."""
+        for page in range(1, max_pages + 1):
+            data = self.get_page(page, is_="ongoing", order="end_asc", **params)
+            items = data.get("items") or []
+            for item in items:
+                if item.get("ends_at") and item["ends_at"] > horizon.timestamp():
+                    return
+                yield item
+            total = (data.get("pagination") or {}).get("total_pages") or 0
+            if not items or page >= total:
                 return
 
     def pages(self, start_page: int = 1, count: int = MAX_PAGES, **params: object) -> Iterator[tuple[int, list, bool]]:

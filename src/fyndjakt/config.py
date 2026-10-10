@@ -37,6 +37,10 @@ class Config(BaseSettings):
     # Sources
     user_agent: str = "Fyndjakt/0.1 (internal furniture alerts)"
     auctionet_min_interval_s: float = 5.0
+    # Ongoing Auctionet auctions as a deal source (same open API and pace as the comps).
+    auctionet_live_enabled: bool = True
+    auctionet_buyer_premium: float = 0.25  # buyer's premium incl. VAT; check the house's terms per lot
+    auctionet_live_horizon_h: float = 48.0  # look at auctions ending within this window
     # Blocket poller is not built. Stays false until permission is documented.
     blocket_enabled: bool = False
 

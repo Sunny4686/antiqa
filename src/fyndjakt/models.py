@@ -19,7 +19,7 @@ class Listing(Base):
     __table_args__ = (UniqueConstraint("source", "external_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    # How it came in: blocket_push | blocket_share | blocket_ext | blocket_poll | tradera
+    # How it came in: blocket_push | blocket_share | blocket_ext | blocket_poll | tradera | manual | auctionet_live
     source: Mapped[str] = mapped_column(String(32))
     external_id: Mapped[str] = mapped_column(String(64))
     url: Mapped[str | None] = mapped_column(String(512))
@@ -33,6 +33,9 @@ class Listing(Base):
     first_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     image_urls: Mapped[list[str]] = mapped_column(JSON, default=list)
     status: Mapped[str] = mapped_column(String(16), default="new")  # new | assessed | skipped | handled
+    # Auctions only: when bidding closes and the leading bid (price_sek is the all-in cost to win right now).
+    ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    current_bid_sek: Mapped[int | None] = mapped_column(Integer)
 
 
 class WatchModel(Base):

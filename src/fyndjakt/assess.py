@@ -11,7 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from fyndjakt.ai import budget
-from fyndjakt.ai.steps import CandidateSpec, Usage, screen, verify
+from fyndjakt.ai.steps import CandidateSpec, Usage, Verification, screen, verify
 from fyndjakt.config import Config
 from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
 from fyndjakt.models import AICall, Assessment, Listing, TelegramMessage, WatchModel
@@ -37,6 +37,11 @@ class Deps:
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
     screen_fn: Callable = screen
     verify_fn: Callable = verify
+
+
+def remote_images_allowed(source: str, cfg: Config) -> bool:
+    """Auctionet's image CDN is part of its open API; other sites' images need ai_send_listing_images."""
+    return source == "auctionet_live" or cfg.ai_send_listing_images
 
 
 def model_label(m: WatchModel) -> str:
@@ -133,7 +138,7 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         return _final(session, listing, decision=dec.INGET, note=pf.reason)
 
     spend = _Spend(session, deps, s.daily_ai_budget_usd)
-    image_urls = usable_urls(listing.image_urls, cfg.ai_send_listing_images)
+    image_urls = usable_urls(listing.image_urls, remote_images_allowed(listing.source, cfg))
     use_images = deps.images is not None and bool(image_urls)
 
     def imgs(max_px: int, limit: int) -> list[dict]:
@@ -150,68 +155,79 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
             )
         return out
 
-    # 2. Screening
-    if not spend.can_spend():
-        listing.status = "assessed"
-        return _final(session, listing, decision=dec.INGET, note="AI hoppades över (budget eller saknad nyckel)")
-    scr, usage = deps.screen_fn(deps.ai, cfg.model_fast, listing.title, listing.price_sek, imgs(512, 1))
-    spend.log("screen", usage)
-    session.add(
-        Assessment(
-            listing_id=listing.id,
-            stage="screen",
-            confidence=scr.confidence,
-            note=scr.reason,
-            llm_model=usage.model,
-            raw=scr.model_dump(),
-        )
-    )
-
-    # 3. Candidates
-    refs = [cand.ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]
-    picked = cand.select_candidates(refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name)
-    if not picked:
-        listing.status = "assessed"
-        return _final(
-            session,
-            listing,
-            decision=dec.INGET,
-            spend=spend,
-            note="Ingen kandidat i bevakningslistan" + (" (möjlig design)" if scr.is_collectible_design else ""),
+    # A price change doesn't change what the object is: reuse the earlier verification instead of paying again.
+    reused = _reusable_verdict(session, listing.id, by_id)
+    strong: Verification | None = None
+    if reused is not None:
+        ver, strong, disagree = reused
+        model = by_id[ver.candidate_id]
+        picked_ids = {model.id}
+        specs = [
+            CandidateSpec(model.id, model_label(model), model.identifying_features, model.replica_traps, model.marks)
+        ]
+    else:
+        # 2. Screening
+        if not spend.can_spend():
+            listing.status = "assessed"
+            return _final(session, listing, decision=dec.INGET, note="AI hoppades över (budget eller saknad nyckel)")
+        scr, usage = deps.screen_fn(deps.ai, cfg.model_fast, listing.title, listing.price_sek, imgs(512, 1))
+        spend.log("screen", usage)
+        session.add(
+            Assessment(
+                listing_id=listing.id,
+                stage="screen",
+                confidence=scr.confidence,
+                note=scr.reason,
+                llm_model=usage.model,
+                raw=scr.model_dump(),
+            )
         )
 
-    specs = [
-        CandidateSpec(
-            r.id,
-            model_label(by_id[r.id]),
-            by_id[r.id].identifying_features,
-            by_id[r.id].replica_traps,
-            by_id[r.id].marks,
-        )
-        for r in picked
-    ]
+        # 3. Candidates
+        refs = [cand.ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]
+        picked = cand.select_candidates(refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name)
+        if not picked:
+            listing.status = "assessed"
+            return _final(
+                session,
+                listing,
+                decision=dec.INGET,
+                spend=spend,
+                note="Ingen kandidat i bevakningslistan" + (" (möjlig design)" if scr.is_collectible_design else ""),
+            )
 
-    # 4. Verification (fast)
-    if not spend.can_spend():
-        listing.status = "assessed"
-        return _final(session, listing, decision=dec.INGET, spend=spend, note="AI-budget slut före verifiering")
-    ver, usage = deps.verify_fn(
-        deps.ai, cfg.model_fast, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
-    )
-    spend.log("verify", usage)
-    picked_ids = {r.id for r in picked}
-    session.add(
-        Assessment(
-            listing_id=listing.id,
-            stage="verify",
-            model_candidate_id=_known(ver.candidate_id, picked_ids),
-            match=ver.match,
-            confidence=ver.confidence,
-            llm_model=usage.model,
-            raw=ver.model_dump(),
+        specs = [
+            CandidateSpec(
+                r.id,
+                model_label(by_id[r.id]),
+                by_id[r.id].identifying_features,
+                by_id[r.id].replica_traps,
+                by_id[r.id].marks,
+            )
+            for r in picked
+        ]
+
+        # 4. Verification (fast)
+        if not spend.can_spend():
+            listing.status = "assessed"
+            return _final(session, listing, decision=dec.INGET, spend=spend, note="AI-budget slut före verifiering")
+        ver, usage = deps.verify_fn(
+            deps.ai, cfg.model_fast, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
         )
-    )
-    model = by_id.get(ver.candidate_id) if ver.candidate_id in picked_ids else None
+        spend.log("verify", usage)
+        picked_ids = {r.id for r in picked}
+        session.add(
+            Assessment(
+                listing_id=listing.id,
+                stage="verify",
+                model_candidate_id=_known(ver.candidate_id, picked_ids),
+                match=ver.match,
+                confidence=ver.confidence,
+                llm_model=usage.model,
+                raw=ver.model_dump(),
+            )
+        )
+        model = by_id.get(ver.candidate_id) if ver.candidate_id in picked_ids else None
 
     # 5-7. Value, geography, margin
     where = geo.locate(listing.lat, listing.lon, listing.municipality, deps.municipalities)
@@ -237,10 +253,12 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
 
     val, m25, m75 = priced(ver.condition_guess)
 
-    # 8. Escalation to the strong model
-    disagree = False
+    # 8. Escalation to the strong model (once per listing)
     final_ver = ver
-    if dec.should_escalate(ver.match, m25.net_sek if m25 else None, s.min_net_margin_sek) and spend.can_spend():
+    if reused is None:
+        disagree = False
+    escalate = strong is None and dec.should_escalate(ver.match, m25.net_sek if m25 else None, s.min_net_margin_sek)
+    if escalate and spend.can_spend():
         strong, usage = deps.verify_fn(
             deps.ai, cfg.model_strong, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
         )
@@ -257,10 +275,10 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
             )
         )
         disagree = strong.candidate_id != ver.candidate_id or strong.match == "no"
-        if not disagree:
-            final_ver = strong
-            if strong.condition_guess != ver.condition_guess:
-                val, m25, m75 = priced(strong.condition_guess)  # the decision uses the strong model's condition
+    if strong is not None and not disagree:
+        final_ver = strong
+        if strong.condition_guess != ver.condition_guess:
+            val, m25, m75 = priced(strong.condition_guess)  # the decision uses the strong model's condition
 
     replica = pf.replica_flag or bool(final_ver.replica_signals)
     confidence = dec.combine_confidence(final_ver.confidence, final_ver.match, val.level, replica, disagree, val.n)
@@ -296,6 +314,29 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     listing.status = "assessed"
     _maybe_notify(session, deps, s, listing, final, model)
     return final
+
+
+def _reusable_verdict(
+    session: Session, listing_id: int, by_id: dict[int, WatchModel]
+) -> tuple[Verification, Verification | None, bool] | None:
+    """(fast verdict, strong verdict, disagree) from an earlier run, if it pointed at a still-active model."""
+    rows = list(
+        session.scalars(
+            select(Assessment)
+            .where(Assessment.listing_id == listing_id, Assessment.stage.in_(("verify", "verify_strong")))
+            .order_by(Assessment.id.desc())
+        )
+    )
+    fast = next((r for r in rows if r.stage == "verify"), None)
+    if fast is None or not fast.raw:
+        return None
+    ver = Verification(**fast.raw)
+    if ver.candidate_id not in by_id or fast.model_candidate_id != ver.candidate_id:
+        return None
+    strong_row = next((r for r in rows if r.stage == "verify_strong" and r.id > fast.id), None)
+    strong = Verification(**strong_row.raw) if strong_row and strong_row.raw else None
+    disagree = strong is not None and (strong.candidate_id != ver.candidate_id or strong.match == "no")
+    return ver, strong, disagree
 
 
 def _known(candidate_id: int | None, allowed: set[int]) -> int | None:
@@ -379,10 +420,9 @@ def send_alert_for(session: Session, deps: Deps, assessment_id: int) -> None:
     listing = session.get(Listing, a.listing_id)
     if not (deps.telegram and deps.config.telegram_chat_id):
         return
+    # One alert per listing and verdict: a rising bid or a retry must not repeat it.
     sent = session.scalar(
-        select(TelegramMessage.id).where(
-            TelegramMessage.listing_id == listing.id, TelegramMessage.created_at >= a.created_at
-        )
+        select(TelegramMessage.id).where(TelegramMessage.listing_id == listing.id, TelegramMessage.kind == a.decision)
     )
     if sent:
         return
@@ -408,7 +448,7 @@ def send_alert_for(session: Session, deps: Deps, assessment_id: int) -> None:
         needs_underside_photo=a.needs_underside_photo,
     )
     remote = [u for u in listing.image_urls if not u.startswith(LOCAL_PREFIX)]
-    photo = remote[0] if deps.config.ai_send_listing_images and remote else None
+    photo = remote[0] if remote_images_allowed(listing.source, deps.config) and remote else None
     msg_id = deps.telegram.send_alert(
         deps.config.telegram_chat_id,
         format_alert(data),

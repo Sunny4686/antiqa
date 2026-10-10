@@ -56,7 +56,9 @@ class IngestListing(BaseModel):
 
     model_config = ConfigDict(extra="ignore")
 
-    source: str = Field(pattern=r"^(blocket_push|blocket_share|blocket_ext|blocket_poll|tradera|manual)$")
+    source: str = Field(
+        pattern=r"^(blocket_push|blocket_share|blocket_ext|blocket_poll|tradera|manual|auctionet_live)$"
+    )
     external_id: str = Field(min_length=1, max_length=64)
     title: str = Field(min_length=1, max_length=512)
     url: str | None = None

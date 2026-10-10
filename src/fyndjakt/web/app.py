@@ -14,7 +14,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Session
 
-from fyndjakt.assess import Deps
+from fyndjakt.assess import Deps, remote_images_allowed
 from fyndjakt.config import get_config
 from fyndjakt.db import session_scope
 from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
@@ -219,7 +219,7 @@ def _routes():
                 "model": model,
                 "feedback": feedback,
                 "buttons": FEEDBACK_BUTTONS,
-                "images": usable_urls(listing.image_urls, get_config().ai_send_listing_images),
+                "images": usable_urls(listing.image_urls, remote_images_allowed(listing.source, get_config())),
                 "pending": final is None and listing.status == "new",
             },
         )

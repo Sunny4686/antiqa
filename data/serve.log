@@ -394,3 +394,7 @@ INFO:     127.0.0.1:61385 - "GET /health HTTP/1.1" 200 OK
 2026-10-10 18:26:56,527 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages/batches "HTTP/1.1 200 OK"
 2026-10-10 18:27:17,718 INFO fyndjakt.jobs: watchlist: 197 new, 0 updated, 343 comps linked
 2026-10-10 18:28:06,715 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22}: up to page 90, 0 new comps
+2026-10-10 18:29:01,676 INFO fyndjakt.jobs: auctionet backfill {'category_id': 22} done; 4 steps left
+2026-10-10 18:29:55,450 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281}: up to page 10, 1000 new comps
+2026-10-10 18:30:49,891 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281}: up to page 20, 1000 new comps
+2026-10-10 18:31:44,636 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281} done; 3 steps left
