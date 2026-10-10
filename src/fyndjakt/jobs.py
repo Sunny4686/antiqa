@@ -294,7 +294,7 @@ def handle_title_batch(session: Session, job: Job, deps: Deps, _ctx: dict) -> No
             # At most half of what's left: the day's listing assessments need the rest.
             limit = int(_budget_left(session, deps) * TITLE_BATCH_BUDGET_SHARE / enrich.EST_USD_PER_TITLE)
             if limit >= 50:
-                row = enrich.submit_title_batch(session, deps.ai, deps.config.model_fast, limit=min(limit, 5000))
+                row = enrich.submit_title_batch(session, deps.ai, deps.config.model_text, limit=min(limit, 5000))
                 still_open = 1 if row else 0
     finally:
         # Poll every 30 min while a batch is open, otherwise once a night.

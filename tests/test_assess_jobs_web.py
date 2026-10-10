@@ -30,9 +30,10 @@ class FakeTelegram:
 
 
 def _screen(designer="Yngve Ekström", model="Lamino"):
-    def fn(client, model_id, title, price, images):
+    def fn(client, model_id, title, price, images, **_kw):
         return (
             Screening(
+                catalog_ids=[],
                 reason="ok",
                 is_collectible_design=True,
                 designer=designer,
@@ -49,7 +50,7 @@ def _screen(designer="Yngve Ekström", model="Lamino"):
 def _verify(candidate_id, match="yes", confidence="hög", strong_candidate=None):
     calls = []
 
-    def fn(client, model_id, title, desc, price, images, cands):
+    def fn(client, model_id, title, desc, price, images, cands, **_kw):
         calls.append(model_id)
         cid = strong_candidate if (strong_candidate is not None and model_id == "claude-sonnet-5-5") else candidate_id
         return (

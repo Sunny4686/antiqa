@@ -16,7 +16,10 @@ SCREEN_SYSTEM = """Du granskar begagnade möbelannonser från Sverige åt en åt
 Avgör om möbeln kan vara en skandinavisk designmöbel med samlarvärde (formgiven modell från en känd formgivare
 eller tillverkare, främst 1930-1980), och i så fall vilken formgivare, tillverkare och modell den troligen är.
 Var återhållsam: vanliga massproducerade möbler och nytillverkade kopior är inte samlarobjekt. Gissa inte namn
-du inte har stöd för i bild eller text; lämna dem tomma. Svara kort och på svenska."""
+du inte har stöd för i bild eller text; lämna dem tomma. Säljare vet ofta inte vad de har, så rubriken kan vara
+helt generisk ("fåtölj", "byrå"): utgå från formen i bilden. När en katalog över bevakade modeller finns, ange
+upp till tre katalog-id vars form möbeln liknar (mest trolig först), även om du är osäker; tom lista om ingen
+liknar. Svara kort och på svenska."""
 
 VERIFY_SYSTEM = """Du verifierar om en möbel i en annons är en specifik formgiven modell från en kandidatlista.
 Arbeta i denna ordning:
@@ -35,6 +38,7 @@ class Screening(BaseModel):
     designer: str | None
     manufacturer: str | None
     model_name: str | None
+    catalog_ids: list[int] = Field(description="Upp till 3 katalog-id som formen liknar, mest trolig först")
     confidence: Confidence
 
 
@@ -79,20 +83,44 @@ def _usage(model: str, resp: object) -> Usage:
 
 
 def screen(
-    client: anthropic.Anthropic, model: str, title: str, price_sek: int | None, image_blocks: list[dict]
+    client: anthropic.Anthropic,
+    model: str,
+    title: str,
+    price_sek: int | None,
+    image_blocks: list[dict],
+    catalog: str | None = None,
 ) -> tuple[Screening, Usage]:
     content = [
         *image_blocks[:1],
         {"type": "text", "text": f"Rubrik: {title}\nPris: {price_sek if price_sek is not None else 'okänt'} kr"},
     ]
+    system = [{"type": "text", "text": SCREEN_SYSTEM}]
+    if catalog:
+        system.append({"type": "text", "text": catalog})
+    system[-1]["cache_control"] = {"type": "ephemeral"}  # the catalog is the same for every listing
     resp = client.messages.parse(
         model=model,
         max_tokens=600,
-        system=[{"type": "text", "text": SCREEN_SYSTEM, "cache_control": {"type": "ephemeral"}}],
+        system=system,
         messages=[{"role": "user", "content": content}],
         output_format=Screening,
     )
     return resp.parsed_output, _usage(model, resp)
+
+
+def _reference_content(candidates: list[CandidateSpec], references: dict[int, dict] | None) -> list[dict]:
+    """After the listing's own photos: one labelled reference photo per candidate, to compare form directly."""
+    out: list[dict] = []
+    for c in candidates:
+        block = (references or {}).get(c.id)
+        if block:
+            out += [
+                {"type": "text", "text": f"Referensbild (såld, bekräftad) för kandidat id={c.id}: {c.label}"},
+                block,
+            ]
+    if out:
+        out.insert(0, {"type": "text", "text": "Ovan: annonsens bilder. Nedan: referensbilder att jämföra formen med."})
+    return out
 
 
 def verify(
@@ -103,6 +131,7 @@ def verify(
     price_sek: int | None,
     image_blocks: list[dict],
     candidates: list[CandidateSpec],
+    references: dict[int, dict] | None = None,
 ) -> tuple[Verification, Usage]:
     cand_text = "\n\n".join(
         f"id={c.id}: {c.label}\nKännetecken: {c.identifying_features or '-'}\n"
@@ -117,7 +146,16 @@ def verify(
         model=model,
         max_tokens=2000,
         system=[{"type": "text", "text": VERIFY_SYSTEM, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": [*image_blocks[:4], {"type": "text", "text": text}]}],
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    *image_blocks[:4],
+                    *_reference_content(candidates, references),
+                    {"type": "text", "text": text},
+                ],
+            }
+        ],
         output_format=Verification,
     )
     return resp.parsed_output, _usage(model, resp)

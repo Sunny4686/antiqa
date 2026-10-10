@@ -211,3 +211,25 @@ def test_generic_terms_and_strict_title_match():
     assert not strict_title_match("Fåtölj Lamino-stil, 1900-tal.", "Yngve Ekström", "Lamino", [])
     assert not strict_title_match("YNGVE EKSTRÖM. Pall, Swedese.", "Yngve Ekström", "Lamino", [])
     assert strict_title_match("BRUNO MATHSSON. Fåtölj, Pernilla.", "Bruno Mathsson", "Pernilla 69", ["Pernilla"])
+
+
+def test_visual_catalog_ids_select_candidates_without_any_text():
+    from fyndjakt.pipeline.candidates import ModelRef, select_candidates
+
+    models = [ModelRef(1, "Bruno Mathsson", "Dux", "Pernilla"), ModelRef(2, "Yngve Ekström", "Swedese", "Lamino")]
+    picked = select_candidates(models, [], None, None, None, visual_ids=[2, 1])
+    assert [m.id for m in picked] == [2, 1]
+    assert select_candidates(models, [], None, None, None) == []
+
+
+def test_reference_photos_are_labelled_per_candidate():
+    from fyndjakt.ai.steps import CandidateSpec, _reference_content
+
+    specs = [
+        CandidateSpec(1, "Mathsson – Pernilla", None, None, None),
+        CandidateSpec(2, "Ekström – Lamino", None, None, None),
+    ]
+    img = {"type": "image", "source": {}}
+    out = _reference_content(specs, {2: img})
+    assert out[1]["text"].startswith("Referensbild") and "id=2" in out[1]["text"] and out[2] is img and len(out) == 3
+    assert _reference_content(specs, None) == []

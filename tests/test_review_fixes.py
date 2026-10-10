@@ -201,7 +201,7 @@ def test_free_listing_can_be_fynd():
 
 
 def _verify_with_strong_condition(candidate_id, strong_condition):
-    def fn(client, model_id, title, desc, price, images, cands):
+    def fn(client, model_id, title, desc, price, images, cands, **_kw):
         strong = model_id == "claude-sonnet-5-5"
         return (
             Verification(

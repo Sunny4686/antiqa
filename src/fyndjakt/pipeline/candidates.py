@@ -33,10 +33,13 @@ def select_candidates(
     guess_manufacturer: str | None,
     guess_model: str | None,
     limit: int = 8,
+    visual_ids: list[int] | None = None,
 ) -> list[ModelRef]:
+    """visual_ids: catalog ids the screening picked from the picture, most likely first."""
+    visual = {mid: rank for rank, mid in enumerate(visual_ids or [])}
     scored: list[tuple[int, int, ModelRef]] = []
     for m in models:
-        score = 0
+        score = 6 - visual[m.id] if m.id in visual else 0
         if m.id in text_matched_ids:
             score += 3
         if _hit(guess_model, m.model_name, *m.aliases):

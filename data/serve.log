@@ -580,3 +580,21 @@ INFO:     127.0.0.1:49527 - "GET /utvalt HTTP/1.1" 200 OK
 2026-10-10 18:50:25,578 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 90, 1000 new comps
 2026-10-10 18:51:19,967 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17} done; 2 steps left
 2026-10-10 18:52:13,692 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 10, 1000 new comps
+2026-10-10 18:53:07,647 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 20, 1000 new comps
+2026-10-10 18:54:01,593 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 30, 1000 new comps
+2026-10-10 18:54:55,544 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 40, 998 new comps
+2026-10-10 18:55:50,119 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 50, 1000 new comps
+2026-10-10 18:56:44,336 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 60, 995 new comps
+2026-10-10 18:57:38,742 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 70, 1000 new comps
+2026-10-10 18:57:39,087 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01JK9aYfkGL9h2onAjdED2Xg "HTTP/1.1 200 OK"
+2026-10-10 18:57:39,370 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01JK9aYfkGL9h2onAjdED2Xg "HTTP/1.1 200 OK"
+2026-10-10 18:57:39,796 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01JK9aYfkGL9h2onAjdED2Xg/results "HTTP/1.1 200 OK"
+2026-10-10 18:57:43,243 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages/batches "HTTP/1.1 200 OK"
+2026-10-10 18:58:33,729 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 80, 996 new comps
+2026-10-10 18:59:28,348 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20}: up to page 90, 997 new comps
+2026-10-10 19:00:23,494 INFO fyndjakt.jobs: auctionet backfill {'category_id': 20} done; 1 steps left
+2026-10-10 19:01:17,094 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 10, 1000 new comps
+2026-10-10 19:02:10,909 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 20, 1000 new comps
+2026-10-10 19:03:05,009 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 30, 1000 new comps
+2026-10-10 19:03:58,592 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 40, 1000 new comps
+2026-10-10 19:04:52,976 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 50, 1000 new comps

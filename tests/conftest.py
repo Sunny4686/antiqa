@@ -25,6 +25,7 @@ def env(monkeypatch, tmp_path):
         "TELEGRAM_WEBHOOK_SECRET": "tg-secret",
         "TELEGRAM_CHAT_ID": "42",
         "ANTHROPIC_API_KEY": "",
+        "MODEL_FAST": "claude-haiku-4-5",  # tests tell the fast and strong step apart by model id
         "TELEGRAM_BOT_TOKEN": "",
     }.items():
         monkeypatch.setenv(k, v)

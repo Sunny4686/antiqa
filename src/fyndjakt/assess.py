@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from fyndjakt.ai import budget
+from fyndjakt.ai.catalog import catalog_text, reference_blocks
 from fyndjakt.ai.steps import CandidateSpec, Usage, Verification, screen, verify
 from fyndjakt.config import Config
 from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
@@ -37,6 +38,9 @@ class Deps:
     now: Callable[[], datetime] = lambda: datetime.now(UTC)
     screen_fn: Callable = screen
     verify_fn: Callable = verify
+
+
+MAX_REFERENCE_IMAGES = 4
 
 
 def remote_images_allowed(source: str, cfg: Config) -> bool:
@@ -155,6 +159,12 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
             )
         return out
 
+    def references(model_ids: list[int]) -> dict[int, dict]:
+        """A sold example's photo per candidate (Auctionet), for picture-against-picture comparison."""
+        if deps.images is None:
+            return {}
+        return reference_blocks(session, deps.images, model_ids[:MAX_REFERENCE_IMAGES])
+
     # A price change doesn't change what the object is: reuse the earlier verification instead of paying again.
     reused = _reusable_verdict(session, listing.id, by_id)
     strong: Verification | None = None
@@ -174,7 +184,9 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
         if not spend.can_spend():
             listing.status = "assessed"
             return _final(session, listing, decision=dec.INGET, note="AI hoppades över (budget eller saknad nyckel)")
-        scr, usage = deps.screen_fn(deps.ai, cfg.model_fast, listing.title, listing.price_sek, imgs(512, 1))
+        scr, usage = deps.screen_fn(
+            deps.ai, cfg.model_fast, listing.title, listing.price_sek, imgs(512, 1), catalog=catalog_text(models)
+        )
         spend.log("screen", usage)
         session.add(
             Assessment(
@@ -189,7 +201,9 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
 
         # 3. Candidates
         refs = [cand.ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]
-        picked = cand.select_candidates(refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name)
+        picked = cand.select_candidates(
+            refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name, visual_ids=scr.catalog_ids
+        )
         if not picked:
             listing.status = "assessed"
             return _final(
@@ -216,7 +230,14 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
             listing.status = "assessed"
             return _final(session, listing, decision=dec.INGET, spend=spend, note="AI-budget slut före verifiering")
         ver, usage = deps.verify_fn(
-            deps.ai, cfg.model_fast, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
+            deps.ai,
+            cfg.model_fast,
+            listing.title,
+            listing.description,
+            listing.price_sek,
+            imgs(784, 4),
+            specs,
+            references=references([s.id for s in specs]),
         )
         spend.log("verify", usage)
         picked_ids = {r.id for r in picked}
@@ -264,7 +285,14 @@ def assess_listing(session: Session, listing_id: int, deps: Deps) -> Assessment:
     escalate = strong is None and dec.should_escalate(ver.match, m25.net_sek if m25 else None, s.min_net_margin_sek)
     if escalate and spend.can_spend():
         strong, usage = deps.verify_fn(
-            deps.ai, cfg.model_strong, listing.title, listing.description, listing.price_sek, imgs(784, 4), specs
+            deps.ai,
+            cfg.model_strong,
+            listing.title,
+            listing.description,
+            listing.price_sek,
+            imgs(784, 4),
+            specs,
+            references=references([s.id for s in specs]),
         )
         spend.log("verify_strong", usage)
         session.add(

@@ -26,3 +26,30 @@
   25/40 negative → -
   26/40 positive → -
   27/40 negative → -
+  28/40 negative → -
+  29/40 positive → -
+  30/40 negative → -
+  31/40 negative → -
+  32/40 positive → -
+  33/40 negative → -
+  34/40 negative → -
+  35/40 positive → -
+  36/40 negative → -
+  37/40 positive → -
+  38/40 negative → -
+  39/40 positive → -
+  40/40 positive → -
+{
+  "n": 40,
+  "n_positive": 20,
+  "true_positive": 0,
+  "wrong_model": 0,
+  "precision": null,
+  "recall": 0.0,
+  "false_positives_by_source": {},
+  "errors": 0,
+  "cost_usd": 0.0573,
+  "cost_usd_per_item": 0.00143,
+  "latency_p50_s": 2.85
+}
+Sparat: /Users/jay/antiqa/eval/results/20261010-165326.json

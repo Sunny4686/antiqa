@@ -21,6 +21,7 @@ import anthropic
 from sqlalchemy import func, select
 
 from fyndjakt.ai import budget
+from fyndjakt.ai.catalog import catalog_text, reference_blocks
 from fyndjakt.ai.steps import CandidateSpec, screen, verify
 from fyndjakt.assess import model_label
 from fyndjakt.config import get_config
@@ -68,6 +69,7 @@ class Outcome:
     cost_usd: float
     latency_s: float
     error: str | None = None
+    candidate_hit: bool = False  # the true model was among the candidates sent to verification
 
 
 def build_cases(session, n_pos: int, n_neg: int, seed: int) -> list[Case]:
@@ -133,12 +135,16 @@ def run_case(case: Case, session, client, loader: ImageLoader, cfg) -> Outcome:
         )
         # Listing images (e.g. Blocket) follow the same flag as production; comp images come from Auctionet.
         urls = case.image_urls if case.source == "comp" else usable_urls(case.image_urls, cfg.ai_send_listing_images)
-        scr, u = screen(client, cfg.model_fast, case.title, case.price_sek, loader.blocks(urls, 512, 1))
+        catalog = catalog_text(models)
+        scr, u = screen(client, cfg.model_fast, case.title, case.price_sek, loader.blocks(urls, 512, 1), catalog)
         cost += budget.cost_usd(cfg.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write)
         refs = [ModelRef(m.id, m.designer, m.manufacturer, m.model_name, tuple(m.aliases or [])) for m in models]
-        picked = select_candidates(refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name)
+        picked = select_candidates(
+            refs, pf.matched_model_ids, scr.designer, scr.manufacturer, scr.model_name, visual_ids=scr.catalog_ids
+        )
         if not picked:
             return Outcome(case, None, None, scr.is_collectible_design, cost, time.monotonic() - t0)
+        hit = case.true_model_id in {r.id for r in picked}
         specs = [
             CandidateSpec(
                 r.id,
@@ -157,10 +163,16 @@ def run_case(case: Case, session, client, loader: ImageLoader, cfg) -> Outcome:
             case.price_sek,
             loader.blocks(urls, 784, 4),
             specs,
+            # The case's own comp must never be its reference photo.
+            reference_blocks(
+                session, loader, [s.id for s in specs][:4], {case.ref_id} if case.source == "comp" else None
+            ),
         )
         cost += budget.cost_usd(cfg.model_prices, u.model, u.tokens_in, u.tokens_out, u.cache_read, u.cache_write)
         predicted = ver.candidate_id if ver.match in ("yes", "uncertain") and ver.candidate_id in by_id else None
-        return Outcome(case, predicted, ver.match, scr.is_collectible_design, cost, time.monotonic() - t0)
+        return Outcome(
+            case, predicted, ver.match, scr.is_collectible_design, cost, time.monotonic() - t0, candidate_hit=hit
+        )
     except Exception as e:  # keep going; errors are reported
         return Outcome(case, None, None, False, cost, time.monotonic() - t0, error=repr(e)[:300])
 
@@ -185,6 +197,10 @@ def summarize(outcomes: list[Outcome]) -> dict:
         "wrong_model": wrong_model,
         "precision": round(tp / (tp + fp), 3) if tp + fp else None,
         "recall": round(tp / n_pos, 3) if n_pos else None,
+        # How often the right model reached verification at all (the screening's share of the misses).
+        "candidate_recall": round(sum(o.candidate_hit for o in outcomes if o.case.kind == "positive") / n_pos, 3)
+        if n_pos
+        else None,
         "false_positives_by_source": fp_by,
         "errors": sum(1 for o in outcomes if o.error),
         "cost_usd": round(sum(o.cost_usd for o in outcomes), 4),

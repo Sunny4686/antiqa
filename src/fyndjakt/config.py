@@ -12,7 +12,11 @@ class Config(BaseSettings):
 
     # Anthropic. Verify ids and prices against Anthropic's docs when changing them.
     anthropic_api_key: str | None = None
-    model_fast: str = "claude-haiku-4-5"
+    # Screening + verification. Eval 2026-10-10 (40 cases, title masked to the furniture type, picture only):
+    # Haiku 4.5 recall 5 %, Sonnet 5.5 recall 50 % (65 % right model among candidates), 0 false alarms on
+    # ordinary furniture, 0.009 USD per listing. Recognising a model from the picture needs the stronger model.
+    model_fast: str = "claude-sonnet-5-5"
+    model_text: str = "claude-haiku-4-5"  # text-only work (comp title parsing in batches)
     model_strong: str = "claude-sonnet-5-5"
     # USD per million tokens: (input, output). Cache reads ~0.1x input, cache writes ~1.25x input.
     model_prices: dict[str, tuple[float, float]] = {
