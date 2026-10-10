@@ -27,13 +27,16 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
       headers: { Authorization: `Bearer ${s.token}` },
       body: form,
     });
-    if (r.ok) {
+    if (!r.ok) throw new Error(`Servern svarade ${r.status}${r.status === 401 ? " (fel token)" : ""}`);
+    {
       const sent = s.sent + 1;
       await chrome.storage.local.set({ sent });
       chrome.action.setBadgeText({ text: String(sent) });
       chrome.action.setBadgeBackgroundColor({ color: "#b8460b" });
-    } else {
-      chrome.action.setBadgeText({ text: "!" });
+      await chrome.storage.local.set({ lastError: "" });
     }
-  })().catch(() => chrome.action.setBadgeText({ text: "!" }));
+  })().catch(async (e) => {
+    chrome.action.setBadgeText({ text: "!" });
+    await chrome.storage.local.set({ lastError: String(e && e.message ? e.message : e) });
+  });
 });

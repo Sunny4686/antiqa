@@ -640,3 +640,59 @@ INFO:     127.0.0.1:52672 - "GET /health HTTP/1.1" 200 OK
 2026-10-10 19:08:43,084 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 80, 1000 new comps
 2026-10-10 19:09:37,405 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19}: up to page 90, 1000 new comps
 2026-10-10 19:10:32,460 INFO fyndjakt.jobs: auctionet backfill {'category_id': 19} done; 0 steps left
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [81421]
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 19:14:36,728 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [81717]
+INFO:     Waiting for application startup.
+2026-10-10 19:14:36,805 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 19:14:36,805 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:53891 - "GET /health HTTP/1.1" 200 OK
+2026-10-10 19:27:39,974 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01Rzgi2uau8XaU6RXngBXgVH "HTTP/1.1 200 OK"
+2026-10-10 19:27:40,310 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01Rzgi2uau8XaU6RXngBXgVH "HTTP/1.1 200 OK"
+2026-10-10 19:27:40,829 INFO httpx2: HTTP Request: GET https://api.anthropic.com/v1/messages/batches/msgbatch_01Rzgi2uau8XaU6RXngBXgVH/results "HTTP/1.1 200 OK"
+2026-10-10 19:27:43,241 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages/batches "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [81717]
+2026-10-10 19:36:25,271 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 19:36:25,272 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [82012]
+INFO:     Waiting for application startup.
+2026-10-10 19:36:25,349 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 19:36:25,349 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:57292 - "GET /health HTTP/1.1" 200 OK
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 19:37:18,585 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [82127]
+INFO:     Waiting for application startup.
+2026-10-10 19:37:18,664 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 19:37:18,664 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     127.0.0.1:57433 - "GET /health HTTP/1.1" 200 OK

@@ -18,10 +18,12 @@ from pydantic import BaseModel, Field
 from fyndjakt.ai.steps import Usage, _usage
 
 CAPTURE_SYSTEM = """Du läser en skärmbild av en sida med begagnade annonser (Blocket eller Facebook Marketplace).
-Lista varje annonskort vars bild syns till minst hälften. För varje kort: rubriken ordagrant, priset i kronor som
-heltal (null om det saknas eller är oläsligt), ort om den syns, och annonsbildens ram som andelar av skärmbildens
-bredd och höjd (0-1). Ta inte med annonser för annat än möbler och inredning (bilar, kläder, elektronik, bostäder):
-markera dem is_furniture=false. Skriv aldrig ut namn på personer, även om de syns. Svara på svenska."""
+Lista varje annonskort vars bild syns till minst hälften. Visar skärmbilden en enskild öppnad annons: lista
+just den annonsen som ett kort, med den största möbelbilden som bildram.
+För varje kort: rubriken ordagrant, priset i kronor som heltal (null om det saknas eller är oläsligt), ort om
+den syns, och annonsbildens ram som andelar av skärmbildens bredd och höjd (0-1).
+Annonser för annat än möbler och inredning (bilar, kläder, elektronik, bostäder): markera is_furniture=false.
+Skriv aldrig ut namn på personer, även om de syns. Svara på svenska."""
 
 
 class CapturedCard(BaseModel):
