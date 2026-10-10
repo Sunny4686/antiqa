@@ -210,7 +210,12 @@ def handle_auctionet_live(session: Session, job: Job, deps: Deps, ctx: dict) -> 
             if seen % COMMIT_EVERY == 0:
                 session.commit()
         record_success(session, "auctionet", now, got_items=seen > 0)
-        log.info("auctionet live: %d lots ending within %s h, %d match the watchlist", seen, horizon - now, kept)
+        log.info(
+            "auctionet live: %d lots ending within %.0f h, %d match the watchlist",
+            seen,
+            cfg.auctionet_live_horizon_h,
+            kept,
+        )
     except SourceBlocked as e:
         record_failure(session, "auctionet", now, f"blocked: {e.reason}", e.reason)
         notify_owner(
