@@ -28,6 +28,23 @@ Bevakar {{ n_models }} modeller och {{ n_live }} pågående auktioner. Senaste g
   </a>
 {% endfor %}
 </div>
+{% if watching %}
+<h2>Närmast fynd bland bevakade auktioner</h2>
+<p class="muted">Modeller från bevakningslistan som är ute på auktion just nu, sorterade efter nettomarginal vid dagens
+ledande bud plus provision. Ett fynd kräver minst {{ min_net }} kr netto; priset räknas om var 30:e minut.</p>
+<div class="wrap"><table>
+  <tr><th>Objekt</th><th class="num">Att betala nu</th><th class="num">Värde P25–P75</th><th class="num">Netto</th><th class="num">Avstånd</th><th>Slutar om</th></tr>
+  {% for w in watching %}{% set a, l = w.a, w.l %}
+  <tr>
+    <td><a href="/annons/{{ l.id }}">{{ l.title }}</a></td>
+    <td class="num">{{ l.price_sek }} kr</td>
+    <td class="num">{{ a.value_p25 }}–{{ a.value_p75 }}</td>
+    <td class="num {{ 'pos' if a.net_margin_sek > 0 else 'neg' }} net">{{ a.net_margin_sek }} kr</td>
+    <td class="num">{{ a.distance_km|round|int ~ " km" if a.distance_km is not none else "–" }}</td>
+    <td>{{ w.ends_in }}</td>
+  </tr>{% endfor %}
+</table></div>
+{% endif %}
 <style>
   .cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; margin-top: 1rem; }
   .card { display:flex; flex-direction:column; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; color:inherit; text-decoration:none; }

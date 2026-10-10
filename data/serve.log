@@ -556,3 +556,21 @@ INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
 2026-10-10 18:46:53,462 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
 2026-10-10 18:46:56,419 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
 2026-10-10 18:47:01,975 INFO httpx2: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [80326]
+2026-10-10 18:47:49,052 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.schemas
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.tables
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.types
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.constraints
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.defaults
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.autogenerate.comments
+2026-10-10 18:47:49,053 INFO alembic.runtime.plugins: setup plugin alembic.ext.checkconstraint_byname
+INFO:     Started server process [80700]
+INFO:     Waiting for application startup.
+2026-10-10 18:47:49,130 INFO alembic.runtime.migration: Context impl SQLiteImpl.
+2026-10-10 18:47:49,130 INFO alembic.runtime.migration: Will assume non-transactional DDL.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49442 - "GET /utvalt HTTP/1.1" 200 OK

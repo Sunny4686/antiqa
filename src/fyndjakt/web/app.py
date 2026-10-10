@@ -204,15 +204,19 @@ def _routes():
             .join(Listing, Listing.id == Assessment.listing_id)
             .where(
                 Assessment.id.in_(latest),
-                Assessment.decision.in_(("FYND", "KOLLA_SJALV")),
                 Listing.status != "handled",
                 or_(Listing.ends_at.is_(None), Listing.ends_at > now),
             )
-            .limit(300)
+            .limit(500)
         ).all()
         cfg = get_config()
-        cards = []
+        cards, watching = [], []
         for a, lst in rows:
+            if a.decision not in ("FYND", "KOLLA_SJALV"):
+                if lst.source == "auctionet_live" and a.net_margin_sek is not None:
+                    ends = _utc(lst.ends_at)
+                    watching.append({"a": a, "l": lst, "ends_in": _left(ends - now)})
+                continue
             urls = usable_urls(lst.image_urls, remote_images_allowed(lst.source, cfg))
             img = (
                 ("/bild/" + urls[0][len(LOCAL_PREFIX) :])
@@ -238,6 +242,8 @@ def _routes():
             "utvalt.html",
             {
                 "cards": cards,
+                "watching": sorted(watching, key=lambda w: -w["a"].net_margin_sek)[:25],
+                "min_net": get_settings(session).min_net_margin_sek,
                 "n_live": n_live,
                 "n_models": n_models,
                 "last_scan": last.strftime("%H:%M") if last else None,
