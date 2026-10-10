@@ -15,6 +15,7 @@ from fyndjakt.sources.auctionet import AuctionetClient, live_price
 from tests.conftest import NOW
 from tests.test_assess_jobs_web import _deps, _verify
 from tests.test_assess_jobs_web import world as world  # noqa: F401  (pytest fixture)
+from tests.test_pages_m3 import client as client  # noqa: F401  (pytest fixture)
 
 MUNICIPALITIES = load_municipalities(Path(__file__).resolve().parents[1] / "data" / "kommuner.csv")
 
@@ -110,3 +111,32 @@ def test_live_job_keeps_watchlist_lots_and_reprices_without_new_ai(session, conf
     )
     assert len(finals) == 2 and finals[-1].decision != "FYND"
     assert session.scalar(select(func.count(AICall.id))) == ai_calls
+
+
+def test_utvalt_shows_running_fynd_cards_soonest_first(client):
+    from fyndjakt.db import session_scope
+
+    now = datetime.now(UTC)
+    with session_scope() as s:
+        for ext, ends, decision in (
+            ("late", 20, "FYND"),
+            ("soon", 2, "FYND"),
+            ("over", -1, "FYND"),
+            ("no", 1, "INGET"),
+        ):
+            lst = Listing(
+                source="auctionet_live",
+                external_id=ext,
+                title=f"Lot {ext}",
+                price_sek=1000,
+                ends_at=now + timedelta(hours=ends),
+                image_urls=[f"https://images.auctionet.com/{ext}.jpg"],
+            )
+            s.add(lst)
+            s.flush()
+            s.add(Assessment(listing_id=lst.id, stage="final", decision=decision, net_margin_sek=2000))
+    page = client.get("/utvalt").text
+    assert page.index("Lot soon") < page.index("Lot late")
+    assert "Lot over" not in page and "Lot no" not in page
+    assert "https://images.auctionet.com/soon.jpg" in page and "slutar om 1 h" in page
+    assert client.get("/", follow_redirects=False).headers["location"] == "/utvalt"

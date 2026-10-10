@@ -398,3 +398,4 @@ INFO:     127.0.0.1:61385 - "GET /health HTTP/1.1" 200 OK
 2026-10-10 18:29:55,450 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281}: up to page 10, 1000 new comps
 2026-10-10 18:30:49,891 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281}: up to page 20, 1000 new comps
 2026-10-10 18:31:44,636 INFO fyndjakt.jobs: auctionet backfill {'category_id': 281} done; 3 steps left
+2026-10-10 18:32:38,358 INFO fyndjakt.jobs: auctionet backfill {'category_id': 17}: up to page 10, 1000 new comps

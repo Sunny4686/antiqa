@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Utvalt · Fyndjakt{% endblock %}
+{% block content %}
+<h1>Utvalt just nu</h1>
+<p class="muted">Objekt som Fyndjakt själv har hittat och bedömt som undervärderade, med de som slutar först överst.
+Bevakar {{ n_models }} modeller och {{ n_live }} pågående auktioner. Senaste genomsökning: {{ last_scan or "–" }}.</p>
+{% if not cards %}
+  <p>Inget utvalt ännu. Auktionerna gås igenom var 30:e minut; nya fynd dyker upp här.</p>
+{% endif %}
+<div class="cards">
+{% for c in cards %}
+  {% set a, l = c.a, c.l %}
+  <a class="card" href="/annons/{{ l.id }}">
+    <div class="img">{% if c.img %}<img src="{{ c.img }}" alt="" loading="lazy">{% endif %}
+      <span class="tag {{ a.decision }}">{{ {"FYND": "FYND", "KOLLA_SJALV": "KOLLA SJÄLV"}[a.decision] }}</span></div>
+    <div class="body">
+      <div class="title">{{ l.title }}</div>
+      <div class="price"><b>{{ l.price_sek if l.price_sek is not none else "?" }} kr</b>
+        {% if l.source == "auctionet_live" %}<span class="muted">inkl. provision{% if l.current_bid_sek %} · bud {{ l.current_bid_sek }} kr{% endif %}</span>{% endif %}</div>
+      {% if a.value_p25 %}<div>Värde <b>{{ a.value_p25 }}–{{ a.value_p75 }} kr</b> <span class="muted">(n={{ a.n_comps }})</span></div>{% endif %}
+      {% if a.net_margin_sek is not none %}<div class="net {{ 'pos' if a.net_margin_sek > 0 else 'neg' }}">Netto ≈ {{ a.net_margin_sek }} kr</div>{% endif %}
+      <div class="muted small">
+        {{ l.municipality or "okänd ort" }}{% if a.distance_km is not none %} · {{ a.distance_km|round|int }} km{% endif %}
+        · säkerhet {{ a.confidence or "–" }}
+        {% if c.ends_in %} · <span class="ends">slutar om {{ c.ends_in }}</span>{% endif %}
+      </div>
+    </div>
+  </a>
+{% endfor %}
+</div>
+<style>
+  .cards { display:grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .card { display:flex; flex-direction:column; background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden; color:inherit; text-decoration:none; }
+  .card:hover { box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+  .card .img { position:relative; aspect-ratio: 4/3; background:#eee; }
+  .card .img img { width:100%; height:100%; object-fit:cover; display:block; }
+  .card .img .tag { position:absolute; top:.5rem; left:.5rem; }
+  .card .body { padding:.6rem .7rem .8rem; display:flex; flex-direction:column; gap:.2rem; }
+  .card .title { font-weight:600; line-height:1.25; }
+  .net.pos { color:#1f7a3a; font-weight:600; } .net.neg { color:#a33; }
+  .small { font-size:.85rem; } .ends { color: var(--fynd); font-weight:600; }
+</style>
+{% endblock %}

@@ -5,13 +5,15 @@ import logging
 import threading
 import uuid
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import anthropic
 from fastapi import Depends, FastAPI, Form, Header, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import desc, func, select
+from sqlalchemy import desc, func, or_, select
 from sqlalchemy.orm import Session
 
 from fyndjakt.assess import Deps, remote_images_allowed
@@ -20,7 +22,7 @@ from fyndjakt.db import session_scope
 from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
 from fyndjakt.jobs import Worker
 from fyndjakt.migrate import upgrade
-from fyndjakt.models import Assessment, Feedback, Listing, WatchModel
+from fyndjakt.models import Assessment, Feedback, Listing, SourceHealth, WatchModel
 from fyndjakt.notify.telegram import FEEDBACK_BUTTONS, FEEDBACK_LABELS, TelegramClient, parse_callback
 from fyndjakt.pipeline.geo import load_municipalities
 from fyndjakt.services import IngestListing, get_settings, upsert_listing
@@ -142,6 +144,18 @@ def db():
         yield session
 
 
+def _utc(dt: datetime) -> datetime:
+    return dt if dt.tzinfo else dt.replace(tzinfo=UTC)
+
+
+def _left(d: timedelta) -> str:
+    minutes = max(int(d.total_seconds() // 60), 0)
+    if minutes < 60:
+        return f"{minutes} min"
+    hours = minutes // 60
+    return f"{hours} h {minutes % 60} min" if hours < 24 else f"{hours // 24} d {hours % 24} h"
+
+
 def _check_token(expected: str | None, given: str | None) -> None:
     if not expected or not given or not hmac.compare_digest(expected, given):
         raise HTTPException(status_code=401)
@@ -174,7 +188,61 @@ def _routes():
 
     @r.get("/")
     def root() -> RedirectResponse:
-        return RedirectResponse("/inkorg")
+        return RedirectResponse("/utvalt")
+
+    @r.get("/utvalt", response_class=HTMLResponse)
+    def utvalt(request: Request, session: Session = Depends(db)):
+        now = datetime.now(UTC)
+        latest = (
+            select(func.max(Assessment.id))
+            .where(Assessment.stage == "final")
+            .group_by(Assessment.listing_id)
+            .scalar_subquery()
+        )
+        rows = session.execute(
+            select(Assessment, Listing)
+            .join(Listing, Listing.id == Assessment.listing_id)
+            .where(
+                Assessment.id.in_(latest),
+                Assessment.decision.in_(("FYND", "KOLLA_SJALV")),
+                Listing.status != "handled",
+                or_(Listing.ends_at.is_(None), Listing.ends_at > now),
+            )
+            .limit(300)
+        ).all()
+        cfg = get_config()
+        cards = []
+        for a, lst in rows:
+            urls = usable_urls(lst.image_urls, remote_images_allowed(lst.source, cfg))
+            img = (
+                ("/bild/" + urls[0][len(LOCAL_PREFIX) :])
+                if urls and urls[0].startswith(LOCAL_PREFIX)
+                else (urls or [None])[0]
+            )
+            ends = _utc(lst.ends_at) if lst.ends_at else None
+            cards.append({"a": a, "l": lst, "img": img, "ends": ends, "ends_in": _left(ends - now) if ends else None})
+        far = datetime.max.replace(tzinfo=UTC)
+        cards.sort(key=lambda c: (c["a"].decision != "FYND", c["ends"] or far, -(c["a"].net_margin_sek or 0)))
+        health = session.get(SourceHealth, "auctionet")
+        n_live = session.scalar(
+            select(func.count(Listing.id)).where(Listing.source == "auctionet_live", Listing.ends_at > now)
+        )
+        n_models = session.scalar(select(func.count(WatchModel.id)).where(WatchModel.active.is_(True)))
+        last = (
+            _utc(health.last_success_at).astimezone(ZoneInfo(cfg.timezone))
+            if health and health.last_success_at
+            else None
+        )
+        return templates.TemplateResponse(
+            request,
+            "utvalt.html",
+            {
+                "cards": cards,
+                "n_live": n_live,
+                "n_models": n_models,
+                "last_scan": last.strftime("%H:%M") if last else None,
+            },
+        )
 
     @r.get("/inkorg", response_class=HTMLResponse)
     def inkorg(request: Request, alla: bool = False, session: Session = Depends(db)):
