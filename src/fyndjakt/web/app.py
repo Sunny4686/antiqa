@@ -2,6 +2,7 @@
 
 import hmac
 import logging
+import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -41,19 +42,76 @@ def build_deps() -> Deps:
     )
 
 
+def handle_telegram_update(update: dict, deps: Deps) -> None:
+    """A feedback button press. Ignores anything not from the owner's chat when TELEGRAM_CHAT_ID is set."""
+    cq = update.get("callback_query")
+    parsed = parse_callback(cq.get("data", "")) if cq else None
+    if not parsed:
+        return
+    msg = cq.get("message") or {}
+    owner = deps.config.telegram_chat_id
+    if owner and str((msg.get("chat") or {}).get("id")) != str(owner):
+        return
+    listing_id, label = parsed
+    with session_scope() as session:
+        listing = session.get(Listing, listing_id)
+        if listing is None:
+            return
+        session.add(Feedback(listing_id=listing_id, label=label))
+        listing.status = "handled"
+    if deps.telegram and msg:
+        try:
+            deps.telegram.mark_handled(str(msg["chat"]["id"]), msg["message_id"], FEEDBACK_TEXT[label], cq["id"])
+        except Exception:
+            log.exception("could not mark telegram message handled")
+
+
+class TelegramPoller(threading.Thread):
+    """Local alternative to the webhook: long-polls getUpdates (removes any webhook first)."""
+
+    def __init__(self, deps: Deps):
+        super().__init__(daemon=True, name="telegram-poller")
+        self.deps = deps
+        self._stop = threading.Event()
+
+    def stop(self) -> None:
+        self._stop.set()
+
+    def run(self) -> None:
+        tg = self.deps.telegram
+        offset = None
+        try:
+            tg.delete_webhook()
+        except Exception:
+            log.exception("could not delete telegram webhook")
+        while not self._stop.is_set():
+            try:
+                for update in tg.get_updates(offset):
+                    offset = update["update_id"] + 1
+                    handle_telegram_update(update, self.deps)
+            except Exception:
+                log.exception("telegram polling failed")
+                self._stop.wait(30)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     upgrade()
     deps = build_deps()
     app.state.deps = deps
-    worker = None
+    worker = poller = None
     if app.state.run_worker:
         cfg = deps.config
         worker = Worker(deps, {"auctionet": AuctionetClient(cfg.user_agent, cfg.auctionet_min_interval_s)})
         worker.start()
+        if cfg.telegram_polling and deps.telegram:
+            poller = TelegramPoller(deps)
+            poller.start()
     yield
     if worker:
         worker.stop()
+    if poller:
+        poller.stop()
 
 
 def create_app(run_worker: bool = True) -> FastAPI:
@@ -96,24 +154,7 @@ def _routes():
         request: Request, x_telegram_bot_api_secret_token: str | None = Header(default=None)
     ) -> dict:
         _check_token(get_config().telegram_webhook_secret, x_telegram_bot_api_secret_token)
-        update = await request.json()
-        cq = update.get("callback_query")
-        parsed = parse_callback(cq.get("data", "")) if cq else None
-        if not parsed:
-            return {"ok": True}
-        listing_id, label = parsed
-        deps: Deps = request.app.state.deps
-        with session_scope() as session:
-            if session.get(Listing, listing_id) is None:
-                return {"ok": True}
-            session.add(Feedback(listing_id=listing_id, label=label))
-            session.get(Listing, listing_id).status = "handled"
-        msg = cq.get("message") or {}
-        if deps.telegram and msg:
-            try:
-                deps.telegram.mark_handled(str(msg["chat"]["id"]), msg["message_id"], FEEDBACK_TEXT[label], cq["id"])
-            except Exception:
-                log.exception("could not mark telegram message handled")
+        handle_telegram_update(await request.json(), request.app.state.deps)
         return {"ok": True}
 
     @r.get("/")

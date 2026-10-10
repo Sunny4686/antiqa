@@ -119,6 +119,17 @@ class TelegramClient:
             )
         return res["message_id"]
 
+    def get_updates(self, offset: int | None, timeout_s: int = 25) -> list[dict]:
+        payload = {"timeout": timeout_s, "allowed_updates": ["callback_query"]}
+        if offset is not None:
+            payload["offset"] = offset
+        r = self._http.post(f"{self._base}/getUpdates", json=payload, timeout=timeout_s + 10)
+        r.raise_for_status()
+        return r.json()["result"]
+
+    def delete_webhook(self) -> None:
+        self._call("deleteWebhook", {})
+
     def send_text(self, chat_id: str, text: str, silent: bool = False) -> None:
         self._call("sendMessage", {"chat_id": chat_id, "text": text, "disable_notification": silent})
 

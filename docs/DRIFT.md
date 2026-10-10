@@ -3,7 +3,19 @@
 En EU-VPS (t.ex. Hetzner CX22 i Helsingfors/Nürnberg, ~50 kr/mån) med Docker. Webben exponeras bara via
 Cloudflare Tunnel; ingen port öppnas mot internet.
 
-## Engångsuppsättning
+## Lokalt först (ingen server)
+
+Allt kan köras på en egen dator under testperioden:
+
+1. `.env` med `ANTHROPIC_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` och `TELEGRAM_POLLING=true`
+   (knapparna hämtas då med getUpdates; ingen webhook eller publik adress behövs).
+2. `uv run fyndjakt auctionet-backfill`, sedan `uv run fyndjakt serve`. Webben finns på http://127.0.0.1:8000.
+3. Datorn måste vara vaken för nattjobben (`caffeinate -s` på Mac).
+
+Begränsning: `/ingest/listing` nås bara från datorn själv. Vid flytt till server kopieras `data/fyndjakt.db` med,
+och `TELEGRAM_POLLING` sätts till `false` före `telegram-webhook`.
+
+## Engångsuppsättning (server)
 
 1. **VPS:** installera Docker och Docker Compose, klona repot.
 2. **`.env`:** kopiera `.env.example` och fyll i:

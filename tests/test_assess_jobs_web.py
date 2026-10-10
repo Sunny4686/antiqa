@@ -371,3 +371,49 @@ def test_ui_pages_render_and_settings_save(client):
         row = s.get(SettingsRow, 1)
         assert (row.min_net_margin_sek, row.min_roi) == (2000, 0.6)
         assert row.allowed_regions == ["Hallands län", "Västra Götalands län"]
+
+
+def test_telegram_ignores_other_chats_and_poller_handles_updates(client):
+    from fyndjakt.db import session_scope
+    from fyndjakt.web.app import TelegramPoller
+
+    r = client.post(
+        "/ingest/listing",
+        json={"source": "blocket_push", "external_id": "p4", "title": "Byrå"},
+        headers={"Authorization": "Bearer ingest-secret"},
+    )
+    lid = r.json()["id"]
+    hdr = {"X-Telegram-Bot-Api-Secret-Token": "tg-secret"}
+    stranger = {
+        "callback_query": {"id": "x", "data": f"fb:{lid}:köpt", "message": {"message_id": 1, "chat": {"id": 7}}}
+    }
+    assert client.post("/telegram/webhook", json=stranger, headers=hdr).status_code == 200
+    with session_scope() as s:
+        assert s.scalar(select(Feedback).where(Feedback.listing_id == lid)) is None
+
+    class FakeTg:
+        def __init__(self):
+            self.calls, self.offsets = [], []
+
+        def delete_webhook(self):
+            self.calls.append("deleteWebhook")
+
+        def get_updates(self, offset):
+            self.offsets.append(offset)
+            if len(self.offsets) == 1:
+                cq = {"id": "c", "data": f"fb:{lid}:ej_intressant", "message": {"message_id": 3, "chat": {"id": 42}}}
+                return [{"update_id": 10, "callback_query": cq}]
+            poller.stop()
+            return []
+
+        def mark_handled(self, chat_id, message_id, label, callback_id):
+            self.calls.append(("mark", chat_id, message_id))
+
+    deps = client.app.state.deps
+    fake = FakeTg()
+    deps.telegram = fake
+    poller = TelegramPoller(deps)
+    poller.run()
+    assert fake.offsets == [None, 11] and fake.calls == ["deleteWebhook", ("mark", "42", 3)]
+    with session_scope() as s:
+        assert s.scalar(select(Feedback).where(Feedback.listing_id == lid)).label == "ej_intressant"

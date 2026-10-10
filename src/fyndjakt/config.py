@@ -28,6 +28,8 @@ class Config(BaseSettings):
     telegram_bot_token: str | None = None
     telegram_chat_id: str | None = None
     telegram_webhook_secret: str | None = None
+    # Local mode without a public URL: fetch button presses with getUpdates instead of the webhook.
+    telegram_polling: bool = False
 
     # Ingest (/ingest/listing) bearer token
     ingest_token: str | None = None
