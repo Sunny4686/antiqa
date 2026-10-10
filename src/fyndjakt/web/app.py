@@ -23,6 +23,7 @@ from fyndjakt.notify.telegram import FEEDBACK_BUTTONS, FEEDBACK_LABELS, Telegram
 from fyndjakt.pipeline.geo import load_municipalities
 from fyndjakt.services import IngestListing, get_settings, upsert_listing
 from fyndjakt.sources.auctionet import AuctionetClient
+from fyndjakt.web.pages import build_router
 
 log = logging.getLogger(__name__)
 templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
@@ -59,6 +60,7 @@ def create_app(run_worker: bool = True) -> FastAPI:
     app = FastAPI(title="Fyndjakt", lifespan=lifespan)
     app.state.run_worker = run_worker
     app.include_router(_routes())
+    app.include_router(build_router(templates, db))
     return app
 
 

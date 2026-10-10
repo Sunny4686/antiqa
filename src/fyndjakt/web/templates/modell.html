@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ m.designer or "Ny modell" }} · Fyndjakt{% endblock %}
+{% block content %}
+<h1>{% if m.id %}{{ m.designer or "?" }} – {{ m.model_name or "?" }}{% else %}Ny modell{% endif %}</h1>
+{% if m.id %}<p class="muted">{{ m.n_sales }} sålda, median {{ m.median_sek or "–" }} kr{% if m.auto_generated %} · skapad automatiskt{% endif %}</p>{% endif %}
+{% set labels = {"designer": "Formgivare", "manufacturer": "Tillverkare", "model_name": "Modell", "period": "Period",
+                 "category": "Kategori", "identifying_features": "Kännetecken", "replica_traps": "Replikafällor",
+                 "marks": "Märkning"} %}
+<form class="grid" method="post" action="/bevakningslista/{{ m.id or 0 }}">
+  {% for f in fields %}
+  <label for="{{ f }}">{{ labels[f] }}</label>
+  {% if f in ("identifying_features", "replica_traps", "marks") %}
+  <textarea id="{{ f }}" name="{{ f }}" rows="4">{{ m[f] or "" }}</textarea>
+  {% else %}
+  <input id="{{ f }}" name="{{ f }}" value="{{ m[f] or "" }}">
+  {% endif %}
+  {% endfor %}
+  <label for="aliases">Alias (kommaseparerade)</label>
+  <input id="aliases" name="aliases" value="{{ (m.aliases or [])|join(', ') }}">
+  <label for="active">Aktiv</label>
+  <input id="active" type="checkbox" name="active" {% if m.active %}checked{% endif %}>
+  <span></span><button type="submit">Spara</button>
+</form>
+{% if comps %}
+<h2>Jämförelseobjekt</h2>
+<div class="wrap"><table>
+  <tr><th>Datum</th><th>Titel</th><th>Skick</th><th class="num">Klubbslag</th></tr>
+  {% for c in comps %}
+  <tr><td>{{ c.sold_at.strftime("%Y-%m-%d") if c.sold_at else "–" }}</td>
+      <td>{% if c.url %}<a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.title }}</a>{% else %}{{ c.title }}{% endif %}</td>
+      <td>{{ c.condition or "–" }}</td><td class="num">{{ c.hammer_sek or "–" }} kr</td></tr>
+  {% endfor %}
+</table></div>
+{% endif %}
+{% endblock %}
