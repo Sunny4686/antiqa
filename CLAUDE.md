@@ -40,10 +40,15 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
 - Köra lokalt (webb + jobb): `uv run fyndjakt serve` → http://127.0.0.1:8000/inkorg
 - Migrera: `uv run fyndjakt migrate` (körs även vid start). Ny migration: ändra `models.py`, autogenerera via
   `alembic.command.revision(fyndjakt.migrate.alembic_config(), autogenerate=True, ...)`.
+- Första fyllningen av Auctionet-comps: `uv run fyndjakt auctionet-backfill [--designer "Bruno Mathsson"]`
+  (köar jobb, körs av `serve`, ~1,5 h för de 10 underkategorierna).
+- Eval: `uv run python -m eval.run --dry-run` / `--limit 40` (kräver `ANTHROPIC_API_KEY`). Kör efter varje promptändring.
 - Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
 
 ## Struktur
 
 `src/fyndjakt/`: `pipeline/` (rena funktioner, steg 1, 3, 5–9), `ai/` (steg 2, 4, budget), `sources/auctionet.py`,
 `notify/telegram.py`, `assess.py` (kör stegen för en annons), `jobs.py` (SQLite-jobbkö + worker),
-`web/` (FastAPI + Jinja2/HTMX), `migrations/` (Alembic).
+`web/` (FastAPI + Jinja2/HTMX), `migrations/` (Alembic), `watchlist.py` (automatisk bevakningslista),
+`ai/enrich.py` (titeltolkning i Batches, modellanteckningar), `images.py` (nedskalning, radering efter 7 dagar),
+`eval/` (precision/recall/kostnad), `data/kommuner.csv` (tätorter + kommuner, Wikidata CC0).

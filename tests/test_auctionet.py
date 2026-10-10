@@ -55,6 +55,10 @@ def test_fixtures_contain_no_bidder_identity():
             "SUPERELLIPSE",
         ),
         ("SIDEBOARD, trä, gustaviansk stil.", None, None, None),
+        ("CARL JOHAN BOMAN, Stolar, 2 st. Wilh. Schauman Ab formgivna 1962.", "Carl Johan Boman", None, None),
+        ("SKINNFÅTÖLJ MED FOTPALL, IMG COMFORT OF NORWAY.", None, None, None),
+        ('FÅTÖLJ, "Pernilla", Bruno Mathsson, Dux.', None, None, "Pernilla"),
+        ("SKINNFÅTÖLJ MED FOTPALL. Brun läder.", None, None, None),
         ("ARKIVSKÅP, ek, tidigt 1900-tal.", None, None, None),
     ],
 )

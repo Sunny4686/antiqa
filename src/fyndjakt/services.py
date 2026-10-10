@@ -11,6 +11,7 @@ from fyndjakt.pipeline.prefilter import contains_term, normalize
 from fyndjakt.pipeline.valuation import CompPrice
 from fyndjakt.sources.auctionet import CompData
 
+PARSED_FIELDS = ("designer", "manufacturer", "model_name", "parse_status")
 STOP_BACKOFF = (timedelta(minutes=30), timedelta(hours=2), timedelta(hours=8), timedelta(hours=24))
 
 
@@ -90,6 +91,9 @@ def known_comp_ids(session: Session, source: str) -> set[str]:
 def upsert_comp(session: Session, source: str, c: CompData) -> bool:
     existing = session.scalar(select(Comp).where(Comp.source == source, Comp.external_id == c.external_id))
     values = {k: v for k, v in vars(c).items() if k != "external_id"}
+    if existing and existing.parse_status and existing.parse_status.startswith("llm"):
+        for k in PARSED_FIELDS:  # keep what the LLM parser found
+            values.pop(k, None)
     if existing:
         for k, v in values.items():
             setattr(existing, k, v)

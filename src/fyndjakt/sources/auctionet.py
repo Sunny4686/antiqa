@@ -60,11 +60,54 @@ class CompData:
     designer: str | None = None
     manufacturer: str | None = None
     model_name: str | None = None
+    parse_status: str | None = None
 
 
 _TAG = re.compile(r"<[^>]+>")
 _QUOTED = re.compile(r"[\"“”«»]([^\"“”«»]{2,60})[\"“”«»]")
 _UPPER_LEAD = re.compile(r"^([A-ZÅÄÖÆØÉÜ][A-ZÅÄÖÆØÉÜ&'. -]{2,60}?)\.\s")
+_UPPER_LEAD_COMMA = re.compile(r"^([A-ZÅÄÖÆØÉÜ][A-ZÅÄÖÆØÉÜ&'. -]{2,60}?),\s+(?=[A-ZÅÄÖ][a-zåäöé])")
+# Leading uppercase words that describe the object, not a person.
+TYPE_WORDS = (
+    "STOL",
+    "FÅTÖLJ",
+    "KARMSTOL",
+    "VILSTOL",
+    "GUNGSTOL",
+    "PALL",
+    "BÄNK",
+    "SOFFA",
+    "DIVAN",
+    "SCHÄSLONG",
+    "BORD",
+    "MATBORD",
+    "SOFFBORD",
+    "SKRIVBORD",
+    "SKÅP",
+    "VITRIN",
+    "BYRÅ",
+    "SEKRETÄR",
+    "HYLLA",
+    "BOKHYLLA",
+    "SIDEBOARD",
+    "SKÄNK",
+    "KOMMOD",
+    "SÄNG",
+    "SPEGEL",
+    "MATSAL",
+    "MÖBEL",
+    "MÖBLER",
+    "SKINN",
+    "TABLE",
+    "CHAIR",
+    "SOFA",
+    "CABINET",
+    "DESK",
+    "SETT",
+    "GRUPP",
+    "ETT PAR",
+    "PAR ",
+)
 _MAKER_FOR = re.compile(r",\s*([^,]{3,80}?)\s+(?:för|for|by|för firma)\s+([^,.]{2,60})", re.I)
 
 
@@ -80,9 +123,12 @@ def parse_title(title: str) -> ParsedTitle:
     Leaves fields as None when unsure; the rest is resolved by MODEL_FAST later (M2).
     """
     out = ParsedTitle()
-    m = _UPPER_LEAD.match(title)
-    if m and " " in m.group(1).strip():
-        out.designer = m.group(1).strip().title()
+    m = _UPPER_LEAD.match(title) or _UPPER_LEAD_COMMA.match(title)
+    lead = m.group(1).strip() if m else ""
+    if m and " " in lead and not any(w in lead for w in TYPE_WORDS):
+        out.designer = lead.title()
+    else:
+        m = None
     q = _QUOTED.search(title)
     if q:
         out.model_name = q.group(1).strip()
@@ -141,6 +187,8 @@ def parse_item(item: dict) -> CompData:
         designer=pt.designer,
         manufacturer=pt.manufacturer,
         model_name=pt.model_name,
+        # Titles without a recognisable designer go to the LLM batch parser.
+        parse_status="rules" if pt.designer else None,
     )
 
 
@@ -186,4 +234,14 @@ class AuctionetClient:
                 yield item
             total = (data.get("pagination") or {}).get("total_pages") or 0
             if hit_known or not items or page >= total:
+                return
+
+    def iter_all(self, max_pages: int = MAX_PAGES, **params: object) -> Iterator[dict]:
+        """Every item up to the page cap (backfill). Upserts make re-runs harmless."""
+        for page in range(1, max_pages + 1):
+            data = self.get_page(page, **params)
+            items = data.get("items") or []
+            yield from items
+            total = (data.get("pagination") or {}).get("total_pages") or 0
+            if not items or page >= total:
                 return

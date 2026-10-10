@@ -52,6 +52,9 @@ class WatchModel(Base):
     marks: Mapped[str | None] = mapped_column(Text)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     auto_generated: Mapped[bool] = mapped_column(Boolean, default=False)
+    n_sales: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    median_sek: Mapped[int | None] = mapped_column(Integer)
+    notes_generated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Comp(Base):
@@ -76,6 +79,23 @@ class Comp(Base):
     condition: Mapped[str | None] = mapped_column(String(32))  # utmärkt | gott | slitet | renoveringsobjekt
     url: Mapped[str | None] = mapped_column(String(512))
     image_urls: Mapped[list[str]] = mapped_column(JSON, default=list)
+    # How designer/manufacturer/model were obtained: rules | llm_pending | llm | llm_failed | none
+    parse_status: Mapped[str | None] = mapped_column(String(16), index=True)
+
+
+class AIBatch(Base):
+    """Message Batches submitted to Anthropic (half price, async)."""
+
+    __tablename__ = "ai_batches"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    batch_id: Mapped[str] = mapped_column(String(64), unique=True)
+    purpose: Mapped[str] = mapped_column(String(32))
+    model: Mapped[str] = mapped_column(String(64))
+    n_requests: Mapped[int] = mapped_column(Integer, default=0)
+    status: Mapped[str] = mapped_column(String(16), default="submitted")  # submitted | collected | failed
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    collected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Assessment(Base):
