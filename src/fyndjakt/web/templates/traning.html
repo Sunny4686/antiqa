@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Träning · Fyndjakt{% endblock %}
+{% block content %}
+<h1>Träningsomgångar</h1>
+<p class="muted">Importer markerade som träning: inga Telegram-larm, bara utvärdering. Starta en på
+<a href="/importera">Importera</a> (bocka i Träningsomgång) eller lägg en mapp/zip som heter <code>traning-…</code> i inkorgsmappen.</p>
+{% if batches %}
+<table><tr><th>Omgång</th><th class="num">Annonser</th><th>Startad</th></tr>
+{% for b, n, started in batches %}<tr><td><a href="/traning/{{ b }}">{{ b }}</a></td><td class="num">{{ n }}</td>
+<td>{{ started.strftime("%Y-%m-%d %H:%M") if started else "" }}</td></tr>{% endfor %}
+</table>
+{% else %}<p>Inga träningsomgångar ännu.</p>{% endif %}
+{% endblock %}

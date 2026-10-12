@@ -3,6 +3,7 @@
 import hmac
 import json
 import logging
+import re
 import shutil
 import threading
 import uuid
@@ -429,6 +430,9 @@ def _routes():
         """Upload a zip, a CSV/JSON/TXT or loose images + a text file; imported right away."""
         form = await request.form()
         deps: Deps = request.app.state.deps
+        training = form.get("training") == "on"
+        batch = re.sub(r"[^\w.-]+", "-", str(form.get("batch") or "").strip())[:48].strip("-")
+        batch = batch or f"{'traning' if training else 'import'}-{datetime.now(UTC):%Y%m%d-%H%M}"
         tmp = Path(get_config().inbox_dir) / f"_upload-{uuid.uuid4().hex}"
         tmp.mkdir(parents=True, exist_ok=True)
         try:
@@ -445,19 +449,21 @@ def _routes():
             remote = get_config().ai_send_listing_images
             captures = Path(get_config().capture_dir)
             for z in zips:
-                r = importer.import_zip(session, deps.images, z, remote, captures)
+                r = importer.import_zip(session, deps.images, z, remote, captures, batch, training)
                 result.imported += r.imported
                 result.errors += r.errors
                 result.screenshots += r.screenshots
                 z.unlink()
             if any(tmp.iterdir()):
-                r = importer.import_path(session, deps.images, tmp, remote, captures)
+                r = importer.import_path(session, deps.images, tmp, remote, captures, batch, training)
                 result.imported += r.imported
                 result.errors += r.errors
                 result.screenshots += r.screenshots
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
         session.flush()
+        if training:
+            return RedirectResponse(f"/traning/{batch}", status_code=303)
         return _import_results(request, session, result.imported, result.screenshots, result.errors)
 
     @r.get("/importera/resultat", response_class=HTMLResponse)

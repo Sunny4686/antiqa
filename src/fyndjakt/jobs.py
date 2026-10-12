@@ -321,7 +321,7 @@ def _read_capture(session: Session, deps: Deps, path: Path, payload: dict) -> No
             continue
         href = capture.link_for(card.image_box, links)
         ext = (capture.item_id(href) if href else None) or capture.fallback_id(card.title, card.price_sek, card.place)
-        upsert_listing(
+        listing, _new, _changed = upsert_listing(
             session,
             IngestListing(
                 source=source,
@@ -333,6 +333,9 @@ def _read_capture(session: Session, deps: Deps, path: Path, payload: dict) -> No
                 image_urls=[deps.images.save_upload(photo)],
             ),
         )
+        if payload.get("batch"):
+            listing.import_batch = str(payload["batch"])[:64]
+        listing.training = bool(payload.get("training")) or listing.training
 
 
 def handle_health_check(session: Session, job: Job, deps: Deps, _ctx: dict) -> None:

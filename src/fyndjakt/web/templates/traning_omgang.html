@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ batch }} · Träning · Fyndjakt{% endblock %}
+{% block content %}
+<div id="omg" {% if pending %}hx-get="/traning/{{ batch }}" hx-trigger="every 5s" hx-select="#omg" hx-target="#omg" hx-swap="outerHTML"{% endif %}>
+<h1>Träningsomgång: {{ batch }}</h1>
+{% macro pct(v) %}{{ ((v * 100)|round|int ~ " %") if v is not none else "–" }}{% endmacro %}
+<table>
+  <tr><th>Annonser</th><td>{{ s.n }}{% if pending %} <span class="muted">({{ pending }} bedöms fortfarande…)</span>{% endif %}</td></tr>
+  <tr><th>Larm (FYND + Kolla själv)</th><td>{{ s.alerts }}</td></tr>
+  <tr><th>Med facit</th><td>{{ s.answered }} av {{ s.n }}</td></tr>
+  <tr><th>Precision: larm med rätt modell</th><td>{{ pct(s.precision) }} ({{ s.correct }} rätt, {{ s.wrong_model }} fel modell, {{ s.false_alarms }} falsklarm)</td></tr>
+  <tr><th>Falsklarm på vanliga möbler</th><td>{{ pct(s.false_alarm_rate) }} ({{ s.false_alarms }} av {{ s.false_alarms + s.correct_none }})</td></tr>
+  <tr><th>Träffsäkerhet på designmöbler</th><td>{{ pct(s.recall) }} ({{ s.missed }} missade)</td></tr>
+  <tr><th>AI-kostnad</th><td>{{ "%.2f"|format(s.cost_usd) }} USD</td></tr>
+</table>
+<p class="muted">Annonser utan facit i filen: klicka på rätt bedömning per rad. Siffrorna räknas om direkt.</p>
+<div class="wrap"><table>
+  <tr><th></th><th>Annons</th><th>AI:ns svar</th><th>Facit / din bedömning</th></tr>
+  {% for r in rows %}{% set l, a = r.l, r.a %}
+  <tr id="l{{ l.id }}">
+    <td>{% if r.img %}<img src="{{ r.img }}" alt="" style="width:88px;height:66px;object-fit:cover;border-radius:4px">{% endif %}</td>
+    <td><a href="/annons/{{ l.id }}">{{ l.title }}</a><br><span class="muted">{{ l.price_sek if l.price_sek is not none else "?" }} kr · {{ l.municipality or "" }}</span></td>
+    <td>{% if a %}<span class="tag {{ a.decision }}">{{ {"FYND": "FYND", "KOLLA_SJALV": "KOLLA", "INGET": "–"}[a.decision] }}</span>
+        {{ r.label or "" }}{% if a.value_p25 %}<br><span class="muted">{{ a.value_p25 }}–{{ a.value_p75 }} kr · {{ a.confidence }}</span>{% endif %}
+        {% else %}⏳{% endif %}</td>
+    <td>
+      {% if r.verdict %}<b>{{ {"rätt": "✓ rätt", "rätt_inget": "✓ rätt (inget)", "fel_modell": "✗ fel modell", "falsklarm": "✗ falsklarm", "missad": "✗ missad"}[r.verdict] }}</b>
+        {% if l.expected not in choices %}<span class="muted">facit: {{ l.expected }}</span>{% endif %}<br>{% endif %}
+      {% if a %}<form method="post" action="/traning/{{ batch }}/{{ l.id }}" style="display:flex;flex-wrap:wrap;gap:.3rem">
+        {% for key, label in choices.items() %}<button name="verdict" value="{{ key }}">{{ label }}</button>{% endfor %}
+      </form>{% endif %}
+    </td>
+  </tr>{% endfor %}
+</table></div>
+</div>
+{% endblock %}

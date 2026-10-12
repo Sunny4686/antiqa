@@ -9,6 +9,9 @@ texten tas bort; bilderna raderas efter 7 dagar.</p>
 <h2>Ladda upp</h2>
 <form method="post" action="/importera" enctype="multipart/form-data" class="grid">
   <label>Filer</label><input type="file" name="files" multiple>
+  <label>Namn på omgången</label><input name="batch" placeholder="t.ex. blocket-okt-12">
+  <label>Träningsomgång</label><span><input type="checkbox" name="training" id="training">
+    <label for="training" style="display:inline">inga larm, utvärderas på Träning (skriv gärna <code>Facit:</code> per annons)</label></span>
   <span></span><button type="submit">Importera</button>
 </form>
 <p class="muted">Välj alla filer på en gång: en zip, en textfil eller CSV med bilderna, eller bara skärmbilder av

@@ -53,6 +53,8 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
   `Bilder:`-rad), CSV, JSON, zip, eller bara skärmbilder (AI läser av dem). Lägg i `data/inbox/` (läses varje
   minut, flyttas till `_klart`/`_fel`), ladda upp på `/importera` (resultatsida som uppdateras), eller
   `uv run fyndjakt import <sökväg>`. Format: `importer.py`; mallar på `/importera/mall.txt` och `mall.csv`.
+- Träningsomgång: import med "Träningsomgång" ikryssat (eller mapp/zip som heter `traning-…`): inga larm,
+  `Facit:` per annons (modellnamn eller "inget"), utvärdering och klick-bedömning på `/traning` (`training_eval.py`).
 - Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
 
 ## Struktur

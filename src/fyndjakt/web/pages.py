@@ -10,7 +10,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func, or_, select
 from sqlalchemy.orm import Session
 
-from fyndjakt import stats
+from fyndjakt import stats, training_eval
+from fyndjakt.assess import model_label
 from fyndjakt.models import AICall, Assessment, Comp, Deal, Feedback, Listing, SourceHealth, WatchModel
 
 CSV_FIELDS = (
@@ -209,6 +210,67 @@ def build_router(templates: Jinja2Templates, db) -> APIRouter:  # noqa: ANN001
                 for k, v in values.items():
                     setattr(own, k, v)
         return RedirectResponse("/affarer", status_code=303)
+
+    # --- training rounds ----------------------------------------------------------------------------
+
+    def _round_rows(session: Session, batch: str) -> list[dict]:
+        rows = []
+        listings = session.scalars(
+            select(Listing).where(Listing.import_batch == batch, Listing.training.is_(True)).order_by(Listing.id)
+        )
+        for lst in listings:
+            final = session.scalar(
+                select(Assessment)
+                .where(Assessment.listing_id == lst.id, Assessment.stage == "final")
+                .order_by(desc(Assessment.id))
+                .limit(1)
+            )
+            model = session.get(WatchModel, final.model_candidate_id) if final and final.model_candidate_id else None
+            label = model_label(model) if model else None
+            decision = final.decision if final and lst.status != "new" else None
+            rows.append(
+                {
+                    "l": lst,
+                    "a": final if decision else None,
+                    "label": label,
+                    "verdict": training_eval.verdict(lst.expected, decision, label),
+                    "img": ("/bild/" + lst.image_urls[0][6:])
+                    if lst.image_urls and lst.image_urls[0].startswith("local:")
+                    else None,
+                }
+            )
+        return rows
+
+    @r.get("/traning", response_class=HTMLResponse)
+    def training_rounds(request: Request, session: Session = Depends(db)):
+        batches = session.execute(
+            select(Listing.import_batch, func.count(Listing.id), func.min(Listing.first_seen_at))
+            .where(Listing.training.is_(True), Listing.import_batch.is_not(None))
+            .group_by(Listing.import_batch)
+            .order_by(desc(func.min(Listing.first_seen_at)))
+        ).all()
+        return templates.TemplateResponse(request, "traning.html", {"batches": batches})
+
+    @r.get("/traning/{batch}", response_class=HTMLResponse)
+    def training_round(request: Request, batch: str, session: Session = Depends(db)):
+        rows = _round_rows(session, batch)  # empty at first when only screenshots were sent: they are being read
+        stats_ = training_eval.summarize(
+            [(r["a"].decision if r["a"] else None, r["verdict"], r["a"].cost_usd if r["a"] else 0.0) for r in rows]
+        )
+        pending = sum(1 for r in rows if r["a"] is None) or (0 if rows else 1)
+        return templates.TemplateResponse(
+            request,
+            "traning_omgang.html",
+            {"batch": batch, "rows": rows, "s": stats_, "pending": pending, "choices": training_eval.MANUAL},
+        )
+
+    @r.post("/traning/{batch}/{listing_id}")
+    def training_judge(batch: str, listing_id: int, verdict: str = Form(...), session: Session = Depends(db)):
+        lst = session.get(Listing, listing_id)
+        if lst is None or lst.import_batch != batch or verdict not in training_eval.MANUAL:
+            raise HTTPException(400)
+        lst.expected = verdict
+        return RedirectResponse(f"/traning/{batch}#l{listing_id}", status_code=303)
 
     # --- statistics -------------------------------------------------------------------------------
 

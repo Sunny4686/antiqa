@@ -36,6 +36,11 @@ class Listing(Base):
     # Auctions only: when bidding closes and the leading bid (price_sek is the all-in cost to win right now).
     ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     current_bid_sek: Mapped[int | None] = mapped_column(Integer)
+    # Imports: which upload/folder it came in, whether it is a training round (no alerts), and the answer key:
+    # a model name, "inget" (ordinary furniture), or the owner's verdict on the AI's answer afterwards.
+    import_batch: Mapped[str | None] = mapped_column(String(64), index=True)
+    training: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
+    expected: Mapped[str | None] = mapped_column(String(256))
 
 
 class WatchModel(Base):

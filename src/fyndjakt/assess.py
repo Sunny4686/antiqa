@@ -444,8 +444,8 @@ def _maybe_notify(
     a: Assessment,  # noqa: ANN001
     model: WatchModel | None,
 ) -> None:
-    if a.decision == dec.INGET or not (deps.telegram and deps.config.telegram_chat_id):
-        return
+    if a.decision == dec.INGET or listing.training or not (deps.telegram and deps.config.telegram_chat_id):
+        return  # training rounds are evaluated on /traning, never alerted
     hour = deps.now().astimezone(ZoneInfo(deps.config.timezone)).hour
     if a.decision == dec.KOLLA_SJALV and dec.in_quiet_hours(hour, s.quiet_hours_start, s.quiet_hours_end):
         return  # stays in the inbox; quiet hours never hold back a FYND

@@ -35,7 +35,7 @@ DONE, FAILED = "_klart", "_fel"
 MAX_IMAGES = 8
 
 _LABEL = re.compile(
-    r"^\s*(rubrik|titel|title|pris|price|ort|plats|place|länk|lank|url|källa|kalla|source|id|bilder|bild|images)"
+    r"^\s*(rubrik|titel|title|pris|price|ort|plats|place|länk|lank|url|källa|kalla|source|id|bilder|bild|images|facit)"
     r"\s*:\s*(.*)$",
     re.I,
 )
@@ -55,6 +55,7 @@ class Draft:
     images: list[Path] = field(default_factory=list)
     remote_images: list[str] = field(default_factory=list)
     image_names: list[str] = field(default_factory=list)  # "Bilder:" line in a text file
+    facit: str | None = None  # training rounds: the right answer (a model name or "inget")
 
 
 def parse_price(text: str | None) -> int | None:
@@ -96,6 +97,8 @@ def parse_text(text: str) -> Draft:
                 d.url = val
             elif key in ("källa", "kalla", "source"):
                 d.source_hint = val
+            elif key == "facit":
+                d.facit = val
             elif key in ("bilder", "bild", "images"):
                 d.image_names = [n.strip() for n in re.split(r"[,|]", val or "") if n.strip()]
             else:
@@ -142,6 +145,7 @@ def from_mapping(row: dict) -> Draft:
         description=g("beskrivning", "description", "text"),
         source_hint=g("kalla", "källa", "source"),
         ext_id=g("id", "external_id"),
+        facit=g("facit", "expected"),
     )
 
 
@@ -232,7 +236,19 @@ def drafts_in(path: Path, errors: list[str] | None = None, screenshots: list[Pat
     return out
 
 
-def ingest_draft(session: Session, images: ImageLoader, d: Draft, remote_allowed: bool) -> int:
+def is_training_name(name: str) -> bool:
+    """A folder or zip named "traning-…"/"träning-…" is a training round: no alerts, evaluated on /traning."""
+    return name.lower().startswith(("traning", "träning", "training"))
+
+
+def ingest_draft(
+    session: Session,
+    images: ImageLoader,
+    d: Draft,
+    remote_allowed: bool,
+    batch: str | None = None,
+    training: bool = False,
+) -> int:
     if not d.title.strip():
         raise ValueError("rubrik saknas")
     urls = [images.save_upload(p.read_bytes()) for p in d.images[:MAX_IMAGES]]
@@ -255,6 +271,10 @@ def ingest_draft(session: Session, images: ImageLoader, d: Draft, remote_allowed
             image_urls=urls,
         ),
     )
+    listing.import_batch = batch[:64] if batch else listing.import_batch
+    listing.training = training or listing.training
+    if d.facit:
+        listing.expected = d.facit[:256]
     return listing.id
 
 
@@ -271,6 +291,8 @@ def import_path(
     path: Path,
     remote_allowed: bool = False,
     capture_dir: Path | None = None,
+    batch: str | None = None,
+    training: bool = False,
 ) -> ImportResult:
     res = ImportResult()
     shots: list[Path] = []
@@ -281,24 +303,34 @@ def import_path(
         return res
     for i, d in enumerate(drafts, 1):
         try:
-            res.imported.append(ingest_draft(session, images, d, remote_allowed))
+            res.imported.append(ingest_draft(session, images, d, remote_allowed, batch, training))
         except Exception as e:  # one bad listing must not stop the rest
             res.errors.append(f"{path.name} #{i} ({d.title[:40] or 'utan rubrik'}): {e}")
     if shots:
         if capture_dir is None:
             res.errors.append(f"{path.name}: {len(shots)} bilder utan text hoppades över")
         else:
-            res.screenshots += queue_screenshots(session, shots, capture_dir, source_for(path.name, None))
+            res.screenshots += queue_screenshots(
+                session, shots, capture_dir, source_for(path.name, None), batch, training
+            )
     return res
 
 
-def queue_screenshots(session: Session, shots: list[Path], capture_dir: Path, source: str) -> int:
+def queue_screenshots(
+    session: Session,
+    shots: list[Path],
+    capture_dir: Path,
+    source: str,
+    batch: str | None = None,
+    training: bool = False,
+) -> int:
     """Copy each screenshot to the capture folder and queue the job that reads it (fyndjakt.capture)."""
     capture_dir.mkdir(parents=True, exist_ok=True)
     for shot in shots:
         target = capture_dir / f"{uuid.uuid4().hex}.img"
         shutil.copyfile(shot, target)
-        enqueue(session, "screen_capture", {"path": str(target), "source": source, "page_url": "", "links": []})
+        payload = {"path": str(target), "source": source, "page_url": "", "links": [], "batch": batch}
+        enqueue(session, "screen_capture", {**payload, "training": training})
     return len(shots)
 
 
@@ -320,10 +352,11 @@ def scan_inbox(
         newest = max((p.stat().st_mtime for p in [entry, *entry.rglob("*")]), default=0)
         if now.timestamp() - newest < settle_s:
             continue  # still being copied
+        batch, training = entry.stem[:64], is_training_name(entry.name)
         if entry.suffix.lower() == ".zip":
-            res = import_zip(session, images, entry, remote_allowed, capture_dir)
+            res = import_zip(session, images, entry, remote_allowed, capture_dir, batch, training)
         else:
-            res = import_path(session, images, entry, remote_allowed, capture_dir)
+            res = import_path(session, images, entry, remote_allowed, capture_dir, batch, training)
         if not res.imported and not res.errors and not res.screenshots:
             res.errors.append(f"{entry.name}: inga annonser hittades")
         total.imported += res.imported
@@ -339,7 +372,13 @@ def scan_inbox(
 
 
 def import_zip(
-    session: Session, images: ImageLoader, zip_path: Path, remote_allowed: bool = False, capture_dir: Path | None = None
+    session: Session,
+    images: ImageLoader,
+    zip_path: Path,
+    remote_allowed: bool = False,
+    capture_dir: Path | None = None,
+    batch: str | None = None,
+    training: bool = False,
 ) -> ImportResult:
     """Unpack into a temporary folder next to the zip (refusing paths that escape it) and import that."""
     tmp = zip_path.parent / f"_unzip-{zip_path.stem}"
@@ -356,7 +395,7 @@ def import_zip(
             z.extractall(tmp)
         inner = [p for p in tmp.iterdir() if not p.name.startswith((".", "__MACOSX"))]
         root = inner[0] if len(inner) == 1 and inner[0].is_dir() else tmp
-        res = import_path(session, images, root, remote_allowed, capture_dir)
+        res = import_path(session, images, root, remote_allowed, capture_dir, batch, training)
         if res.imported or res.errors or res.screenshots:
             return res
         return ImportResult(errors=[f"{zip_path.name}: inga annonser hittades"])
