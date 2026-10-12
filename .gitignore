@@ -9,3 +9,6 @@ data/*.db*
 eval/results/
 data/backups/
 data/images/
+data/*.log
+data/captures/
+data/inbox/
