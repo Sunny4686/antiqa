@@ -6,38 +6,164 @@
   <title>{% block title %}Fyndjakt{% endblock %}</title>
   <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
   <style>
-    :root { --fg:#1d1d1b; --muted:#6b6b66; --line:#e4e2dc; --bg:#faf9f6; --fynd:#b8460b; --kolla:#2f5f8a; }
-    body { font: 15px/1.45 system-ui, sans-serif; color: var(--fg); background: var(--bg); margin: 0; }
-    header { display:flex; flex-wrap:wrap; gap:1.2rem; align-items:baseline; padding: .8rem 1.2rem; border-bottom:1px solid var(--line); }
-    header b { font-size: 1.1rem; } header a { color: var(--fg); text-decoration: none; }
-    main { max-width: 980px; margin: 0 auto; padding: 1rem 1.2rem 3rem; }
-    table { width:100%; border-collapse: collapse; } td, th { text-align:left; padding:.45rem .4rem; border-bottom:1px solid var(--line); vertical-align: top; }
-    th { font-weight:600; color: var(--muted); font-size: .85rem; }
-    .tag { font-size:.75rem; font-weight:700; padding:.1rem .4rem; border-radius:4px; color:#fff; }
-    .FYND { background: var(--fynd); } .KOLLA_SJALV { background: var(--kolla); } .INGET { background: #999; }
-    .muted { color: var(--muted); } .num { text-align:right; white-space:nowrap; }
-    button { font: inherit; padding:.3rem .6rem; border:1px solid var(--line); background:#fff; border-radius:5px; cursor:pointer; }
-    form.grid { display:grid; grid-template-columns: max-content minmax(12rem, 32rem); gap:.5rem 1rem; align-items:center; }
-    input, textarea, select { font: inherit; padding:.3rem .4rem; }
-    .wrap { overflow-x:auto; }
-    .done { color: green; font-weight: 600; }
-    pre { background:#fff; border:1px solid var(--line); padding:.6rem; overflow-x:auto; font-size:.8rem; }
+    /* Layout: fixed sidebar on desktop, top bar with scrolling nav on phones; oiled-oak accent on warm grey. */
+    :root {
+      --bg: #f4f3f0; --panel: #ffffff; --panel-2: #faf9f7; --ink: #1f2326; --muted: #6a6f72; --line: #e3e1dc;
+      --accent: #8a5a1c; --accent-ink: #ffffff; --accent-soft: #f4ead9;
+      --fynd: #b5480f; --fynd-soft: #fbe9df; --kolla: #2c5d86; --kolla-soft: #e3edf6; --inget: #8b9094;
+      --ok: #2f7448; --ok-soft: #e3f1e7; --bad: #a33a2c; --bad-soft: #f8e4e1;
+      --radius: 10px; --shadow: 0 1px 2px rgba(31, 35, 38, .06), 0 4px 14px rgba(31, 35, 38, .05);
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141617; --panel: #1c1f21; --panel-2: #212527; --ink: #e8e8e6; --muted: #9da2a5; --line: #2f3437;
+        --accent: #d4a25a; --accent-ink: #1b1308; --accent-soft: #2f2617;
+        --fynd: #f08a4f; --fynd-soft: #3a2316; --kolla: #79aee0; --kolla-soft: #1b2a38; --inget: #7f868a;
+        --ok: #7cc79a; --ok-soft: #1a2e22; --bad: #ef8b7d; --bad-soft: #3a1f1b;
+        --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+        color-scheme: dark;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font: 15px/1.5 var(--font); color: var(--ink); background: var(--bg); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; }
+
+    /* Shell */
+    .shell { display: grid; grid-template-columns: 232px 1fr; min-height: 100%; }
+    .side { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--panel); border-right: 1px solid var(--line);
+      padding: 18px 12px; display: flex; flex-direction: column; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px; color: var(--ink); font-weight: 700; font-size: 1.1rem; }
+    .brand .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: var(--accent-ink);
+      display: grid; place-items: center; font-size: .9rem; }
+    .nav { display: flex; flex-direction: column; gap: 14px; }
+    .nav-group { display: flex; flex-direction: column; gap: 2px; }
+    .nav-group > span { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 10px 4px; }
+    .nav a { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; color: var(--ink); }
+    .nav a:hover { background: var(--panel-2); text-decoration: none; }
+    .nav a.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+    .nav svg { width: 17px; height: 17px; flex: none; opacity: .8; }
+    main { padding: 28px clamp(16px, 3vw, 40px) 64px; max-width: 1180px; width: 100%; }
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: 1fr; }
+      .side { position: sticky; top: 0; height: auto; z-index: 10; flex-direction: row; align-items: center; gap: 8px;
+        padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+      .nav { flex-direction: row; gap: 4px; }
+      .nav-group { flex-direction: row; gap: 2px; }
+      .nav-group > span { display: none; }
+      .nav a { white-space: nowrap; padding: 6px 9px; }
+      .nav svg { display: none; }
+      .brand .name { display: none; }
+    }
+
+    /* Page header */
+    .page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    h1 { font-size: 1.6rem; line-height: 1.2; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+    h2 { font-size: 1.1rem; margin: 28px 0 12px; }
+    h3 { font-size: 1rem; margin: 18px 0 8px; }
+    .lead { color: var(--muted); margin: 6px 0 0; max-width: 70ch; }
+    .muted { color: var(--muted); } .small { font-size: .85rem; }
+    p { margin: 0 0 10px; }
+
+    /* Components */
+    .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card.pad { padding: 18px 20px; }
+    .stack { display: flex; flex-direction: column; gap: 14px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+    @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .btn, button { font: inherit; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px;
+      border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; text-decoration: none; }
+    .btn:hover, button:hover { background: var(--panel-2); text-decoration: none; }
+    .btn.primary, button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn.primary:hover, button.primary:hover { filter: brightness(1.05); background: var(--accent); }
+    .btn.small, button.small { padding: 4px 9px; font-size: .85rem; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .seg { display: inline-flex; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 3px; gap: 2px; }
+    .seg a { padding: 5px 12px; border-radius: 7px; color: var(--muted); font-weight: 500; }
+    .seg a.on { background: var(--panel); color: var(--ink); box-shadow: var(--shadow); }
+    .seg a:hover { text-decoration: none; color: var(--ink); }
+
+    .tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px;
+      white-space: nowrap; }
+    .tag.FYND { background: var(--fynd); color: #fff; }
+    .tag.KOLLA_SJALV { background: var(--kolla); color: #fff; }
+    .tag.INGET { background: var(--panel-2); color: var(--muted); border: 1px solid var(--line); }
+    .pill { display: inline-block; font-size: .78rem; padding: 1px 8px; border-radius: 999px; background: var(--panel-2);
+      border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+    .pos { color: var(--ok); font-weight: 600; } .neg { color: var(--bad); }
+    .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    th { font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: var(--panel-2); }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: var(--panel-2); }
+    .thumb { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; background: var(--panel-2); display: block; }
+    .thumb.empty { border: 1px dashed var(--line); }
+
+    form.grid { display: grid; grid-template-columns: minmax(150px, max-content) minmax(0, 30rem); gap: 10px 16px; align-items: center; }
+    @media (max-width: 600px) { form.grid { grid-template-columns: 1fr; } }
+    label { color: var(--muted); font-size: .9rem; }
+    input, textarea, select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 10px; width: 100%; }
+    input[type=checkbox] { width: auto; }
+    input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+    .drop { display: grid; place-items: center; gap: 6px; padding: 28px; border: 2px dashed var(--line); border-radius: var(--radius);
+      background: var(--panel-2); text-align: center; color: var(--muted); }
+    .drop input[type=file] { width: auto; border: 0; background: transparent; }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .kpi { padding: 14px 16px; }
+    .kpi b { display: block; font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+    .kpi span { color: var(--muted); font-size: .85rem; }
+    .empty { padding: 36px; text-align: center; color: var(--muted); }
+    .done { color: var(--ok); font-weight: 600; }
+    .flash { padding: 10px 14px; border-radius: 8px; background: var(--ok-soft); color: var(--ok); margin-bottom: 16px; }
+    .error { padding: 10px 14px; border-radius: 8px; background: var(--bad-soft); color: var(--bad); margin-bottom: 16px; }
+    pre { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; overflow-x: auto; font: .8rem/1.4 var(--mono); }
+    code { font: .85em var(--mono); background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
+    details summary { cursor: pointer; padding: 6px 0; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
+  {% block head %}{% endblock %}
 </head>
 <body>
-<header>
-  <b>Fyndjakt</b>
-  <a href="/utvalt">Utvalt</a>
-  <a href="/inkorg">Inkorg</a>
-  <a href="/testa">Testa annons</a>
-  <a href="/importera">Importera</a>
-  <a href="/traning">Träning</a>
-  <a href="/bevakningslista">Bevakningslista</a>
-  <a href="/comps">Comps</a>
-  <a href="/affarer">Affärer</a>
-  <a href="/statistik">Statistik</a>
-  <a href="/installningar">Inställningar</a>
-</header>
-<main>{% block content %}{% endblock %}</main>
+{% set path = request.url.path %}
+{% macro item(href, label, icon) %}<a href="{{ href }}" class="{{ 'on' if path == href or (href != '/' and path.startswith(href ~ '/')) or (href == '/utvalt' and path == '/') else '' }}">{{ icon|safe }}<span>{{ label }}</span></a>{% endmacro %}
+<div class="shell">
+  <aside class="side">
+    <a class="brand" href="/utvalt"><span class="mark">F</span><span class="name">Fyndjakt</span></a>
+    <nav class="nav">
+      <div class="nav-group"><span>Fynd</span>
+        {{ item("/utvalt", "Utvalt", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg>') }}
+        {{ item("/inkorg", "Inkorg", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 13l2-8h12l2 8M4 13v6h16v-6M4 13h5l1 2h4l1-2h5"/></svg>') }}
+      </div>
+      <div class="nav-group"><span>Lägg in</span>
+        {{ item("/importera", "Importera", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v11m0 0l-4-4m4 4l4-4M4 19h16"/></svg>') }}
+        {{ item("/testa", "Testa annons", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>') }}
+        {{ item("/traning", "Träning", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 16V9m5 7V5m5 11v-4"/></svg>') }}
+      </div>
+      <div class="nav-group"><span>Kunskap</span>
+        {{ item("/bevakningslista", "Bevakningslista", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/></svg>') }}
+        {{ item("/comps", "Sålda (comps)", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>') }}
+      </div>
+      <div class="nav-group"><span>Affär</span>
+        {{ item("/affarer", "Affärer", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v12H3zM8 7V5h8v2"/></svg>') }}
+        {{ item("/statistik", "Statistik", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg>') }}
+        {{ item("/installningar", "Inställningar", '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4.9a7 7 0 0 0-2-1.2L14 3h-4l-.5 2.5a7 7 0 0 0-2 1.2l-2.4-.9-2 3.4 2 1.6A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.6 2 3.4 2.4-.9a7 7 0 0 0 2 1.2L10 21h4l.5-2.5a7 7 0 0 0 2-1.2l2.4.9 2-3.4-2-1.6c.1-.4.1-.8.1-1.2z"/></svg>') }}
+      </div>
+    </nav>
+  </aside>
+  <main>{% block content %}{% endblock %}</main>
+</div>
 </body>
 </html>

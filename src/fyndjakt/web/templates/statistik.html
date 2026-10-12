@@ -1,37 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Statistik · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Statistik</h1>
-<p class="muted">Senaste 12 veckorna, {{ n_assessed }} bedömda annonser.</p>
-
-<h2>Styrsignaler</h2>
-<table>
-  <tr><th>Precision på FYND</th><td>{% if precision is not none %}{{ (precision * 100)|round|int }} % ({{ n_rated }} bedömda via knapparna){% else %}inga återkopplade larm ännu{% endif %}</td></tr>
-  <tr><th>Latens publicering → bedömning (median)</th><td>{{ latency ~ " min" if latency is not none else "–" }}</td></tr>
-</table>
-<p class="muted">Kill-kriterier: vecka 4 precision &lt; 15 % eller 0 handlingsbara larm på 2 veckor; vecka 8 &lt; 1 lönsam affär.</p>
-
-<h2>Larm per vecka</h2>
-{% if per_week %}<table><tr><th>Vecka</th><th class="num">FYND</th><th class="num">Kolla själv</th></tr>
-  {% for w, c in per_week.items() %}<tr><td>{{ w }}</td><td class="num">{{ c.FYND }}</td><td class="num">{{ c.KOLLA_SJALV }}</td></tr>{% endfor %}
-</table>{% else %}<p>Inga larm ännu.</p>{% endif %}
-
-<h2>Vinst per månad</h2>
-{% if profit %}<table><tr><th>Månad</th><th class="num">Netto</th></tr>
-  {% for mth, v in profit.items() %}<tr><td>{{ mth }}</td><td class="num">{{ v }} kr</td></tr>{% endfor %}
-</table>{% else %}<p>Inga sålda affärer ännu.</p>{% endif %}
-
-<h2>AI-kostnad per månad</h2>
-{% if costs %}<table><tr><th>Månad</th><th class="num">USD</th></tr>
-  {% for mth, v in costs %}<tr><td>{{ mth }}</td><td class="num">{{ "%.2f"|format(v) }}</td></tr>{% endfor %}
-</table>{% else %}<p>Inga AI-anrop ännu.</p>{% endif %}
-
-<h2>Källhälsa</h2>
-{% if health %}<table><tr><th>Källa</th><th>Senast lyckad</th><th class="num">Fel i rad</th><th>Stoppad</th><th>Senaste fel</th></tr>
-  {% for h in health %}<tr><td>{{ h.source }}</td>
-    <td>{{ h.last_success_at.strftime("%Y-%m-%d %H:%M") if h.last_success_at else "–" }}</td>
+<div class="page-head"><div><h1>Statistik</h1><p class="lead">Senaste 12 veckorna, {{ n_assessed }} bedömda annonser.</p></div></div>
+<div class="kpis">
+  <div class="card kpi"><b>{{ ((precision * 100)|round|int ~ " %") if precision is not none else "–" }}</b><span>precision på FYND ({{ n_rated }} återkopplade)</span></div>
+  <div class="card kpi"><b>{{ (latency ~ " min") if latency is not none else "–" }}</b><span>publicering → bedömning (median)</span></div>
+  <div class="card kpi"><b>{{ "%.2f"|format(costs[-1][1]) if costs else "0.00" }}</b><span>USD AI-kostnad denna månad</span></div>
+</div>
+<p class="muted small">Avbrottskriterier: vecka 4 precision under 15 % eller 0 handlingsbara larm på 2 veckor; vecka 8 färre än 1 lönsam affär.</p>
+<div class="grid-2">
+  <div><h2>Larm per vecka</h2>
+  {% if per_week %}<div class="table-wrap"><table><thead><tr><th>Vecka</th><th class="num">FYND</th><th class="num">Kolla själv</th></tr></thead>
+    <tbody>{% for w, c in per_week.items() %}<tr><td>{{ w }}</td><td class="num">{{ c.FYND }}</td><td class="num">{{ c.KOLLA_SJALV }}</td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<div class="card empty">Inga larm ännu.</div>{% endif %}</div>
+  <div><h2>Vinst per månad</h2>
+  {% if profit %}<div class="table-wrap"><table><thead><tr><th>Månad</th><th class="num">Netto</th></tr></thead>
+    <tbody>{% for mth, v in profit.items() %}<tr><td>{{ mth }}</td><td class="num">{{ v|kr }}</td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<div class="card empty">Inga sålda affärer ännu.</div>{% endif %}</div>
+  <div><h2>AI-kostnad per månad</h2>
+  {% if costs %}<div class="table-wrap"><table><thead><tr><th>Månad</th><th class="num">USD</th></tr></thead>
+    <tbody>{% for mth, v in costs %}<tr><td>{{ mth }}</td><td class="num">{{ "%.2f"|format(v) }}</td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<div class="card empty">Inga AI-anrop ännu.</div>{% endif %}</div>
+  <div><h2>Källhälsa</h2>
+  {% if health %}<div class="table-wrap"><table><thead><tr><th>Källa</th><th>Senast lyckad</th><th class="num">Fel i rad</th><th>Status</th></tr></thead>
+    <tbody>{% for h in health %}<tr><td>{{ h.source }}</td>
+    <td class="small">{{ h.last_success_at.strftime("%Y-%m-%d %H:%M") if h.last_success_at else "–" }}</td>
     <td class="num">{{ h.consecutive_failures }}</td>
-    <td>{{ (h.stopped_reason ~ " till " ~ h.stopped_until.strftime("%Y-%m-%d %H:%M")) if h.stopped_reason else "nej" }}</td>
-    <td class="muted">{{ (h.last_error or "–")[:120] }}</td></tr>{% endfor %}
-</table>{% else %}<p>Inga körningar ännu.</p>{% endif %}
+    <td>{% if h.stopped_reason %}<span class="pill neg">stoppad: {{ h.stopped_reason }}</span>{% else %}<span class="pill">ok</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+  {% else %}<div class="card empty">Inga körningar ännu.</div>{% endif %}</div>
+</div>
 {% endblock %}

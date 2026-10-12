@@ -35,6 +35,28 @@ from fyndjakt.web.pages import build_router
 
 log = logging.getLogger(__name__)
 templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
+
+
+def _kr(value: object) -> str:
+    """12500 -> '12 500 kr' (narrow no-break space as thousands separator)."""
+    if value is None or value == "":
+        return "–"
+    return f"{int(value):,}".replace(",", "\u202f") + "\u00a0kr"
+
+
+def _thumb(listing: Listing | None) -> str | None:
+    """First displayable picture of a listing: own uploads always, remote ones only where fetching is allowed."""
+    if listing is None:
+        return None
+    urls = usable_urls(listing.image_urls or [], remote_images_allowed(listing.source, get_config()))
+    if not urls:
+        return None
+    return "/bild/" + urls[0][len(LOCAL_PREFIX) :] if urls[0].startswith(LOCAL_PREFIX) else urls[0]
+
+
+templates.env.filters["kr"] = _kr
+templates.env.globals["thumb"] = _thumb
+templates.env.globals["DECISION_LABEL"] = {"FYND": "FYND", "KOLLA_SJALV": "Kolla själv", "INGET": "Inget"}
 FEEDBACK_TEXT = dict(FEEDBACK_BUTTONS)
 
 

@@ -1,30 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Bevakningslista · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Bevakningslista</h1>
-<p class="muted">Byggs automatiskt varje söndag från Auctionet (≥ 3 försäljningar, median ≥ 3 000 kr). Du kan redigera,
-  men behöver inte. Dina ändringar skrivs aldrig över.</p>
-<p>
-  <a href="/bevakningslista/0">+ Ny modell</a> ·
-  <a href="/bevakningslista/export.csv">Exportera CSV</a>
-</p>
-<form method="post" action="/bevakningslista/import" enctype="multipart/form-data">
-  <input type="file" name="file" accept=".csv" required> <button type="submit">Importera CSV</button>
+<div class="page-head">
+  <div><h1>Bevakningslista</h1>
+  <p class="lead">Modellerna som bildmotorn känner igen. Byggs automatiskt varje söndag ur sålda objekt (minst 3 försäljningar, median minst 3 000 kr). Dina ändringar skrivs aldrig över.</p></div>
+  <div class="row"><a class="btn" href="/bevakningslista/export.csv">Exportera CSV</a><a class="btn primary" href="/bevakningslista/0">Ny modell</a></div>
+</div>
+<form class="row" method="post" action="/bevakningslista/import" enctype="multipart/form-data" style="margin-bottom:16px">
+  <input type="file" name="file" accept=".csv" required style="width:auto"> <button type="submit">Importera CSV</button>
 </form>
-{% if not models %}<p>Listan är tom. Den fylls när Auctionet-comps finns och veckojobbet har kört.</p>{% else %}
-<div class="wrap"><table>
-  <tr><th>Formgivare</th><th>Modell</th><th>Tillverkare</th><th class="num">Sålda</th><th class="num">Median</th><th>Anteckningar</th><th>Aktiv</th></tr>
-  {% for m in models %}
+{% if not models %}<div class="card empty"><p>Listan är tom. Den fylls när det finns sålda objekt och veckojobbet har kört.</p></div>{% else %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Formgivare</th><th>Modell</th><th>Tillverkare</th><th class="num">Sålda</th><th class="num">Median</th><th>Profil</th><th>Status</th></tr></thead>
+  <tbody>{% for m in models %}
   <tr>
-    <td><a href="/bevakningslista/{{ m.id }}">{{ m.designer or "–" }}</a></td>
-    <td>{{ m.model_name or "–" }}</td>
+    <td><a href="/bevakningslista/{{ m.id }}"><b>{{ m.designer or "–" }}</b></a></td>
+    <td>{{ m.model_name or "–" }}{% if m.aliases %}<br><span class="muted small">{{ m.aliases|join(", ") }}</span>{% endif %}</td>
     <td>{{ m.manufacturer or "–" }}</td>
     <td class="num">{{ m.n_sales }}</td>
-    <td class="num">{{ m.median_sek ~ " kr" if m.median_sek else "–" }}</td>
-    <td>{{ "✓" if m.identifying_features else "–" }}{% if m.auto_generated %} <span class="muted">auto</span>{% endif %}</td>
-    <td>{{ "ja" if m.active else "nej" }}</td>
-  </tr>
-  {% endfor %}
+    <td class="num">{{ m.median_sek|kr if m.median_sek else "–" }}</td>
+    <td>{% if m.identifying_features %}<span class="pill">✓ profil</span>{% else %}<span class="muted">–</span>{% endif %}</td>
+    <td>{% if not m.active %}<span class="pill">inaktiv</span>{% elif m.auto_generated %}<span class="pill">auto</span>{% else %}<span class="pill">egen</span>{% endif %}</td>
+  </tr>{% endfor %}</tbody>
 </table></div>
 {% endif %}
 {% endblock %}

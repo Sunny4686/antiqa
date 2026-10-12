@@ -1,35 +1,34 @@
 {% extends "base.html" %}
 {% block title %}{{ m.designer or "Ny modell" }} · Fyndjakt{% endblock %}
 {% block content %}
+<div class="page-head"><div>
 <h1>{% if m.id %}{{ m.designer or "?" }} – {{ m.model_name or "?" }}{% else %}Ny modell{% endif %}</h1>
-{% if m.id %}<p class="muted">{{ m.n_sales }} sålda, median {{ m.median_sek or "–" }} kr{% if m.auto_generated %} · skapad automatiskt{% endif %}</p>{% endif %}
+{% if m.id %}<p class="lead">{{ m.n_sales }} sålda · median {{ m.median_sek|kr if m.median_sek else "–" }}{% if m.auto_generated %} · skapad automatiskt{% endif %}</p>{% endif %}
+</div><a class="btn" href="/bevakningslista">Tillbaka</a></div>
 {% set labels = {"designer": "Formgivare", "manufacturer": "Tillverkare", "model_name": "Modell", "period": "Period",
-                 "category": "Kategori", "identifying_features": "Kännetecken", "replica_traps": "Replikafällor",
+                 "category": "Kategori", "identifying_features": "Kännetecken (visuell profil)", "replica_traps": "Replikafällor",
                  "marks": "Märkning"} %}
-<form class="grid" method="post" action="/bevakningslista/{{ m.id or 0 }}">
+<form class="card pad grid" method="post" action="/bevakningslista/{{ m.id or 0 }}">
   {% for f in fields %}
   <label for="{{ f }}">{{ labels[f] }}</label>
   {% if f in ("identifying_features", "replica_traps", "marks") %}
-  <textarea id="{{ f }}" name="{{ f }}" rows="4">{{ m[f] or "" }}</textarea>
-  {% else %}
-  <input id="{{ f }}" name="{{ f }}" value="{{ m[f] or "" }}">
-  {% endif %}
+  <textarea id="{{ f }}" name="{{ f }}" rows="5">{{ m[f] or "" }}</textarea>
+  {% else %}<input id="{{ f }}" name="{{ f }}" value="{{ m[f] or "" }}">{% endif %}
   {% endfor %}
   <label for="aliases">Alias (kommaseparerade)</label>
   <input id="aliases" name="aliases" value="{{ (m.aliases or [])|join(', ') }}">
   <label for="active">Aktiv</label>
-  <input id="active" type="checkbox" name="active" {% if m.active %}checked{% endif %}>
-  <span></span><button type="submit">Spara</button>
+  <span><input id="active" type="checkbox" name="active" {% if m.active %}checked{% endif %}></span>
+  <span></span><div><button class="primary" type="submit">Spara</button></div>
 </form>
 {% if comps %}
-<h2>Jämförelseobjekt</h2>
-<div class="wrap"><table>
-  <tr><th>Datum</th><th>Titel</th><th>Skick</th><th class="num">Klubbslag</th></tr>
-  {% for c in comps %}
-  <tr><td>{{ c.sold_at.strftime("%Y-%m-%d") if c.sold_at else "–" }}</td>
+<h2>Sålda exemplar</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Datum</th><th>Titel</th><th>Skick</th><th class="num">Slutpris</th></tr></thead>
+  <tbody>{% for c in comps %}
+  <tr><td class="small">{{ c.sold_at.strftime("%Y-%m-%d") if c.sold_at else "–" }}</td>
       <td>{% if c.url %}<a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.title }}</a>{% else %}{{ c.title }}{% endif %}</td>
-      <td>{{ c.condition or "–" }}</td><td class="num">{{ c.hammer_sek or "–" }} kr</td></tr>
-  {% endfor %}
+      <td>{{ c.condition or "–" }}</td><td class="num">{{ c.hammer_sek|kr }}</td></tr>{% endfor %}</tbody>
 </table></div>
 {% endif %}
 {% endblock %}

@@ -1,40 +1,41 @@
 {% extends "base.html" %}
 {% block title %}Affärer · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Affärsliggare</h1>
-<p class="muted">Den enda sanningen om lönsamheten. Sålda affärer blir automatiskt jämförelseobjekt.</p>
-<h2>{% if d %}Ändra affär{% else %}Ny affär{% endif %}</h2>
-{% macro day(v) %}{{ v.strftime("%Y-%m-%d") if v else "" }}{% endmacro %}
-<form class="grid" method="post" action="/affarer">
+<div class="page-head"><div><h1>Affärer</h1>
+<p class="lead">Vad du köpt och sålt, och vad det gav. Sålda affärer blir automatiskt slutpriser i värderingen.</p></div></div>
+<div class="grid-2">
+<form class="card pad grid" method="post" action="/affarer">
   {% if d %}<input type="hidden" name="deal_id" value="{{ d.id }}">{% endif %}
-  <label>Objekt</label><input name="title" required value="{{ d.title if d else '' }}">
-  <label>Köpt datum</label><input name="bought_at" type="date" value="{{ day(d.bought_at) if d else today }}">
-  <label>Inköpspris (kr)</label><input name="purchase_sek" type="number" value="{{ d.purchase_sek if d else 0 }}">
-  <label>Kostnader: frakt, renovering (kr)</label><input name="costs_sek" type="number" value="{{ d.costs_sek if d else 0 }}">
-  <label>Sålt datum</label><input name="sold_at" type="date" value="{{ day(d.sold_at) if d else '' }}">
-  <label>Försäljningspris (kr)</label><input name="sale_sek" type="number" value="{{ d.sale_sek if d and d.sale_sek is not none else '' }}">
-  <label>Avgifter (kr)</label><input name="fees_sek" type="number" value="{{ d.fees_sek if d else 0 }}">
-  <label>Timmar</label><input name="hours" type="number" step="0.5" value="{{ d.hours if d else 0 }}">
-  <label>Modell-id (valfritt)</label><input name="model_id" value="{{ d.model_id if d and d.model_id else '' }}">
-  <label>Anteckning</label><input name="note" value="{{ d.note if d and d.note else '' }}">
-  <span></span><span><button type="submit">Spara</button>{% if d %} <a href="/affarer">Avbryt</a>{% endif %}</span>
+  {% macro day(v) %}{{ v.strftime("%Y-%m-%d") if v else "" }}{% endmacro %}
+  <span></span><h3 style="margin:0">{% if d %}Ändra affär{% else %}Ny affär{% endif %}</h3>
+  <label for="title">Objekt</label><input id="title" name="title" required value="{{ d.title if d else '' }}">
+  <label for="bought_at">Köpt datum</label><input id="bought_at" name="bought_at" type="date" value="{{ day(d.bought_at) if d else today }}">
+  <label for="purchase_sek">Inköpspris (kr)</label><input id="purchase_sek" name="purchase_sek" type="number" value="{{ d.purchase_sek if d else 0 }}">
+  <label for="costs_sek">Kostnader (kr)</label><input id="costs_sek" name="costs_sek" type="number" value="{{ d.costs_sek if d else 0 }}">
+  <label for="sold_at">Sålt datum</label><input id="sold_at" name="sold_at" type="date" value="{{ day(d.sold_at) if d else '' }}">
+  <label for="sale_sek">Försäljningspris (kr)</label><input id="sale_sek" name="sale_sek" type="number" value="{{ d.sale_sek if d and d.sale_sek is not none else '' }}">
+  <label for="fees_sek">Avgifter (kr)</label><input id="fees_sek" name="fees_sek" type="number" value="{{ d.fees_sek if d else 0 }}">
+  <label for="hours">Timmar</label><input id="hours" name="hours" type="number" step="0.5" value="{{ d.hours if d else 0 }}">
+  <label for="model_id">Modell-id</label><input id="model_id" name="model_id" value="{{ d.model_id if d and d.model_id else '' }}">
+  <label for="note">Anteckning</label><input id="note" name="note" value="{{ d.note if d and d.note else '' }}">
+  <span></span><div class="row"><button class="primary" type="submit">Spara</button>{% if d %}<a class="btn" href="/affarer">Avbryt</a>{% endif %}</div>
 </form>
+<div class="card pad"><h3 style="margin-top:0">Tips</h3><p class="muted small">Registrera köpet direkt och fyll i försäljningen när den sker. Kronor per timme räknas när timmar är ifyllda.</p></div>
+</div>
 {% if deals %}
-<h2>Affärer</h2>
-<div class="wrap"><table>
-  <tr><th>Objekt</th><th>Köpt</th><th class="num">Inköp</th><th class="num">Kostn.</th><th>Sålt</th><th class="num">Pris</th><th class="num">Avgifter</th><th class="num">Netto</th><th class="num">Kr/h</th><th></th></tr>
-  {% for d in deals %}
-  {% set n = net(d.sale_sek, d.purchase_sek, d.costs_sek, d.fees_sek) %}
+<h2>Alla affärer</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Objekt</th><th>Köpt</th><th class="num">Inköp</th><th class="num">Kostn.</th><th>Sålt</th><th class="num">Pris</th><th class="num">Avgifter</th><th class="num">Netto</th><th class="num">Kr/h</th><th></th></tr></thead>
+  <tbody>{% for d in deals %}{% set n = net(d.sale_sek, d.purchase_sek, d.costs_sek, d.fees_sek) %}
   <tr>
-    <td>{{ d.title }}</td><td>{{ d.bought_at.strftime("%Y-%m-%d") if d.bought_at else "–" }}</td>
+    <td><b>{{ d.title }}</b></td><td class="small">{{ d.bought_at.strftime("%Y-%m-%d") if d.bought_at else "–" }}</td>
     <td class="num">{{ d.purchase_sek }}</td><td class="num">{{ d.costs_sek }}</td>
-    <td>{{ d.sold_at.strftime("%Y-%m-%d") if d.sold_at else "–" }}</td>
+    <td class="small">{{ d.sold_at.strftime("%Y-%m-%d") if d.sold_at else "–" }}</td>
     <td class="num">{{ d.sale_sek if d.sale_sek is not none else "–" }}</td><td class="num">{{ d.fees_sek }}</td>
-    <td class="num">{{ n if n is not none else "–" }}</td>
+    <td class="num">{% if n is not none %}<span class="{{ 'pos' if n > 0 else 'neg' }}">{{ n }}</span>{% else %}–{% endif %}</td>
     <td class="num">{{ (n / d.hours)|round|int if n is not none and d.hours else "–" }}</td>
-    <td><a href="/affarer?redigera={{ d.id }}">Ändra</a></td>
-  </tr>
-  {% endfor %}
+    <td><a class="btn small" href="/affarer?redigera={{ d.id }}">Ändra</a></td>
+  </tr>{% endfor %}</tbody>
 </table></div>
 {% endif %}
 {% endblock %}

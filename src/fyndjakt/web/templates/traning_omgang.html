@@ -2,35 +2,34 @@
 {% block title %}{{ batch }} · Träning · Fyndjakt{% endblock %}
 {% block content %}
 <div id="omg" {% if pending %}hx-get="/traning/{{ batch }}" hx-trigger="every 5s" hx-select="#omg" hx-target="#omg" hx-swap="outerHTML"{% endif %}>
-<h1>Träningsomgång: {{ batch }}</h1>
 {% macro pct(v) %}{{ ((v * 100)|round|int ~ " %") if v is not none else "–" }}{% endmacro %}
-<table>
-  <tr><th>Annonser</th><td>{{ s.n }}{% if pending %} <span class="muted">({{ pending }} bedöms fortfarande…)</span>{% endif %}</td></tr>
-  <tr><th>Larm (FYND + Kolla själv)</th><td>{{ s.alerts }}</td></tr>
-  <tr><th>Med facit</th><td>{{ s.answered }} av {{ s.n }}</td></tr>
-  <tr><th>Precision: larm med rätt modell</th><td>{{ pct(s.precision) }} ({{ s.correct }} rätt, {{ s.wrong_model }} fel modell, {{ s.false_alarms }} falsklarm)</td></tr>
-  <tr><th>Falsklarm på vanliga möbler</th><td>{{ pct(s.false_alarm_rate) }} ({{ s.false_alarms }} av {{ s.false_alarms + s.correct_none }})</td></tr>
-  <tr><th>Träffsäkerhet på designmöbler</th><td>{{ pct(s.recall) }} ({{ s.missed }} missade)</td></tr>
-  <tr><th>AI-kostnad</th><td>{{ "%.2f"|format(s.cost_usd) }} USD</td></tr>
-</table>
-<p class="muted">Annonser utan facit i filen: klicka på rätt bedömning per rad. Siffrorna räknas om direkt.</p>
-<div class="wrap"><table>
-  <tr><th></th><th>Annons</th><th>AI:ns svar</th><th>Facit / din bedömning</th></tr>
-  {% for r in rows %}{% set l, a = r.l, r.a %}
+<div class="page-head"><div><h1>Träningsomgång: {{ batch }}</h1>
+<p class="lead">{{ s.n }} annonser{% if pending %}, {{ pending }} bedöms fortfarande…{% endif %} · {{ s.answered }} med facit · Precision: {{ pct(s.precision) }} ({{ s.correct }} rätt, {{ s.wrong_model }} fel modell, {{ s.false_alarms }} falsklarm)</p></div></div>
+<div class="kpis">
+  <div class="card kpi"><b>{{ pct(s.false_alarm_rate) }}</b><span>falsklarm på vanliga möbler ({{ s.false_alarms }} av {{ s.false_alarms + s.correct_none }})</span></div>
+  <div class="card kpi"><b>{{ pct(s.precision) }}</b><span>larm med rätt modell</span></div>
+  <div class="card kpi"><b>{{ pct(s.recall) }}</b><span>designmöbler hittade ({{ s.missed }} missade)</span></div>
+  <div class="card kpi"><b>{{ s.alerts }}</b><span>larm av {{ s.n }}</span></div>
+  <div class="card kpi"><b>{{ "%.2f"|format(s.cost_usd) }}</b><span>USD i AI-kostnad</span></div>
+</div>
+<p class="muted small">Saknar en annons facit: klicka på rätt bedömning. Siffrorna räknas om direkt.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th></th><th>Annons</th><th>AI:ns svar</th><th>Facit och din bedömning</th></tr></thead>
+  <tbody>{% for r in rows %}{% set l, a = r.l, r.a %}
   <tr id="l{{ l.id }}">
-    <td>{% if r.img %}<img src="{{ r.img }}" alt="" style="width:88px;height:66px;object-fit:cover;border-radius:4px">{% endif %}</td>
-    <td><a href="/annons/{{ l.id }}">{{ l.title }}</a><br><span class="muted">{{ l.price_sek if l.price_sek is not none else "?" }} kr · {{ l.municipality or "" }}</span></td>
-    <td>{% if a %}<span class="tag {{ a.decision }}">{{ {"FYND": "FYND", "KOLLA_SJALV": "KOLLA", "INGET": "–"}[a.decision] }}</span>
-        {{ r.label or "" }}{% if a.value_p25 %}<br><span class="muted">{{ a.value_p25 }}–{{ a.value_p75 }} kr · {{ a.confidence }}</span>{% endif %}
-        {% else %}⏳{% endif %}</td>
+    <td>{% if r.img %}<img class="thumb" src="{{ r.img }}" alt="">{% else %}<span class="thumb empty"></span>{% endif %}</td>
+    <td><a href="/annons/{{ l.id }}"><b>{{ l.title }}</b></a><br><span class="muted small">{{ l.price_sek|kr }} · {{ l.municipality or "" }}</span></td>
+    <td>{% if a %}<span class="tag {{ a.decision }}">{{ DECISION_LABEL[a.decision] }}</span> {{ r.label or "" }}
+        {% if a.value_p25 %}<br><span class="muted small">{{ a.value_p25|kr }} – {{ a.value_p75|kr }} · {{ a.confidence }}</span>{% endif %}
+        {% else %}<span class="pill">bedöms…</span>{% endif %}</td>
     <td>
       {% if r.verdict %}<b>{{ {"rätt": "✓ rätt", "rätt_inget": "✓ rätt (inget)", "fel_modell": "✗ fel modell", "falsklarm": "✗ falsklarm", "missad": "✗ missad"}[r.verdict] }}</b>
-        {% if l.expected not in choices %}<span class="muted">facit: {{ l.expected }}</span>{% endif %}<br>{% endif %}
-      {% if a %}<form method="post" action="/traning/{{ batch }}/{{ l.id }}" style="display:flex;flex-wrap:wrap;gap:.3rem">
-        {% for key, label in choices.items() %}<button name="verdict" value="{{ key }}">{{ label }}</button>{% endfor %}
+        {% if l.expected not in choices %}<span class="muted small">facit: {{ l.expected }}</span>{% endif %}{% endif %}
+      {% if a %}<form method="post" action="/traning/{{ batch }}/{{ l.id }}" class="row" style="gap:4px;margin-top:4px">
+        {% for key, label in choices.items() %}<button class="small" name="verdict" value="{{ key }}">{{ label }}</button>{% endfor %}
       </form>{% endif %}
     </td>
-  </tr>{% endfor %}
+  </tr>{% endfor %}</tbody>
 </table></div>
 </div>
 {% endblock %}

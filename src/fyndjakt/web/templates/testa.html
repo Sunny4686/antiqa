@@ -1,19 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Testa annons · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Testa en annons</h1>
-<p class="muted">Klistra in en annons du själv hittat (t.ex. på Blocket i mobilen) och ladda upp bilderna. Fyndjakt kör
-hela bedömningen: förfilter, bildscreening, verifiering mot bevakningslistan, värdering mot Auctionet, avstånd och
-marginal. Ingenting hämtas automatiskt från annonssajten. Bilderna raderas efter 7 dagar; telefonnummer och e-post i
-texten tas bort.</p>
-<form class="grid" method="post" action="/testa" enctype="multipart/form-data">
-  <label>Rubrik</label><input name="title" required placeholder="t.ex. Fåtölj i ek och läder, 60-tal">
-  <label>Pris (kr)</label><input name="price_sek" type="number" min="0" placeholder="800">
-  <label>Ort</label><input name="municipality" placeholder="t.ex. Kungsbacka">
-  <label>Beskrivning</label><textarea name="description" rows="5" placeholder="Säljarens text"></textarea>
-  <label>Länk (valfri)</label><input name="url" type="url" placeholder="https://www.blocket.se/…">
-  <label>Bilder (högst 4)</label><input name="images" type="file" accept="image/*" multiple>
-  <span></span><button type="submit">Bedöm</button>
-</form>
-<p class="muted">Kostnad per bedömning: normalt under 0,05 kr; den starka modellen används bara när marginalen ser stor ut.</p>
+<div class="page-head"><div><h1>Testa en annons</h1>
+<p class="lead">Klistra in en annons du hittat och ladda upp bilderna. Svaret kommer på några sekunder.</p></div></div>
+<div class="grid-2">
+  <form class="card pad stack" method="post" action="/testa" enctype="multipart/form-data">
+    <div><label for="title">Rubrik</label><input id="title" name="title" required placeholder="t.ex. Fåtölj i ek och läder, 60-tal"></div>
+    <div class="row" style="flex-wrap:nowrap">
+      <div style="flex:1"><label for="price_sek">Pris (kr)</label><input id="price_sek" name="price_sek" type="number" min="0" placeholder="800"></div>
+      <div style="flex:1"><label for="municipality">Ort</label><input id="municipality" name="municipality" placeholder="t.ex. Kungsbacka"></div>
+    </div>
+    <div><label for="description">Beskrivning</label><textarea id="description" name="description" rows="5" placeholder="Säljarens text"></textarea></div>
+    <div><label for="url">Länk (valfri)</label><input id="url" name="url" type="url" placeholder="https://www.blocket.se/…"></div>
+    <label class="drop" for="images"><b>Bilder</b><span class="small">Högst 4. Fler vinklar ger säkrare svar.</span>
+      <input id="images" name="images" type="file" accept="image/*" multiple></label>
+    <div><button class="primary" type="submit">Bedöm</button></div>
+  </form>
+  <div class="card pad">
+    <h3 style="margin-top:0">Vad händer</h3>
+    <p class="muted small">Bilden jämförs med bevakningslistans modeller och med foton av sålda exemplar. Känns den igen värderas den mot slutpriser från Auctionet, och nettot räknas med frakt från din hemort och avgifter.</p>
+    <p class="muted small">Telefonnummer och e-post i texten tas bort. Bilderna raderas efter 7 dagar. Kostnad normalt under 0,3 kr.</p>
+  </div>
+</div>
 {% endblock %}

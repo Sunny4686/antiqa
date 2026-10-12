@@ -1,48 +1,74 @@
 {% extends "base.html" %}
 {% block title %}{{ listing.title }} · Fyndjakt{% endblock %}
+{% block head %}<style>
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .gallery img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 8px; background: var(--panel-2); }
+  .gallery img:first-child { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+  .facts { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; }
+  .facts dt { color: var(--muted); } .facts dd { margin: 0; }
+  .verdict { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .big { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .fb { display: flex; flex-wrap: wrap; gap: 6px; }
+  ul.ev { margin: 0; padding-left: 1.1em; }
+</style>{% endblock %}
 {% block content %}
-<h1>{{ listing.title }}</h1>
-<p>
-  {{ listing.price_sek if listing.price_sek is not none else "?" }} kr · {{ listing.municipality or "okänd ort" }}
-  · källa {{ listing.source }}
-  {% if listing.url %}· <a href="{{ listing.url }}" target="_blank" rel="noopener">Öppna annons</a>{% endif %}
-</p>
-{% for u in images[:4] %}<img src="{{ '/bild/' ~ u[6:] if u.startswith('local:') else u }}" alt="" style="max-height:180px;margin-right:.4rem;border-radius:4px">{% endfor %}
-{% if pending %}
-<p class="muted" hx-get="/annons/{{ listing.id }}" hx-trigger="every 3s" hx-select="main" hx-target="main" hx-swap="outerHTML">
-  ⏳ Bedöms nu: förfilter, bildscreening, verifiering mot bevakningslistan… sidan uppdateras själv.
-</p>
-{% endif %}
-{% if listing.description %}<p style="white-space:pre-line">{{ listing.description }}</p>{% endif %}
-
-{% if final %}
-<h2><span class="tag {{ final.decision }}">{{ final.decision }}</span> Bedömning</h2>
-<table>
-  <tr><th>Kandidat</th><td>{% if model %}{{ model.designer }} – {{ model.model_name or "" }} ({{ model.manufacturer or "?" }}){% else %}–{% endif %} · match: {{ final.match or "–" }}</td></tr>
-  <tr><th>Värde</th><td>{% if final.value_p25 %}{{ final.value_p25 }}–{{ final.value_p75 }} kr (median {{ final.value_median }}), n={{ final.n_comps }}, nivå {{ final.value_level }}{% else %}inget värde ({{ final.value_level or "–" }}){% endif %}</td></tr>
-  <tr><th>Netto / ROI</th><td>{% if final.net_margin_sek is not none %}{{ final.net_margin_sek }} kr{% if final.roi is not none %} / {{ (final.roi * 100)|round|int }} %{% endif %}{% else %}–{% endif %}</td></tr>
-  <tr><th>Avstånd / transport</th><td>{{ final.distance_km if final.distance_km is not none else "?" }} km / {{ final.transport_sek if final.transport_sek is not none else "?" }} kr</td></tr>
-  <tr><th>Säkerhet</th><td>{{ final.confidence or "–" }}{% if final.needs_underside_photo %} · be om foto av undersidan{% endif %}</td></tr>
-  <tr><th>Bevis</th><td>{% for e in final.evidence %}✓ {{ e }}<br>{% else %}–{% endfor %}</td></tr>
-  <tr><th>Motbevis</th><td>{% for e in final.contradictions %}✗ {{ e }}<br>{% else %}–{% endfor %}</td></tr>
-  <tr><th>Replikasignaler</th><td>{{ final.replica_signals|join(", ") or "–" }}</td></tr>
-  <tr><th>Märkning (OCR)</th><td>{{ final.label_ocr or "–" }}</td></tr>
-  <tr><th>Notering</th><td>{{ final.note or "–" }}</td></tr>
-  <tr><th>AI</th><td class="muted">{{ final.llm_model or "–" }} · {{ final.tokens_in }} in / {{ final.tokens_out }} ut · {{ "%.4f"|format(final.cost_usd) }} USD</td></tr>
-</table>
-{% endif %}
-
-<h2>Återkoppling</h2>
-<div id="fb">
-  {% for key, label in buttons %}
-  <button hx-post="/annons/{{ listing.id }}/feedback" hx-vals='{"label": "{{ key }}"}' hx-target="#fb-result">{{ label }}</button>
-  {% endfor %}
-  <span id="fb-result">{% for f in feedback %}<span class="done">✓ {{ f.label }}</span> {% endfor %}</span>
+<div id="ann" {% if pending %}hx-get="/annons/{{ listing.id }}" hx-trigger="every 3s" hx-select="#ann" hx-target="#ann" hx-swap="outerHTML"{% endif %}>
+<div class="page-head">
+  <div>
+    <h1>{{ listing.title }}</h1>
+    <p class="lead">{{ listing.price_sek|kr }} · {{ listing.municipality or "okänd ort" }} · källa {{ listing.source }}
+      {% if listing.ends_at %} · slutar {{ listing.ends_at.strftime("%d/%m %H:%M") }}{% endif %}</p>
+  </div>
+  {% if listing.url %}<a class="btn primary" href="{{ listing.url }}" target="_blank" rel="noopener">Öppna annonsen ↗</a>{% endif %}
 </div>
 
-<h2>Alla steg</h2>
-{% for a in assessments %}
-<details><summary>{{ a.stage }} · {{ a.created_at.strftime("%H:%M:%S") }}{% if a.decision %} · {{ a.decision }}{% endif %}</summary>
-<pre>{{ a.raw | tojson(indent=2) if a.raw else (a.note or "") }}</pre></details>
-{% endfor %}
+<div class="grid-2">
+  <div class="stack">
+    {% if images %}<div class="gallery">{% for u in images[:5] %}<img src="{{ '/bild/' ~ u[6:] if u.startswith('local:') else u }}" alt="" loading="lazy">{% endfor %}</div>{% endif %}
+    {% if listing.description %}<div class="card pad"><h3 style="margin-top:0">Annonstext</h3><p style="white-space:pre-line">{{ listing.description }}</p></div>{% endif %}
+  </div>
+
+  <div class="stack">
+    {% if pending %}
+    <div class="card pad"><b>Bedöms nu…</b><p class="muted">Bildscreening, jämförelse mot bevakningslistan och värdering. Sidan uppdateras själv.</p></div>
+    {% elif final %}
+    <div class="card pad">
+      <div class="verdict"><span class="tag {{ final.decision }}">{{ DECISION_LABEL[final.decision] }}</span>
+        <span class="muted">säkerhet {{ final.confidence or "–" }}</span></div>
+      {% if model %}<p><b>{{ model.designer }} – {{ model.model_name }}</b>{% if model.manufacturer %}, {{ model.manufacturer }}{% endif %}
+        <span class="pill">{{ {"yes": "bekräftad", "uncertain": "trolig", "no": "stämmer inte"}.get(final.match, final.match or "–") }}</span></p>{% endif %}
+      {% if final.net_margin_sek is not none %}
+      <div class="row" style="gap:24px;margin:8px 0 12px">
+        <div><div class="muted small">Netto</div><div class="big {{ 'pos' if final.net_margin_sek > 0 else 'neg' }}">{{ final.net_margin_sek|kr }}</div></div>
+        {% if final.roi is not none %}<div><div class="muted small">Avkastning</div><div class="big">{{ (final.roi * 100)|round|int }} %</div></div>{% endif %}
+      </div>{% endif %}
+      <dl class="facts">
+        <dt>Värde</dt><dd>{% if final.value_p25 %}{{ final.value_p25|kr }} – {{ final.value_p75|kr }} <span class="muted">(median {{ final.value_median|kr }}, {{ final.n_comps }} sålda)</span>{% else %}inget värde{% endif %}</dd>
+        <dt>Avstånd</dt><dd>{{ (final.distance_km|round|int ~ " km") if final.distance_km is not none else "okänt" }}{% if final.transport_sek %} · frakt ca {{ final.transport_sek|kr }}{% endif %}</dd>
+        <dt>Skick</dt><dd>{{ final.condition_guess or "–" }}</dd>
+        {% if final.label_ocr %}<dt>Märkning</dt><dd>{{ final.label_ocr }}</dd>{% endif %}
+        {% if final.needs_underside_photo %}<dt>Tips</dt><dd>Be säljaren om ett foto av undersidan eller märkningen.</dd>{% endif %}
+        {% if final.note %}<dt>Notering</dt><dd>{{ final.note }}</dd>{% endif %}
+      </dl>
+      {% if final.evidence %}<h3>Talar för</h3><ul class="ev">{% for e in final.evidence %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      {% if final.contradictions %}<h3>Talar emot</h3><ul class="ev">{% for e in final.contradictions %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      {% if final.replica_signals %}<h3>Replikasignaler</h3><p>{{ final.replica_signals|join(", ") }}</p>{% endif %}
+      <p class="muted small" style="margin-top:12px">{{ final.llm_model or "ingen AI" }} · {{ "%.3f"|format(final.cost_usd or 0) }} USD</p>
+    </div>
+    {% endif %}
+
+    <div class="card pad">
+      <h3 style="margin-top:0">Vad blev det?</h3>
+      <div class="fb">{% for key, label in buttons %}
+        <button class="small" hx-post="/annons/{{ listing.id }}/feedback" hx-vals='{"label": "{{ key }}"}' hx-target="#fb-result">{{ label }}</button>{% endfor %}</div>
+      <p id="fb-result" style="margin-top:8px">{% for f in feedback %}<span class="done">✓ {{ f.label }}</span> {% endfor %}</p>
+    </div>
+
+    <details class="card pad"><summary>Alla steg ({{ assessments|length }})</summary>
+      {% for a in assessments %}<details><summary>{{ a.stage }} · {{ a.created_at.strftime("%H:%M:%S") }}{% if a.decision %} · {{ a.decision }}{% endif %}</summary>
+      <pre>{{ a.raw | tojson(indent=2) if a.raw else (a.note or "") }}</pre></details>{% endfor %}
+    </details>
+  </div>
+</div>
+</div>
 {% endblock %}

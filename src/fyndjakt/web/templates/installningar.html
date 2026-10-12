@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Inställningar · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Inställningar</h1>
-{% if sparat %}<p class="done">Sparat.</p>{% endif %}
-<form class="grid" method="post" action="/installningar">
+<div class="page-head"><div><h1>Inställningar</h1><p class="lead">Trösklar för larm, hemort och budget.</p></div></div>
+{% if sparat %}<div class="flash">Sparat.</div>{% endif %}
+<form class="card pad grid" method="post" action="/installningar">
   {% for name, (label, kind) in fields.items() %}
   <label for="{{ name }}">{{ label }}</label>
   <input id="{{ name }}" name="{{ name }}" value="{{ s[name]|join(', ') if kind == 'list' else s[name] }}">
   {% endfor %}
-  <span></span><button type="submit">Spara</button>
+  <span></span><div><button class="primary" type="submit">Spara</button></div>
 </form>
 {% endblock %}

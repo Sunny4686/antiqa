@@ -1,19 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Comps · Fyndjakt{% endblock %}
+{% block title %}Sålda objekt · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Jämförelseobjekt</h1>
-<p class="muted">{{ total }} totalt. Visar de 300 senaste{% if q %} som matchar "{{ q }}"{% endif %}.</p>
-<form method="get" action="/comps"><input name="q" value="{{ q }}" placeholder="Sök formgivare, modell, titel"> <button>Sök</button></form>
-<div class="wrap"><table>
-  <tr><th>Datum</th><th>Titel</th><th>Formgivare</th><th>Modell</th><th>Skick</th><th class="num">Klubbslag</th><th>Källa</th></tr>
-  {% for c in comps %}
+<div class="page-head"><div><h1>Sålda objekt</h1>
+<p class="lead">{{ "{:,}".format(total).replace(",", " ") }} slutpriser som värderingen bygger på. Visar de 300 senaste{% if q %} som matchar "{{ q }}"{% endif %}.</p></div>
+<form class="row" method="get" action="/comps"><input name="q" value="{{ q }}" placeholder="Sök formgivare, modell eller titel" style="width:18rem"><button class="primary">Sök</button></form></div>
+<div class="table-wrap"><table>
+  <thead><tr><th>Datum</th><th>Titel</th><th>Formgivare</th><th>Modell</th><th>Skick</th><th class="num">Slutpris</th><th>Källa</th></tr></thead>
+  <tbody>{% for c in comps %}
   <tr>
-    <td>{{ c.sold_at.strftime("%Y-%m-%d") if c.sold_at else "–" }}</td>
+    <td class="small">{{ c.sold_at.strftime("%Y-%m-%d") if c.sold_at else "–" }}</td>
     <td>{% if c.url %}<a href="{{ c.url }}" target="_blank" rel="noopener">{{ c.title }}</a>{% else %}{{ c.title }}{% endif %}</td>
     <td>{{ c.designer or "–" }}</td><td>{{ c.model_name or "–" }}</td><td>{{ c.condition or "–" }}</td>
-    <td class="num">{{ c.hammer_sek ~ " kr" if c.hammer_sek else ("osåld" if c.state == "unsold" else "–") }}</td>
-    <td>{{ c.source }}</td>
-  </tr>
-  {% endfor %}
+    <td class="num">{{ c.hammer_sek|kr if c.hammer_sek else ("osåld" if c.state == "unsold" else "–") }}</td>
+    <td><span class="pill">{{ c.source }}</span></td>
+  </tr>{% endfor %}</tbody>
 </table></div>
 {% endblock %}

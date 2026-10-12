@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Träning · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Träningsomgångar</h1>
-<p class="muted">Importer markerade som träning: inga Telegram-larm, bara utvärdering. Starta en på
-<a href="/importera">Importera</a> (bocka i Träningsomgång) eller lägg en mapp/zip som heter <code>traning-…</code> i inkorgsmappen.</p>
+<div class="page-head"><div><h1>Träningsomgångar</h1>
+<p class="lead">Importer markerade som träning: inga larm, bara utvärdering av precision och falsklarm.</p></div>
+<a class="btn primary" href="/importera">Starta en omgång</a></div>
 {% if batches %}
-<table><tr><th>Omgång</th><th class="num">Annonser</th><th>Startad</th></tr>
-{% for b, n, started in batches %}<tr><td><a href="/traning/{{ b }}">{{ b }}</a></td><td class="num">{{ n }}</td>
-<td>{{ started.strftime("%Y-%m-%d %H:%M") if started else "" }}</td></tr>{% endfor %}
-</table>
-{% else %}<p>Inga träningsomgångar ännu.</p>{% endif %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Omgång</th><th class="num">Annonser</th><th>Startad</th></tr></thead>
+  <tbody>{% for b, n, started in batches %}<tr><td><a href="/traning/{{ b }}"><b>{{ b }}</b></a></td><td class="num">{{ n }}</td>
+  <td>{{ started.strftime("%Y-%m-%d %H:%M") if started else "" }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% else %}<div class="card empty"><p><b>Inga träningsomgångar ännu.</b></p><p>Importera annonser och bocka i Träningsomgång.</p></div>{% endif %}
 {% endblock %}

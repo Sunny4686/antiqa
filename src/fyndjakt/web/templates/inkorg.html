@@ -1,28 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Inkorg · Fyndjakt{% endblock %}
 {% block content %}
-<h1>Inkorg</h1>
-<p class="muted">
-  {% if alla %}Alla bedömda annonser. <a href="/inkorg">Visa bara larm</a>
-  {% else %}Fynd och "kolla själv". <a href="/inkorg?alla=1">Visa alla bedömningar</a>{% endif %}
-</p>
+<div class="page-head">
+  <div><h1>Inkorg</h1><p class="lead">Alla bedömda annonser, senaste först.</p></div>
+  <div class="seg"><a href="/inkorg" class="{{ '' if alla else 'on' }}">Larm</a><a href="/inkorg?alla=1" class="{{ 'on' if alla else '' }}">Alla</a></div>
+</div>
 {% if not rows %}
-  <p>Inget här ännu.</p>
+<div class="card empty"><p><b>Inget här ännu.</b></p><p>{% if alla %}Inga annonser har bedömts.{% else %}Inga fynd eller "kolla själv" just nu. <a href="/inkorg?alla=1">Visa alla bedömningar</a>{% endif %}</p></div>
 {% else %}
-<table>
-  <tr><th></th><th>Annons</th><th class="num">Pris</th><th class="num">Värde (P25–P75)</th><th class="num">Netto</th><th class="num">Avstånd</th><th>Säkerhet</th><th>Status</th></tr>
-  {% for a, l in rows %}
+<div class="table-wrap"><table>
+  <thead><tr><th></th><th>Annons</th><th></th><th class="num">Pris</th><th class="num">Värde</th><th class="num">Netto</th><th class="num">Avstånd</th><th>Säkerhet</th></tr></thead>
+  <tbody>{% for a, l in rows %}
   <tr>
-    <td><span class="tag {{ a.decision }}">{{ {"FYND": "FYND", "KOLLA_SJALV": "KOLLA", "INGET": "–"}[a.decision] }}</span></td>
-    <td><a href="/annons/{{ l.id }}">{{ l.title }}</a><br><span class="muted">{{ l.municipality or "" }} · {{ l.first_seen_at.strftime("%Y-%m-%d %H:%M") }}</span></td>
-    <td class="num">{{ l.price_sek if l.price_sek is not none else "?" }} kr</td>
-    <td class="num">{% if a.value_p25 %}{{ a.value_p25 }}–{{ a.value_p75 }} (n={{ a.n_comps }}){% else %}<span class="muted">–</span>{% endif %}</td>
-    <td class="num">{% if a.net_margin_sek is not none %}{{ a.net_margin_sek }} kr{% else %}–{% endif %}</td>
+    <td>{% set img = thumb(l) %}{% if img %}<img class="thumb" src="{{ img }}" alt="" loading="lazy">{% else %}<span class="thumb empty"></span>{% endif %}</td>
+    <td><a href="/annons/{{ l.id }}"><b>{{ l.title }}</b></a><br>
+      <span class="muted small">{{ l.municipality or "okänd ort" }} · {{ l.first_seen_at.strftime("%d/%m %H:%M") }}{% if l.status == "handled" %} · hanterad{% endif %}</span></td>
+    <td><span class="tag {{ a.decision }}">{{ DECISION_LABEL[a.decision] }}</span></td>
+    <td class="num">{{ l.price_sek|kr }}</td>
+    <td class="num">{% if a.value_p25 %}{{ a.value_p25|kr }} – {{ a.value_p75|kr }}{% else %}<span class="muted">–</span>{% endif %}</td>
+    <td class="num">{% if a.net_margin_sek is not none %}<span class="{{ 'pos' if a.net_margin_sek > 0 else 'neg' }}">{{ a.net_margin_sek|kr }}</span>{% else %}–{% endif %}</td>
     <td class="num">{% if a.distance_km is not none %}{{ a.distance_km|round|int }} km{% else %}–{% endif %}</td>
     <td>{{ a.confidence or "–" }}</td>
-    <td>{{ {"handled": "hanterad", "assessed": "ny", "skipped": "överhoppad", "new": "i kö"}.get(l.status, l.status) }}</td>
-  </tr>
-  {% endfor %}
-</table>
+  </tr>{% endfor %}</tbody>
+</table></div>
 {% endif %}
 {% endblock %}
