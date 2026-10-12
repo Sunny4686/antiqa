@@ -109,3 +109,33 @@ def test_capture_job_creates_listings_and_deletes_screenshot(session, config, tm
     assert seen_images == ["image/jpeg"]
     assert session.scalar(select(AICall).where(AICall.purpose == "capture")).cost_usd > 0
     assert session.scalar(select(Job).where(Job.kind == "assess")).payload == {"listing_id": lst.id}
+
+
+def test_imported_screenshot_uses_given_source(session, config, tmp_path):
+    shot = tmp_path / "b.img"
+    shot.write_bytes(_screenshot())
+    card = CapturedCard(
+        title="Byrå teak",
+        price_sek=900,
+        place="Borås",
+        is_furniture=True,
+        image_box=[100 / 1200, 100 / 800, 400 / 1200, 400 / 800],
+    )
+    enqueue(
+        session,
+        "screen_capture",
+        {"path": str(shot), "source": "fb_import", "page_url": "", "links": []},
+        run_at=NOW - timedelta(seconds=1),
+    )
+    session.commit()
+    deps = Deps(
+        config=config,
+        ai=object(),
+        images=ImageLoader(tmp_path / "img", "ua"),
+        now=lambda: NOW,
+        capture_fn=lambda c, m, b: (CapturedPage(cards=[card]), Usage(m, 1000, 200, 0, 0)),
+    )
+    assert jobs.run_one(deps, {})
+    session.expire_all()
+    lst = session.scalar(select(Listing))
+    assert (lst.source, lst.title, lst.price_sek) == ("fb_import", "Byrå teak", 900) and not shot.exists()

@@ -51,9 +51,9 @@ def main() -> None:
         with session_scope() as session:
             loader = ImageLoader(cfg.image_cache_dir, cfg.user_agent)
             if path.suffix.lower() == ".zip":
-                res = importer.import_zip(session, loader, path, cfg.ai_send_listing_images)
+                res = importer.import_zip(session, loader, path, cfg.ai_send_listing_images, Path(cfg.capture_dir))
             else:
-                res = importer.import_path(session, loader, path, cfg.ai_send_listing_images)
+                res = importer.import_path(session, loader, path, cfg.ai_send_listing_images, Path(cfg.capture_dir))
         print(f"Importerade {len(res.imported)} annonser (bedöms av `fyndjakt serve`).")
         for e in res.errors:
             print("  fel:", e)

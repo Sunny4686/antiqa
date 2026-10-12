@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Import · Fyndjakt{% endblock %}
+{% block content %}
+<div id="res" {% if pending or screenshots %}hx-get="/importera/resultat?ids={{ ids }}" hx-trigger="every 4s" hx-select="#res" hx-target="#res" hx-swap="outerHTML"{% endif %}>
+<h1>Importerade annonser</h1>
+<p>{{ rows|length }} annonser{% if screenshots %} och {{ screenshots }} skärmbilder som läses av nu (de dyker upp i
+  <a href="/inkorg?alla=1">inkorgen</a> inom ett par minuter){% endif %}.
+  {% if pending %}<span class="muted">Bedöms… sidan uppdateras själv.</span>{% endif %}</p>
+{% if errors %}<p style="color:#a33">Fel:</p><ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+{% if rows %}
+<div class="wrap"><table>
+  <tr><th></th><th>Annons</th><th class="num">Pris</th><th>Kandidat / värde</th><th class="num">Netto</th><th>Säkerhet</th></tr>
+  {% for r in rows %}{% set l, a = r.l, r.a %}
+  <tr>
+    <td>{% if a %}<span class="tag {{ a.decision }}">{{ {"FYND": "FYND", "KOLLA_SJALV": "KOLLA", "INGET": "–"}[a.decision] }}</span>{% else %}⏳{% endif %}</td>
+    <td><a href="/annons/{{ l.id }}">{{ l.title }}</a><br><span class="muted">{{ l.municipality or "" }}</span></td>
+    <td class="num">{{ l.price_sek if l.price_sek is not none else "?" }} kr</td>
+    <td>{% if a and a.value_p25 %}{{ a.value_p25 }}–{{ a.value_p75 }} kr (n={{ a.n_comps }}){% elif a %}<span class="muted">{{ a.note or "–" }}</span>{% endif %}</td>
+    <td class="num">{% if a and a.net_margin_sek is not none %}{{ a.net_margin_sek }} kr{% else %}–{% endif %}</td>
+    <td>{{ a.confidence if a and a.confidence else "–" }}</td>
+  </tr>{% endfor %}
+</table></div>
+{% endif %}
+<p><a href="/importera">Importera fler</a></p>
+</div>
+{% endblock %}

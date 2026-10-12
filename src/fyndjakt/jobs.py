@@ -266,6 +266,7 @@ def handle_inbox_scan(session: Session, job: Job, deps: Deps, _ctx: dict) -> Non
                 Path(deps.config.inbox_dir),
                 now,
                 remote_allowed=deps.config.ai_send_listing_images,
+                capture_dir=Path(deps.config.capture_dir),
             )
             if res.imported or res.errors:
                 log.info("inbox: %d listings imported, %d errors", len(res.imported), len(res.errors))
@@ -292,7 +293,7 @@ def handle_screen_capture(session: Session, job: Job, deps: Deps, _ctx: dict) ->
 
 
 def _read_capture(session: Session, deps: Deps, path: Path, payload: dict) -> None:
-    source = capture.source_for(payload.get("page_url", ""))
+    source = payload.get("source") or capture.source_for(payload.get("page_url", ""))
     if not path.exists() or deps.ai is None or deps.images is None or source is None:
         return
     raw = path.read_bytes()

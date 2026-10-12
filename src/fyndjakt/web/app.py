@@ -161,6 +161,58 @@ def _left(d: timedelta) -> str:
     return f"{hours} h {minutes % 60} min" if hours < 24 else f"{hours // 24} d {hours % 24} h"
 
 
+def _import_results(request: Request, session: Session, ids: list[int], screenshots: int, errors: list[str]):
+    """One row per imported listing with its latest verdict; the page refreshes itself until all are assessed."""
+    rows = []
+    for lid in ids:
+        lst = session.get(Listing, lid)
+        if lst is None:
+            continue
+        final = session.scalar(
+            select(Assessment)
+            .where(Assessment.listing_id == lid, Assessment.stage == "final")
+            .order_by(desc(Assessment.id))
+            .limit(1)
+        )
+        rows.append({"l": lst, "a": final if final and lst.status != "new" else None})
+    pending = any(r["a"] is None for r in rows)
+    return templates.TemplateResponse(
+        request,
+        "import_resultat.html",
+        {
+            "rows": rows,
+            "pending": pending,
+            "screenshots": screenshots,
+            "errors": errors,
+            "ids": ",".join(str(i) for i in ids),
+        },
+    )
+
+
+IMPORT_TEMPLATE_TXT = """Rubrik: Fåtölj i ek och fårskinn
+Pris: 800 kr
+Ort: Mölndal
+Länk: https://www.blocket.se/...
+Källa: blocket
+Bilder: fatolj-1.jpg, fatolj-2.jpg
+Beskrivning:
+Fin fåtölj från farmors hus, lite slitet skinn.
+---
+Rubrik: Byrå i teak
+Pris: 1 200 kr
+Ort: Borås
+Källa: facebook
+Bilder: byra.jpg
+Beskrivning:
+Fyra lådor, nyckel finns.
+"""
+
+IMPORT_TEMPLATE_CSV = """rubrik,pris,ort,lank,kalla,bilder,beskrivning
+Fåtölj i ek och fårskinn,800,Mölndal,https://www.blocket.se/...,blocket,fatolj-1.jpg|fatolj-2.jpg,Från farmors hus
+Byrå i teak,1200,Borås,,facebook,byra.jpg,Fyra lådor
+"""
+
+
 def _check_token(expected: str | None, given: str | None) -> None:
     if not expected or not given or not hmac.compare_digest(expected, given):
         raise HTTPException(status_code=401)
@@ -391,21 +443,42 @@ def _routes():
             zips = [p for p in tmp.iterdir() if p.suffix.lower() == ".zip"]
             result = importer.ImportResult()
             remote = get_config().ai_send_listing_images
+            captures = Path(get_config().capture_dir)
             for z in zips:
-                r = importer.import_zip(session, deps.images, z, remote)
+                r = importer.import_zip(session, deps.images, z, remote, captures)
                 result.imported += r.imported
                 result.errors += r.errors
+                result.screenshots += r.screenshots
                 z.unlink()
             if any(tmp.iterdir()):
-                r = importer.import_path(session, deps.images, tmp, remote)
+                r = importer.import_path(session, deps.images, tmp, remote, captures)
                 result.imported += r.imported
                 result.errors += r.errors
+                result.screenshots += r.screenshots
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
-        return templates.TemplateResponse(
-            request,
-            "importera.html",
-            {"inbox": str(Path(get_config().inbox_dir).resolve()), "result": result},
+        session.flush()
+        return _import_results(request, session, result.imported, result.screenshots, result.errors)
+
+    @r.get("/importera/resultat", response_class=HTMLResponse)
+    def importera_resultat(request: Request, ids: str = "", skarmbilder: int = 0, session: Session = Depends(db)):
+        listing_ids = [int(i) for i in ids.split(",") if i.strip().isdigit()][:MAX_IMPORT_FILES]
+        return _import_results(request, session, listing_ids, skarmbilder, [])
+
+    @r.get("/importera/mall.txt")
+    def importera_mall_txt() -> Response:
+        return Response(
+            IMPORT_TEMPLATE_TXT,
+            media_type="text/plain; charset=utf-8",
+            headers={"Content-Disposition": "attachment; filename=annonser.txt"},
+        )
+
+    @r.get("/importera/mall.csv")
+    def importera_mall_csv() -> Response:
+        return Response(
+            IMPORT_TEMPLATE_CSV,
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": "attachment; filename=annonser.csv"},
         )
 
     @r.get("/bild/{ident}")

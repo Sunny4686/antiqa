@@ -17,6 +17,7 @@ import hashlib
 import json
 import re
 import shutil
+import uuid
 import zipfile
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -26,7 +27,7 @@ from sqlalchemy.orm import Session
 
 from fyndjakt.capture import item_id
 from fyndjakt.images import ImageLoader
-from fyndjakt.services import IngestListing, upsert_listing
+from fyndjakt.services import IngestListing, enqueue, upsert_listing
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp"}
 TEXT_NAMES = ("annons.txt", "annons.json", "listing.txt", "listing.json")
@@ -34,8 +35,11 @@ DONE, FAILED = "_klart", "_fel"
 MAX_IMAGES = 8
 
 _LABEL = re.compile(
-    r"^\s*(rubrik|titel|title|pris|price|ort|plats|place|länk|lank|url|källa|kalla|source|id)\s*:\s*(.*)$", re.I
+    r"^\s*(rubrik|titel|title|pris|price|ort|plats|place|länk|lank|url|källa|kalla|source|id|bilder|bild|images)"
+    r"\s*:\s*(.*)$",
+    re.I,
 )
+_SEPARATOR = re.compile(r"^\s*-{3,}\s*$", re.M)
 _DESC = re.compile(r"^\s*(beskrivning|description|text)\s*:\s*(.*)$", re.I)
 
 
@@ -50,6 +54,7 @@ class Draft:
     ext_id: str | None = None
     images: list[Path] = field(default_factory=list)
     remote_images: list[str] = field(default_factory=list)
+    image_names: list[str] = field(default_factory=list)  # "Bilder:" line in a text file
 
 
 def parse_price(text: str | None) -> int | None:
@@ -91,6 +96,8 @@ def parse_text(text: str) -> Draft:
                 d.url = val
             elif key in ("källa", "kalla", "source"):
                 d.source_hint = val
+            elif key in ("bilder", "bild", "images"):
+                d.image_names = [n.strip() for n in re.split(r"[,|]", val or "") if n.strip()]
             else:
                 d.ext_id = val
             continue
@@ -105,6 +112,17 @@ def parse_text(text: str) -> Draft:
         d.title = free.pop(0).strip() if free else ""
     d.description = "\n".join(free).strip() or None
     return d
+
+
+def parse_text_file(path: Path) -> list[Draft]:
+    """One listing, or several separated by lines of '---'. A listing's 'Bilder:' names files next to the text."""
+    text = path.read_text(encoding="utf-8-sig")
+    drafts = []
+    for block in (b for b in _SEPARATOR.split(text) if b.strip()):
+        d = parse_text(block)
+        _attach_images(d, d.image_names, path.parent)
+        drafts.append(d)
+    return drafts
 
 
 def from_mapping(row: dict) -> Draft:
@@ -156,6 +174,7 @@ def read_folder(folder: Path) -> Draft:
         _attach_images(d, _split_images(data.get("bilder", data.get("images"))), folder)
     else:
         d = parse_text(text_file.read_text(encoding="utf-8-sig"))
+        _attach_images(d, d.image_names, folder)
     if not d.images:
         d.images = sorted(p for p in folder.iterdir() if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES)
     return d
@@ -172,7 +191,7 @@ def read_csv(path: Path) -> list[Draft]:
     return out
 
 
-def drafts_in(path: Path, errors: list[str] | None = None) -> list[Draft]:
+def drafts_in(path: Path, errors: list[str] | None = None, screenshots: list[Path] | None = None) -> list[Draft]:
     """Everything importable at path: a folder for one listing, a folder of folders/files, a CSV, JSON or TXT.
     Problems with one entry are added to errors (when given) instead of stopping the others."""
     errors = errors if errors is not None else []
@@ -189,19 +208,25 @@ def drafts_in(path: Path, errors: list[str] | None = None) -> list[Draft]:
                 out.append(d)
             return out
         if suffix == ".txt":
-            return [parse_text(path.read_text(encoding="utf-8-sig"))]
+            return parse_text_file(path)
         raise ValueError(f"okänt filformat: {path.name}")
     entries = [p for p in sorted(path.iterdir()) if not p.name.startswith((".", "_"))]
     has_text = any((path / n).is_file() for n in TEXT_NAMES)
     has_list = any(p.suffix.lower() in (".csv", ".json") and p.name not in TEXT_NAMES for p in entries)
     has_images = any(p.suffix.lower() in IMAGE_SUFFIXES for p in entries)
-    if has_text or (has_images and not has_list and any(p.suffix.lower() == ".txt" for p in entries)):
+    txts = [p for p in entries if p.suffix.lower() == ".txt"]
+    multi = any(_SEPARATOR.search(p.read_text(encoding="utf-8-sig", errors="replace")) for p in txts)
+    if not multi and (has_text or (has_images and not has_list and txts)):
         return [read_folder(path)]  # one listing: its text file + its images
+    if has_images and not (has_list or txts or has_text) and screenshots is not None:
+        # Only pictures: screenshots of listings the owner picked; the AI reads title/price/place off them.
+        screenshots += [p for p in entries if p.suffix.lower() in IMAGE_SUFFIXES]
+        return []
     out: list[Draft] = []
     for child in entries:
         if child.is_dir() or child.suffix.lower() in (".csv", ".json", ".txt"):
             try:
-                out += drafts_in(child, errors)
+                out += drafts_in(child, errors, screenshots)
             except (ValueError, OSError, json.JSONDecodeError, csv.Error) as e:
                 errors.append(f"{child.name}: {e}")
     return out
@@ -237,12 +262,20 @@ def ingest_draft(session: Session, images: ImageLoader, d: Draft, remote_allowed
 class ImportResult:
     imported: list[int] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
+    screenshots: int = 0  # queued for the AI to read (they become listings within a minute or two)
 
 
-def import_path(session: Session, images: ImageLoader, path: Path, remote_allowed: bool = False) -> ImportResult:
+def import_path(
+    session: Session,
+    images: ImageLoader,
+    path: Path,
+    remote_allowed: bool = False,
+    capture_dir: Path | None = None,
+) -> ImportResult:
     res = ImportResult()
+    shots: list[Path] = []
     try:
-        drafts = drafts_in(path, res.errors)
+        drafts = drafts_in(path, res.errors, shots)
     except (ValueError, OSError, json.JSONDecodeError, csv.Error) as e:
         res.errors.append(f"{path.name}: {e}")
         return res
@@ -251,7 +284,22 @@ def import_path(session: Session, images: ImageLoader, path: Path, remote_allowe
             res.imported.append(ingest_draft(session, images, d, remote_allowed))
         except Exception as e:  # one bad listing must not stop the rest
             res.errors.append(f"{path.name} #{i} ({d.title[:40] or 'utan rubrik'}): {e}")
+    if shots:
+        if capture_dir is None:
+            res.errors.append(f"{path.name}: {len(shots)} bilder utan text hoppades över")
+        else:
+            res.screenshots += queue_screenshots(session, shots, capture_dir, source_for(path.name, None))
     return res
+
+
+def queue_screenshots(session: Session, shots: list[Path], capture_dir: Path, source: str) -> int:
+    """Copy each screenshot to the capture folder and queue the job that reads it (fyndjakt.capture)."""
+    capture_dir.mkdir(parents=True, exist_ok=True)
+    for shot in shots:
+        target = capture_dir / f"{uuid.uuid4().hex}.img"
+        shutil.copyfile(shot, target)
+        enqueue(session, "screen_capture", {"path": str(target), "source": source, "page_url": "", "links": []})
+    return len(shots)
 
 
 def scan_inbox(
@@ -261,6 +309,7 @@ def scan_inbox(
     now: datetime,
     settle_s: float = 10.0,
     remote_allowed: bool = False,
+    capture_dir: Path | None = None,
 ) -> ImportResult:
     """Import every entry in the inbox that hasn't changed for settle_s seconds, then move it to _klart or _fel."""
     total = ImportResult()
@@ -272,14 +321,15 @@ def scan_inbox(
         if now.timestamp() - newest < settle_s:
             continue  # still being copied
         if entry.suffix.lower() == ".zip":
-            res = import_zip(session, images, entry, remote_allowed)
+            res = import_zip(session, images, entry, remote_allowed, capture_dir)
         else:
-            res = import_path(session, images, entry, remote_allowed)
-        if not res.imported and not res.errors:
+            res = import_path(session, images, entry, remote_allowed, capture_dir)
+        if not res.imported and not res.errors and not res.screenshots:
             res.errors.append(f"{entry.name}: inga annonser hittades")
         total.imported += res.imported
         total.errors += res.errors
-        target = inbox / (FAILED if res.errors and not res.imported else DONE)
+        total.screenshots += res.screenshots
+        target = inbox / (FAILED if res.errors and not (res.imported or res.screenshots) else DONE)
         target.mkdir(exist_ok=True)
         dest = target / f"{now:%Y%m%d-%H%M%S}-{entry.name}"
         shutil.move(str(entry), dest)
@@ -288,7 +338,9 @@ def scan_inbox(
     return total
 
 
-def import_zip(session: Session, images: ImageLoader, zip_path: Path, remote_allowed: bool = False) -> ImportResult:
+def import_zip(
+    session: Session, images: ImageLoader, zip_path: Path, remote_allowed: bool = False, capture_dir: Path | None = None
+) -> ImportResult:
     """Unpack into a temporary folder next to the zip (refusing paths that escape it) and import that."""
     tmp = zip_path.parent / f"_unzip-{zip_path.stem}"
     shutil.rmtree(tmp, ignore_errors=True)
@@ -304,8 +356,8 @@ def import_zip(session: Session, images: ImageLoader, zip_path: Path, remote_all
             z.extractall(tmp)
         inner = [p for p in tmp.iterdir() if not p.name.startswith((".", "__MACOSX"))]
         root = inner[0] if len(inner) == 1 and inner[0].is_dir() else tmp
-        res = import_path(session, images, root, remote_allowed)
-        if res.imported or res.errors:
+        res = import_path(session, images, root, remote_allowed, capture_dir)
+        if res.imported or res.errors or res.screenshots:
             return res
         return ImportResult(errors=[f"{zip_path.name}: inga annonser hittades"])
     except (zipfile.BadZipFile, ValueError) as e:

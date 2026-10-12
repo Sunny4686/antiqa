@@ -49,8 +49,10 @@ En ägare, internt bruk, budget 500–5000 kr/mån. Princip: lean and mean, få 
 - Drift (VPS, Docker Compose, Cloudflare Tunnel/Access, Telegram-webhook): se `docs/DRIFT.md`.
 - Webbläsartillägget: Chrome → `chrome://extensions` → Utvecklarläge → "Läs in okomprimerat" → `extension/`.
   Det postar till `POST /ingest/screenshot` (jobb `screen_capture`, `capture.py`).
-- Import från filer (ägarens egna exporter): lägg mappar/CSV/JSON/zip i `data/inbox/` (läses varje minut,
-  flyttas till `_klart`/`_fel`), ladda upp på `/importera`, eller `uv run fyndjakt import <sökväg>`. Format: `importer.py`.
+- Import från filer (annonser ägaren själv valt ut): mappar, `annonser.txt` (flera annonser åtskilda med `---`,
+  `Bilder:`-rad), CSV, JSON, zip, eller bara skärmbilder (AI läser av dem). Lägg i `data/inbox/` (läses varje
+  minut, flyttas till `_klart`/`_fel`), ladda upp på `/importera` (resultatsida som uppdateras), eller
+  `uv run fyndjakt import <sökväg>`. Format: `importer.py`; mallar på `/importera/mall.txt` och `mall.csv`.
 - Annonser in: `POST /ingest/listing` med `Authorization: Bearer $INGEST_TOKEN` (se `IngestListing` i `services.py`).
 
 ## Struktur

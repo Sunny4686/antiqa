@@ -128,7 +128,7 @@ def test_import_page_upload(client):  # noqa: F811
         ("files", ("1.jpg", _jpg(), "image/jpeg")),
     ]
     page = client.post("/importera", files=files).text
-    assert "<b>1</b> annonser importerade" in page
+    assert "1 annonser" in page and "Pinnstol" in page and "Bedöms" in page
     with session_scope() as s:
         lst = s.scalar(select(Listing))
         assert (lst.title, lst.price_sek, lst.municipality, len(lst.image_urls)) == ("Pinnstol", 50, "Alingsås", 1)
@@ -139,3 +139,42 @@ def test_inbox_scan_is_a_periodic_job():
 
     assert "inbox_scan" in PERIODIC and "inbox_scan" in HANDLERS
     assert all(kind in HANDLERS for kind in PERIODIC)
+
+
+def test_multi_listing_text_file_with_named_images(session, tmp_path):
+    loader = ImageLoader(tmp_path / "img", "ua")
+    src = tmp_path / "lista"
+    src.mkdir()
+    for n in ("a1.jpg", "a2.jpg", "b.jpg"):
+        (src / n).write_bytes(_jpg())
+    (src / "annonser.txt").write_text(
+        "Rubrik: Fåtölj ek\nPris: 800\nBilder: a1.jpg, a2.jpg\nBeskrivning:\nFin.\n---\n"
+        "Rubrik: Byrå teak\nPris: 1 200 kr\nKälla: facebook\nBilder: b.jpg\n",
+        encoding="utf-8",
+    )
+    res = importer.import_path(session, loader, src)
+    assert len(res.imported) == 2 and not res.errors
+    rows = {lst.title: lst for lst in session.scalars(select(Listing))}
+    assert len(rows["Fåtölj ek"].image_urls) == 2 and rows["Fåtölj ek"].description == "Fin."
+    assert rows["Byrå teak"].price_sek == 1200 and rows["Byrå teak"].source == "fb_import"
+    assert len(rows["Byrå teak"].image_urls) == 1
+
+
+def test_screenshot_only_folder_queues_capture_jobs(session, tmp_path):
+    loader = ImageLoader(tmp_path / "img", "ua")
+    src = tmp_path / "blocket-skarmbilder"
+    src.mkdir()
+    for n in ("s1.png", "s2.png"):
+        (src / n).write_bytes(_jpg())
+    res = importer.import_path(session, loader, src, capture_dir=tmp_path / "captures")
+    assert res.imported == [] and res.screenshots == 2 and not res.errors
+    jobs = list(session.scalars(select(Job).where(Job.kind == "screen_capture")))
+    assert len(jobs) == 2 and all(j.payload["source"] == "blocket_import" for j in jobs)
+    assert all(Path(j.payload["path"]).exists() for j in jobs)
+    assert src.exists() and len(list(src.iterdir())) == 2  # originals untouched (the inbox moves them)
+
+
+def test_import_templates_download(client):  # noqa: F811
+    txt = client.get("/importera/mall.txt")
+    assert txt.status_code == 200 and "---" in txt.text and "Bilder:" in txt.text
+    assert client.get("/importera/mall.csv").text.startswith("rubrik,pris,ort")

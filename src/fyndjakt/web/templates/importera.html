@@ -6,19 +6,14 @@
 text och bilder från filerna och bedömer varje möbel. Inget hämtas från annonssajterna. Telefonnummer och e-post i
 texten tas bort; bilderna raderas efter 7 dagar.</p>
 
-{% if result %}
-<h2>Resultat</h2>
-<p><b>{{ result.imported|length }}</b> annonser importerade och köade för bedömning.
-  {% if result.imported %}<a href="/inkorg?alla=1">Se dem i inkorgen</a> (bedömningen tar några sekunder per annons).{% endif %}</p>
-{% if result.errors %}<p style="color:#a33">Fel:</p><ul>{% for e in result.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
-{% endif %}
-
 <h2>Ladda upp</h2>
 <form method="post" action="/importera" enctype="multipart/form-data" class="grid">
   <label>Filer</label><input type="file" name="files" multiple>
   <span></span><button type="submit">Importera</button>
 </form>
-<p class="muted">En zip-fil, en CSV/JSON-fil med bilderna, eller bilder plus en <code>annons.txt</code> för en enda annons.</p>
+<p class="muted">Välj alla filer på en gång: en zip, en textfil eller CSV med bilderna, eller bara skärmbilder av
+annonserna (då läser AI:n rubrik, pris och ort ur bilden). Mallar: <a href="/importera/mall.txt">annonser.txt</a> ·
+<a href="/importera/mall.csv">annonser.csv</a>.</p>
 
 <h2>Eller lägg filer i mappen</h2>
 <p><code>{{ inbox }}</code></p>
@@ -41,6 +36,12 @@ Beskrivning:
 Fin fåtölj från farmors hus, lite slitet skinn.</pre>
 <p class="muted">Utan etiketter blir första raden rubriken och resten beskrivningen. Alla bilder i mappen används.
 <code>annons.json</code> med fälten <code>rubrik, pris, ort, lank, beskrivning, kalla, id, bilder</code> fungerar också.</p>
+<h3>Många annonser i en textfil</h3>
+<p class="muted">Skilj annonserna åt med en rad med <code>---</code> och ange bilderna med <code>Bilder: a.jpg, b.jpg</code>.
+Ladda ner <a href="/importera/mall.txt">mallen</a>.</p>
+<h3>Bara skärmbilder</h3>
+<p class="muted">En mapp eller zip med enbart bilder räknas som skärmbilder av annonser: AI:n läser rubrik, pris och ort
+och klipper ut möbelbilden. Ungefär 0,1–0,2 kr per skärmbild.</p>
 <h3>Många annonser i en CSV</h3>
 <pre>rubrik,pris,ort,lank,kalla,bilder,beskrivning
 Fåtölj ek,800,Mölndal,https://...,blocket,a1.jpg|a2.jpg,Fin fåtölj
