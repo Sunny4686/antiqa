@@ -186,6 +186,24 @@ class SettingsRow(Base):
     daily_ai_budget_usd: Mapped[float] = mapped_column(Float, default=2.0)
     quiet_hours_start: Mapped[int] = mapped_column(Integer, default=22)
     quiet_hours_end: Mapped[int] = mapped_column(Integer, default=7)
+    # Owner-chosen folders on this computer that are read for listings (files are never moved or changed there).
+    import_dirs: Mapped[list[str]] = mapped_column(JSON, default=list, server_default="[]")
+
+
+class ImportedEntry(Base):
+    """What was imported from a watched folder, so each file or folder is read once per version."""
+
+    __tablename__ = "imported_entries"
+    __table_args__ = (UniqueConstraint("folder", "name", "signature"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    folder: Mapped[str] = mapped_column(String(1024))
+    name: Mapped[str] = mapped_column(String(512))
+    signature: Mapped[str] = mapped_column(String(64))  # newest mtime + total size of the entry
+    imported: Mapped[int] = mapped_column(Integer, default=0)
+    screenshots: Mapped[int] = mapped_column(Integer, default=0)
+    errors: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
 
 class SourceHealth(Base):

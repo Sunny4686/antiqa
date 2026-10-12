@@ -108,6 +108,7 @@ def crop(png_or_jpeg: bytes, box: list[float], min_px: int = 60) -> bytes | None
 
 
 def fallback_id(title: str, price: int | None, place: str | None) -> str:
-    """Stable id for a card without a readable link, so the same card in two screenshots is one listing."""
-    key = f"{title.strip().lower()}|{price}|{(place or '').strip().lower()}"
+    """Stable id for a card without a readable link, so the same card in two screenshots is one listing.
+    The price is left out on purpose: a price change must update the listing, not create a second one."""
+    key = f"{title.strip().lower()}|{(place or '').strip().lower()}"
     return "h" + hashlib.sha256(key.encode()).hexdigest()[:20]

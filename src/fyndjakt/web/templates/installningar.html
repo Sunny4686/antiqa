@@ -8,6 +8,12 @@
   <label for="{{ name }}">{{ label }}</label>
   <input id="{{ name }}" name="{{ name }}" value="{{ s[name]|join(', ') if kind == 'list' else s[name] }}">
   {% endfor %}
+  <span id="mappar"></span><h3 style="margin:12px 0 0">Mappar med annonser</h3>
+  <label for="import_dirs">En mapp per rad</label>
+  <div><textarea id="import_dirs" name="import_dirs" rows="3" placeholder="~/Downloads/annonser&#10;~/Library/Mobile Documents/com~apple~CloudDocs/Fyndjakt">{{ (s.import_dirs or [])|join("\n") }}</textarea>
+    {% for d in dirs %}<div class="small">{% if d.ok %}<span class="pos">✓</span>{% else %}<span class="neg">✗ finns inte</span>{% endif %} <code>{{ d.path }}</code></div>{% endfor %}
+    <p class="muted small" style="margin-top:6px">Läses varje minut. Nytt eller ändrat importeras, och dina filer flyttas eller ändras aldrig.
+      En undermapp eller zip som heter <code>traning-…</code> blir en träningsomgång. Tips: i Finder, håll in Alt och högerklicka på en mapp → "Kopiera … som sökväg".</p></div>
   <span></span><div><button class="primary" type="submit">Spara</button></div>
 </form>
 {% endblock %}

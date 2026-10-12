@@ -178,3 +178,69 @@ def test_import_templates_download(client):  # noqa: F811
     txt = client.get("/importera/mall.txt")
     assert txt.status_code == 200 and "---" in txt.text and "Bilder:" in txt.text
     assert client.get("/importera/mall.csv").text.startswith("rubrik,pris,ort")
+
+
+def _age(path: Path, seconds: float = 60) -> None:
+    t = datetime.now(UTC).timestamp() - seconds
+    for p in [path, *path.rglob("*")] if path.is_dir() else [path]:
+        os.utime(p, (t, t))
+
+
+def test_watched_folder_imports_once_never_moves_and_reimports_changes(session, tmp_path):
+    from fyndjakt.models import ImportedEntry
+
+    loader = ImageLoader(tmp_path / "img", "ua")
+    mine = tmp_path / "mina annonser"
+    ad = _folder(mine, "lamino", "Rubrik: Fåtölj\nPris: 500")
+    _age(ad)
+    now = datetime.now(UTC)
+    res = importer.scan_watched(session, loader, mine, now)
+    assert len(res.imported) == 1 and ad.exists() and (ad / "annons.txt").exists()  # owner's files untouched
+    assert importer.scan_watched(session, loader, mine, now).imported == []  # already read
+    (ad / "annons.txt").write_text("Rubrik: Fåtölj\nPris: 400", encoding="utf-8")  # owner lowers the price
+    _age(ad)
+    assert len(importer.scan_watched(session, loader, mine, now).imported) == 1
+    assert session.scalar(select(Listing).where(Listing.title == "Fåtölj")).price_sek == 400
+    assert len(list(session.scalars(select(ImportedEntry)))) == 2
+    assert "finns inte" in importer.scan_watched(session, loader, tmp_path / "saknas", now).errors[0]
+
+
+def test_watched_folder_loose_pictures_are_screenshots_unless_text_files(session, tmp_path):
+    loader = ImageLoader(tmp_path / "img", "ua")
+    shots = tmp_path / "blocket skärmbilder"
+    shots.mkdir()
+    (shots / "s1.png").write_bytes(_jpg())
+    _age(shots)
+    res = importer.scan_watched(session, loader, shots, datetime.now(UTC), capture_dir=tmp_path / "cap")
+    assert res.screenshots == 1 and (shots / "s1.png").exists()
+    listed = tmp_path / "lista"
+    listed.mkdir()
+    (listed / "a.jpg").write_bytes(_jpg())
+    (listed / "annonser.txt").write_text("Rubrik: Byrå\nBilder: a.jpg\n", encoding="utf-8")
+    _age(listed)
+    res = importer.scan_watched(session, loader, listed, datetime.now(UTC), capture_dir=tmp_path / "cap")
+    assert len(res.imported) == 1 and res.screenshots == 0
+
+
+def test_folder_upload_keeps_structure_and_settings_save_folders(client, tmp_path):  # noqa: F811
+    from fyndjakt.db import session_scope
+    from fyndjakt.services import get_settings
+    from fyndjakt.web.app import _safe_relative
+
+    assert _safe_relative("annonser/lamino/1.jpg") == Path("annonser/lamino/1.jpg")
+    assert _safe_relative("../../etc/passwd") == Path("etc/passwd")
+    assert _safe_relative("/abs/.hidden/x.jpg") == Path("abs/x.jpg")
+    folder = [
+        ("folder", ("annonser/lamino/annons.txt", b"Rubrik: Lamino-liknande\nPris: 900", "text/plain")),
+        ("folder", ("annonser/lamino/1.jpg", _jpg(), "image/jpeg")),
+        ("folder", ("annonser/byra/annons.txt", "Rubrik: Byrå\nPris: 300".encode(), "text/plain")),
+        ("folder", ("annonser/byra/1.jpg", _jpg(), "image/jpeg")),
+    ]
+    page = client.post("/importera", files=folder).text
+    assert "2 annonser" in page and "Lamino-liknande" in page and "Byrå" in page
+    client.post("/installningar", data={"import_dirs": f"{tmp_path}\n~/finns-inte-här\n{tmp_path}"})
+    with session_scope() as s:
+        dirs = get_settings(s).import_dirs
+    assert dirs[0] == str(tmp_path) and len(dirs) == 2 and not dirs[1].startswith("~")
+    page = client.get("/installningar").text
+    assert "✗ finns inte" in page and "✓" in page

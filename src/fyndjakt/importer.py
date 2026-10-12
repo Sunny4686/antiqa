@@ -17,6 +17,7 @@ import hashlib
 import json
 import re
 import shutil
+import tempfile
 import uuid
 import zipfile
 from dataclasses import dataclass, field
@@ -256,7 +257,8 @@ def ingest_draft(
         urls += d.remote_images[: max(MAX_IMAGES - len(urls), 0)]
     ext = d.ext_id or (item_id(d.url) if d.url else None)
     if not ext:
-        key = f"{d.title.strip().lower()}|{d.price_sek}|{(d.place or '').lower()}|{d.url or ''}"
+        # Not the price: a lowered price must update the same listing (and trigger a re-assessment), not add one.
+        key = f"{d.title.strip().lower()}|{(d.place or '').strip().lower()}|{d.url or ''}"
         ext = "f" + hashlib.sha256(key.encode()).hexdigest()[:20]
     listing, _new, _changed = upsert_listing(
         session,
@@ -381,9 +383,7 @@ def import_zip(
     training: bool = False,
 ) -> ImportResult:
     """Unpack into a temporary folder next to the zip (refusing paths that escape it) and import that."""
-    tmp = zip_path.parent / f"_unzip-{zip_path.stem}"
-    shutil.rmtree(tmp, ignore_errors=True)
-    tmp.mkdir()
+    tmp = Path(tempfile.mkdtemp(prefix="fyndjakt-unzip-"))  # never write into the owner's folder
     try:
         with zipfile.ZipFile(zip_path) as z:
             for info in z.infolist():
@@ -403,3 +403,82 @@ def import_zip(
         return ImportResult(errors=[f"{zip_path.name}: {e}"])
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+TEXT_LIKE = (".txt", ".csv", ".json")
+
+
+def signature(entry: Path) -> str:
+    """Changes when anything in the entry changes: newest mtime + total size."""
+    files = [entry] if entry.is_file() else [p for p in entry.rglob("*") if p.is_file()]
+    newest = max((p.stat().st_mtime_ns for p in files), default=entry.stat().st_mtime_ns)
+    return f"{newest}-{sum(p.stat().st_size for p in files)}"
+
+
+def scan_watched(
+    session: Session,
+    images: ImageLoader,
+    folder: Path,
+    now: datetime,
+    settle_s: float = 10.0,
+    remote_allowed: bool = False,
+    capture_dir: Path | None = None,
+) -> ImportResult:
+    """An owner-chosen folder: import what is new or changed, never move or modify the owner's files.
+
+    Sub-folders, zips and text/CSV/JSON files are entries of their own. Loose pictures in the folder are read as
+    screenshots, unless the folder also holds text files (then they are the pictures those files point to)."""
+    from sqlalchemy import select  # local import keeps the module's pure parts free of the ORM
+
+    from fyndjakt.models import ImportedEntry
+
+    total = ImportResult()
+    folder = folder.expanduser()
+    if not folder.is_dir():
+        total.errors.append(f"{folder}: mappen finns inte")
+        return total
+    entries = [p for p in sorted(folder.iterdir()) if not p.name.startswith((".", "_"))]
+    has_text = any(p.is_file() and p.suffix.lower() in TEXT_LIKE for p in entries)
+    for entry in entries:
+        is_image = entry.is_file() and entry.suffix.lower() in IMAGE_SUFFIXES
+        if is_image and has_text:
+            continue  # referenced by the text files next to it
+        if entry.is_file() and not is_image and entry.suffix.lower() not in (*TEXT_LIKE, ".zip"):
+            continue
+        sig = signature(entry)
+        if now.timestamp() - int(sig.split("-")[0]) / 1e9 < settle_s:
+            continue  # still being copied
+        seen = session.scalar(
+            select(ImportedEntry.id).where(
+                ImportedEntry.folder == str(folder), ImportedEntry.name == entry.name, ImportedEntry.signature == sig
+            )
+        )
+        if seen:
+            continue
+        batch, training = entry.stem[:64], is_training_name(entry.name)
+        if is_image:
+            res = ImportResult()
+            if capture_dir is not None:
+                res.screenshots = queue_screenshots(
+                    session, [entry], capture_dir, source_for(folder.name, None), folder.name[:64], training
+                )
+        elif entry.suffix.lower() == ".zip":
+            res = import_zip(session, images, entry, remote_allowed, capture_dir, batch, training)
+        else:
+            res = import_path(session, images, entry, remote_allowed, capture_dir, batch, training)
+        if not (res.imported or res.errors or res.screenshots):
+            res.errors.append(f"{entry.name}: inga annonser hittades")
+        session.add(
+            ImportedEntry(
+                folder=str(folder),
+                name=entry.name[:512],
+                signature=sig,
+                imported=len(res.imported),
+                screenshots=res.screenshots,
+                errors="\n".join(res.errors) or None,
+            )
+        )
+        total.imported += res.imported
+        total.errors += res.errors
+        total.screenshots += res.screenshots
+    return total

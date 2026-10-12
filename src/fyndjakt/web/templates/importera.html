@@ -1,5 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Importera · Fyndjakt{% endblock %}
+{% block title %}Importera · Fyndjakt<script>
+  const picked = document.getElementById("picked");
+  const show = () => {
+    const n = [...document.querySelectorAll("#files, #folder")].reduce((s, el) => s + el.files.length, 0);
+    picked.textContent = n ? `${n} filer valda` : "";
+  };
+  document.getElementById("files").addEventListener("change", show);
+  document.getElementById("folder").addEventListener("change", show);
+</script>
+{% endblock %}
 {% block content %}
 <div class="page-head">
   <div><h1>Importera annonser</h1>
@@ -9,8 +18,14 @@
 
 <div class="grid-2">
   <form class="card pad stack" method="post" action="/importera" enctype="multipart/form-data">
-    <label class="drop" for="files"><b>Välj filer</b><span class="small">Zip, textfil eller CSV med bilderna, eller bara skärmbilder</span>
-      <input id="files" type="file" name="files" multiple></label>
+    <div class="drop">
+      <b>Välj filer eller en hel mapp</b><span class="small">Zip, textfil eller CSV med bilderna, mappar med en annons i varje, eller bara skärmbilder</span>
+      <div class="row" style="justify-content:center">
+        <label class="btn" for="files">Välj filer</label><input id="files" type="file" name="files" multiple hidden>
+        <label class="btn" for="folder">Välj mapp</label><input id="folder" type="file" name="folder" webkitdirectory directory multiple hidden>
+      </div>
+      <span id="picked" class="small"></span>
+    </div>
     <div><label for="batch">Namn på omgången (valfritt)</label><input id="batch" name="batch" placeholder="t.ex. blocket-okt-12"></div>
     <label class="row" for="training" style="color:var(--ink)"><input type="checkbox" name="training" id="training">
       <span><b>Träningsomgång</b> <span class="muted">inga larm, utvärderas under Träning</span></span></label>
@@ -18,7 +33,13 @@
   </form>
 
   <div class="card pad">
-    <h3 style="margin-top:0">Eller lägg filer i mappen</h3>
+    <h3 style="margin-top:0">Mappar som läses automatiskt</h3>
+    {% for d in dirs %}<p><code>{{ d }}</code></p>{% else %}<p class="muted small">Inga egna mappar ännu.</p>{% endfor %}
+    <p><a class="btn small" href="/installningar#mappar">Välj mappar</a></p>
+    <p class="muted small">Dina mappar läses varje minut. Nytt eller ändrat importeras, och filerna lämnas orörda.</p>
+    {% if recent %}<h3>Senast inläst</h3><ul class="small" style="padding-left:1.1em;margin:0">{% for e in recent %}
+      <li><b>{{ e.name }}</b>: {{ e.imported }} annonser{% if e.screenshots %}, {{ e.screenshots }} skärmbilder{% endif %}{% if e.errors %} <span class="neg">· fel: {{ e.errors[:80] }}</span>{% endif %}</li>{% endfor %}</ul>{% endif %}
+    <h3>Inkorgsmappen</h3>
     <p><code>{{ inbox }}</code></p>
     <p class="muted small">Mappen läses varje minut. Färdigt flyttas till <code>_klart</code>, sådant som inte gick att läsa till
       <code>_fel</code> med en förklaring. En mapp eller zip som heter <code>traning-…</code> blir en träningsomgång.</p>
@@ -56,4 +77,13 @@ Rubrik: Byrå i teak
       <p class="muted small">Bilderna plus <code>annons.txt</code> eller <code>annons.json</code> med samma fält som ovan.</p></div>
   </div>
 </div>
+<script>
+  const picked = document.getElementById("picked");
+  const show = () => {
+    const n = [...document.querySelectorAll("#files, #folder")].reduce((s, el) => s + el.files.length, 0);
+    picked.textContent = n ? `${n} filer valda` : "";
+  };
+  document.getElementById("files").addEventListener("change", show);
+  document.getElementById("folder").addEventListener("change", show);
+</script>
 {% endblock %}

@@ -270,6 +270,17 @@ def handle_inbox_scan(session: Session, job: Job, deps: Deps, _ctx: dict) -> Non
             )
             if res.imported or res.errors:
                 log.info("inbox: %d listings imported, %d errors", len(res.imported), len(res.errors))
+            for folder in get_settings(session).import_dirs or []:
+                res = importer.scan_watched(
+                    session,
+                    deps.images,
+                    Path(folder),
+                    now,
+                    remote_allowed=deps.config.ai_send_listing_images,
+                    capture_dir=Path(deps.config.capture_dir),
+                )
+                if res.imported or res.screenshots:
+                    log.info("%s: %d listings, %d screenshots imported", folder, len(res.imported), res.screenshots)
     finally:
         enqueue(session, "inbox_scan", run_at=now + INBOX_EVERY)
 

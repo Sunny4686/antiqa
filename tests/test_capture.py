@@ -42,7 +42,7 @@ def test_pure_helpers():
     with Image.open(io.BytesIO(jpeg)) as im:
         assert im.size == (300, 300)
     assert capture.crop(_screenshot(), [0.1, 0.1, 0.11, 0.11]) is None  # too small
-    assert capture.fallback_id("Fåtölj ", 500, "Mölndal") == capture.fallback_id("fåtölj", 500, "mölndal")
+    assert capture.fallback_id("Fåtölj ", 500, "Mölndal") == capture.fallback_id("fåtölj", 400, "mölndal")
 
 
 def test_screenshot_endpoint_requires_token_and_known_site(client, tmp_path):  # noqa: F811

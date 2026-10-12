@@ -26,7 +26,7 @@ from fyndjakt.db import session_scope
 from fyndjakt.images import LOCAL_PREFIX, ImageLoader, usable_urls
 from fyndjakt.jobs import Worker
 from fyndjakt.migrate import upgrade
-from fyndjakt.models import Assessment, Feedback, Listing, SourceHealth, WatchModel
+from fyndjakt.models import Assessment, Feedback, ImportedEntry, Listing, SourceHealth, WatchModel
 from fyndjakt.notify.telegram import FEEDBACK_BUTTONS, FEEDBACK_LABELS, TelegramClient, parse_callback
 from fyndjakt.pipeline.geo import load_municipalities
 from fyndjakt.services import IngestListing, enqueue, get_settings, upsert_listing
@@ -182,6 +182,16 @@ def _left(d: timedelta) -> str:
         return f"{minutes} min"
     hours = minutes // 60
     return f"{hours} h {minutes % 60} min" if hours < 24 else f"{hours // 24} d {hours % 24} h"
+
+
+def _safe_relative(filename: str | None) -> Path | None:
+    """A browser's folder upload sends 'folder/sub/file.jpg'; keep that structure but never leave the upload dir."""
+    if not filename:
+        return None
+    parts = [
+        p for p in Path(filename.replace("\\", "/")).parts if p not in ("", ".", "..", "/") and not p.startswith(".")
+    ]
+    return Path(*parts) if parts else None
 
 
 def _import_results(request: Request, session: Session, ids: list[int], screenshots: int, errors: list[str]):
@@ -442,9 +452,16 @@ def _routes():
         return RedirectResponse(f"/annons/{listing.id}", status_code=303)
 
     @r.get("/importera", response_class=HTMLResponse)
-    def importera(request: Request):
+    def importera(request: Request, session: Session = Depends(db)):
+        recent = list(session.scalars(select(ImportedEntry).order_by(desc(ImportedEntry.id)).limit(10)))
         return templates.TemplateResponse(
-            request, "importera.html", {"inbox": str(Path(get_config().inbox_dir).resolve()), "result": None}
+            request,
+            "importera.html",
+            {
+                "inbox": str(Path(get_config().inbox_dir).resolve()),
+                "dirs": get_settings(session).import_dirs or [],
+                "recent": recent,
+            },
         )
 
     @r.post("/importera", response_class=HTMLResponse)
@@ -458,15 +475,18 @@ def _routes():
         tmp = Path(get_config().inbox_dir) / f"_upload-{uuid.uuid4().hex}"
         tmp.mkdir(parents=True, exist_ok=True)
         try:
-            for f in form.getlist("files")[:MAX_IMPORT_FILES]:
+            for f in [*form.getlist("files"), *form.getlist("folder")][:MAX_IMPORT_FILES]:
                 if not hasattr(f, "read") or not f.filename:
                     continue
-                name = Path(f.filename).name
+                rel = _safe_relative(f.filename)
+                if rel is None:
+                    continue
                 data = await f.read()
                 if len(data) > MAX_SCREENSHOT_BYTES * 4:
-                    raise HTTPException(400, f"{name} är för stor")
-                (tmp / name).write_bytes(data)
-            zips = [p for p in tmp.iterdir() if p.suffix.lower() == ".zip"]
+                    raise HTTPException(400, f"{rel.name} är för stor")
+                (tmp / rel).parent.mkdir(parents=True, exist_ok=True)
+                (tmp / rel).write_bytes(data)
+            zips = [p for p in tmp.rglob("*.zip")]
             result = importer.ImportResult()
             remote = get_config().ai_send_listing_images
             captures = Path(get_config().capture_dir)
@@ -526,14 +546,19 @@ def _routes():
 
     @r.get("/installningar", response_class=HTMLResponse)
     def installningar(request: Request, sparat: bool = False, session: Session = Depends(db)):
+        s = get_settings(session)
+        dirs = [{"path": d, "ok": Path(d).expanduser().is_dir()} for d in (s.import_dirs or [])]
         return templates.TemplateResponse(
-            request, "installningar.html", {"s": get_settings(session), "sparat": sparat, "fields": SETTINGS_FIELDS}
+            request, "installningar.html", {"s": s, "sparat": sparat, "fields": SETTINGS_FIELDS, "dirs": dirs}
         )
 
     @r.post("/installningar")
     async def installningar_save(request: Request, session: Session = Depends(db)):
         form = await request.form()
         s = get_settings(session)
+        if "import_dirs" in form:
+            lines = [ln.strip() for ln in str(form.get("import_dirs", "")).splitlines() if ln.strip()]
+            s.import_dirs = list(dict.fromkeys(str(Path(ln).expanduser()) for ln in lines))[:20]
         for name, (_label, kind) in SETTINGS_FIELDS.items():
             raw = str(form.get(name, "")).strip()
             if raw == "" and not (kind == "list" and name in form):
